@@ -27,10 +27,7 @@ export default function PhysicalProducts() {
   }, [user]);
 
   const fetchProducts = async () => {
-    const { data } = await supabase
-      .from("products")
-      .select("*")
-      .eq("type", "physical");
+    const { data } = await supabase.from("products").select("*").eq("type", "physical");
     setProducts(data || []);
     setLoading(false);
   };
@@ -44,19 +41,13 @@ export default function PhysicalProducts() {
         <div className="text-center mb-12">
           <span className="text-5xl mb-4 inline-block">📦</span>
           <h1 className="font-display text-5xl mb-4">Physical Pranks</h1>
-          <p className="text-muted-foreground text-lg">
-            Real props for real mischief! 🪲
-          </p>
+          <p className="text-muted-foreground text-lg">Real props for real mischief! 🪲</p>
         </div>
 
         {loading ? (
           <JokerLoader />
         ) : products.length === 0 ? (
-          <EmptyState
-            icon="📦"
-            title="No physical pranks yet..."
-            description="The warehouse is empty… for now 😏"
-          />
+          <EmptyState icon="📦" title="No physical pranks yet..." description="The warehouse is empty… for now 😏" />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => (

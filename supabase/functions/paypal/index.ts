@@ -2,28 +2,26 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 const PAYPAL_CLIENT_ID = Deno.env.get("PAYPAL_CLIENT_ID")!;
 const PAYPAL_CLIENT_SECRET = Deno.env.get("PAYPAL_CLIENT_SECRET")!;
 const PAYPAL_MODE = Deno.env.get("PAYPAL_MODE") || "sandbox";
 
-const PAYPAL_API_URL =
-  PAYPAL_MODE === "live"
-    ? "https://api-m.paypal.com"
-    : "https://api-m.sandbox.paypal.com";
+const PAYPAL_API_URL = PAYPAL_MODE === "live" 
+  ? "https://api-m.paypal.com" 
+  : "https://api-m.sandbox.paypal.com";
 
 async function getAccessToken(): Promise<string> {
   console.log("Getting PayPal access token...");
-
+  
   const auth = btoa(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`);
-
+  
   const response = await fetch(`${PAYPAL_API_URL}/v1/oauth2/token`, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${auth}`,
+      "Authorization": `Basic ${auth}`,
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: "grant_type=client_credentials",
@@ -40,18 +38,15 @@ async function getAccessToken(): Promise<string> {
   return data.access_token;
 }
 
-async function createOrder(
-  amount: string,
-  currency: string = "USD"
-): Promise<any> {
+async function createOrder(amount: string, currency: string = "USD"): Promise<any> {
   console.log(`Creating PayPal order for ${amount} ${currency}`);
-
+  
   const accessToken = await getAccessToken();
 
   const response = await fetch(`${PAYPAL_API_URL}/v2/checkout/orders`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      "Authorization": `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -80,19 +75,16 @@ async function createOrder(
 
 async function captureOrder(orderId: string): Promise<any> {
   console.log(`Capturing PayPal order: ${orderId}`);
-
+  
   const accessToken = await getAccessToken();
 
-  const response = await fetch(
-    `${PAYPAL_API_URL}/v2/checkout/orders/${orderId}/capture`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(`${PAYPAL_API_URL}/v2/checkout/orders/${orderId}/capture`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!response.ok) {
     const error = await response.text();
@@ -130,15 +122,12 @@ serve(async (req) => {
         throw new Error("Order ID is required for capturing");
       }
       const capture = await captureOrder(orderId);
-      return new Response(
-        JSON.stringify({
-          status: capture.status,
-          id: capture.id,
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ 
+        status: capture.status,
+        id: capture.id,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (action === "get-client-id") {
@@ -149,8 +138,7 @@ serve(async (req) => {
 
     throw new Error("Invalid action");
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     console.error("PayPal error:", errorMessage);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 400,
