@@ -13,7 +13,7 @@ const PAYPAL_MODE = Deno.env.get("PAYPAL_MODE") || "sandbox";
 const PAYPAL_API_URL =
   PAYPAL_MODE === "live"
     ? "https://api-m.paypal.com"
-    : "https://api-m.paypal.com";
+    : "https://api-m.sandbox.paypal.com";
 
 async function getAccessToken(): Promise<string> {
   console.log("Getting PayPal access token...");
