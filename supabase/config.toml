@@ -1,0 +1,4 @@
+project_id = "xfptozziptcpvhtkezba"
+
+[functions.paypal]
+verify_jwt = false
