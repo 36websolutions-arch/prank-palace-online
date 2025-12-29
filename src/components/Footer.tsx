@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 export function Footer() {
   return (
@@ -7,8 +8,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <span className="text-3xl">🃏</span>
+            <Link to="/" className="flex items-center gap-2 mb-4 group">
+              <img 
+                src={logo} 
+                alt="Corporate Pranks Logo" 
+                className="h-10 w-10 rounded-full object-cover animate-gentle-float"
+              />
               <span className="font-display text-2xl text-primary">Corporate Pranks</span>
             </Link>
             <p className="text-muted-foreground max-w-md">

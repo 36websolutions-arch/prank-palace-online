@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { JokerSpinner } from "@/components/JokerLoader";
 import { z } from "zod";
+import logo from "@/assets/logo.png";
 
 const authSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -16,8 +18,10 @@ const authSchema = z.object({
   phone: z.string().optional(),
 });
 
+type AuthMode = "login" | "signup" | "forgot";
+
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
@@ -30,11 +34,43 @@ export default function Auth() {
 
   if (user) return <Navigate to="/" replace />;
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast({ title: "Email Required", description: "Please enter your email address", variant: "destructive" });
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?mode=reset`,
+      });
+      
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Check your email! 📧", description: "We've sent you a password reset link." });
+        setMode("login");
+      }
+    } catch (err) {
+      toast({ title: "Error", description: "Something went wrong", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (mode === "forgot") {
+      return handleForgotPassword(e);
+    }
+    
     // Check for terms and privacy acceptance on signup
-    if (!isLogin) {
+    if (mode === "signup") {
       if (!termsAccepted) {
         toast({ title: "Terms Required", description: "Please accept the Terms and Conditions", variant: "destructive" });
         return;
@@ -51,8 +87,8 @@ export default function Auth() {
       const validation = authSchema.safeParse({ 
         email, 
         password, 
-        nickname: isLogin ? undefined : nickname,
-        phone: isLogin ? undefined : phone || undefined 
+        nickname: mode === "login" ? undefined : nickname,
+        phone: mode === "login" ? undefined : phone || undefined 
       });
       if (!validation.success) {
         toast({ title: "Validation Error", description: validation.error.errors[0].message, variant: "destructive" });
@@ -60,14 +96,14 @@ export default function Auth() {
         return;
       }
 
-      const { error } = isLogin 
+      const { error } = mode === "login" 
         ? await signIn(email, password) 
         : await signUp(email, password, nickname, phone || undefined);
 
       if (error) {
         toast({ title: "Oops!", description: error.message, variant: "destructive" });
       } else {
-        toast({ title: isLogin ? "Welcome back, Prankster! 🃏" : "Welcome to the chaos! 😈", description: isLogin ? "Time to spread some mischief!" : "Your prank journey begins now!" });
+        toast({ title: mode === "login" ? "Welcome back, Prankster! 🃏" : "Welcome to the chaos! 😈", description: mode === "login" ? "Time to spread some mischief!" : "Your prank journey begins now!" });
         navigate("/");
       }
     } catch (err) {
@@ -77,20 +113,28 @@ export default function Auth() {
     }
   };
 
-  const canSubmitSignup = isLogin || (termsAccepted && privacyAccepted);
+  const canSubmitSignup = mode === "login" || mode === "forgot" || (termsAccepted && privacyAccepted);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-secondary joker-pattern p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <span className="text-6xl mb-4 inline-block animate-wiggle">🃏</span>
+          <img 
+            src={logo} 
+            alt="Corporate Pranks" 
+            className="w-20 h-20 rounded-full object-cover mx-auto mb-4 animate-gentle-float shadow-xl ring-4 ring-primary/30"
+          />
           <h1 className="font-display text-4xl text-primary mb-2">Corporate Pranks</h1>
-          <p className="text-muted-foreground">{isLogin ? "Welcome back, mischief maker!" : "Join the chaos crew!"}</p>
+          <p className="text-muted-foreground">
+            {mode === "login" && "Welcome back, mischief maker!"}
+            {mode === "signup" && "Join the chaos crew!"}
+            {mode === "forgot" && "Forgot your password? No worries!"}
+          </p>
         </div>
 
         <div className="bg-card rounded-2xl shadow-card p-8 border">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+            {mode === "signup" && (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="nickname">Nickname</Label>
@@ -106,12 +150,27 @@ export default function Auth() {
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" placeholder="prankster@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            </div>
             
-            {!isLogin && (
+            {mode !== "forgot" && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              </div>
+            )}
+            
+            {mode === "login" && (
+              <div className="text-right">
+                <button 
+                  type="button" 
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  onClick={() => setMode("forgot")}
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
+            
+            {mode === "signup" && (
               <div className="space-y-3 pt-2">
                 <div className="flex items-start space-x-3">
                   <Checkbox 
@@ -150,14 +209,34 @@ export default function Auth() {
               size="lg" 
               disabled={loading || !canSubmitSignup}
             >
-              {loading ? <JokerSpinner /> : isLogin ? "Unleash the Pranks! 🎭" : "Join the Mischief! 😈"}
+              {loading ? <JokerSpinner /> : (
+                <>
+                  {mode === "login" && "Unleash the Pranks! 🎭"}
+                  {mode === "signup" && "Join the Mischief! 😈"}
+                  {mode === "forgot" && "Send Reset Link 📧"}
+                </>
+              )}
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <button type="button" className="text-sm text-muted-foreground hover:text-primary transition-colors" onClick={() => setIsLogin(!isLogin)}>
-              {isLogin ? "New prankster? Sign up here!" : "Already a member? Log in!"}
-            </button>
+          <div className="mt-6 text-center space-y-2">
+            {mode === "forgot" ? (
+              <button 
+                type="button" 
+                className="text-sm text-muted-foreground hover:text-primary transition-colors" 
+                onClick={() => setMode("login")}
+              >
+                Back to login
+              </button>
+            ) : (
+              <button 
+                type="button" 
+                className="text-sm text-muted-foreground hover:text-primary transition-colors" 
+                onClick={() => setMode(mode === "login" ? "signup" : "login")}
+              >
+                {mode === "login" ? "New prankster? Sign up here!" : "Already a member? Log in!"}
+              </button>
+            )}
           </div>
         </div>
       </div>

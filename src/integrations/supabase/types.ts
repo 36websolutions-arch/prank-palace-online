@@ -165,6 +165,7 @@ export type Database = {
           image: string | null
           name: string
           price: number
+          subscription_options: Json | null
           type: string
           updated_at: string
         }
@@ -176,6 +177,7 @@ export type Database = {
           image?: string | null
           name: string
           price: number
+          subscription_options?: Json | null
           type: string
           updated_at?: string
         }
@@ -187,6 +189,7 @@ export type Database = {
           image?: string | null
           name?: string
           price?: number
+          subscription_options?: Json | null
           type?: string
           updated_at?: string
         }
@@ -221,6 +224,80 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      subscription_orders: {
+        Row: {
+          amount_paid: number
+          buyer_email: string
+          buyer_name: string
+          created_at: string
+          delivered_at: string | null
+          delivery_date: string
+          id: string
+          payment_method: string
+          payment_provider: string
+          paypal_order_id: string | null
+          product_id: string
+          product_name: string
+          recipient_address: string
+          recipient_name: string
+          recipient_phone: string
+          status: string
+          subscription_name: string
+          subscription_price: number
+          user_id: string
+        }
+        Insert: {
+          amount_paid: number
+          buyer_email: string
+          buyer_name: string
+          created_at?: string
+          delivered_at?: string | null
+          delivery_date: string
+          id?: string
+          payment_method: string
+          payment_provider?: string
+          paypal_order_id?: string | null
+          product_id: string
+          product_name: string
+          recipient_address: string
+          recipient_name: string
+          recipient_phone: string
+          status?: string
+          subscription_name: string
+          subscription_price: number
+          user_id: string
+        }
+        Update: {
+          amount_paid?: number
+          buyer_email?: string
+          buyer_name?: string
+          created_at?: string
+          delivered_at?: string | null
+          delivery_date?: string
+          id?: string
+          payment_method?: string
+          payment_provider?: string
+          paypal_order_id?: string | null
+          product_id?: string
+          product_name?: string
+          recipient_address?: string
+          recipient_name?: string
+          recipient_phone?: string
+          status?: string
+          subscription_name?: string
+          subscription_price?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

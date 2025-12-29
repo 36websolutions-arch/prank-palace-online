@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
-import { ShoppingCart, Zap } from "lucide-react";
+import { ShoppingCart, Zap, RefreshCw } from "lucide-react";
 
 interface ProductCardProps {
   id: string;
   name: string;
   price: number;
   image: string | null;
-  type: "digital" | "physical";
+  type: "digital" | "physical" | "subscription";
   description?: string | null;
 }
 
@@ -21,8 +21,10 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
     addToCart(id);
   };
 
+  const productLink = type === "subscription" ? `/subscription-checkout/${id}` : `/product/${id}`;
+
   return (
-    <Link to={`/product/${id}`}>
+    <Link to={productLink}>
       <div className="product-card bg-card rounded-xl overflow-hidden shadow-card border border-border group">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-secondary">
@@ -34,7 +36,7 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-6xl">
-              {type === "digital" ? "💻" : "📦"}
+              {type === "digital" ? "💻" : type === "subscription" ? "🔄" : "📦"}
             </div>
           )}
           
@@ -42,9 +44,11 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
           <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold ${
             type === "digital" 
               ? "bg-joker-green text-primary-foreground" 
+              : type === "subscription"
+              ? "bg-primary text-primary-foreground"
               : "bg-joker-gold text-foreground"
           }`}>
-            {type === "digital" ? "⚡ Digital" : "📦 Physical"}
+            {type === "digital" ? "⚡ Digital" : type === "subscription" ? "🔄 Subscription" : "📦 Physical"}
           </div>
         </div>
 
@@ -69,6 +73,11 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
               <Button variant="joker" size="sm" className="gap-2">
                 <Zap className="h-4 w-4" />
                 Buy Now
+              </Button>
+            ) : type === "subscription" ? (
+              <Button variant="joker" size="sm" className="gap-2">
+                <RefreshCw className="h-4 w-4" />
+                Subscribe
               </Button>
             ) : (
               <Button 

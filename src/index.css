@@ -250,6 +250,19 @@
   }
 }
 
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
 @keyframes wiggle {
   0%, 100% {
     transform: rotate(-3deg);

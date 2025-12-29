@@ -7,7 +7,8 @@ import { ProductCard } from "@/components/ProductCard";
 import { JokerLoader } from "@/components/JokerLoader";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Zap, Package, ShieldCheck, Laugh, ArrowRight } from "lucide-react";
+import { Zap, Package, ShieldCheck, Laugh, ArrowRight, RefreshCw } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 interface Product {
   id: string;
@@ -20,6 +21,7 @@ interface Product {
 
 export default function Index() {
   const { user, loading: authLoading } = useAuth();
+  const [subscriptionProducts, setSubscriptionProducts] = useState<Product[]>([]);
   const [digitalProducts, setDigitalProducts] = useState<Product[]>([]);
   const [physicalProducts, setPhysicalProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
@@ -31,10 +33,12 @@ export default function Index() {
   }, [user]);
 
   const fetchProducts = async () => {
-    const [digitalRes, physicalRes] = await Promise.all([
+    const [subscriptionRes, digitalRes, physicalRes] = await Promise.all([
+      supabase.from("products").select("*").eq("type", "subscription").order("created_at", { ascending: false }).limit(4),
       supabase.from("products").select("*").eq("type", "digital").order("created_at", { ascending: false }).limit(4),
       supabase.from("products").select("*").eq("type", "physical").order("created_at", { ascending: false }).limit(4),
     ]);
+    setSubscriptionProducts(subscriptionRes.data || []);
     setDigitalProducts(digitalRes.data || []);
     setPhysicalProducts(physicalRes.data || []);
     setLoadingProducts(false);
@@ -51,7 +55,11 @@ export default function Index() {
         <section className="relative py-20 lg:py-32 overflow-hidden joker-pattern">
           <div className="container mx-auto px-4 text-center relative z-10">
             <div className="inline-block mb-6 animate-bounce-in">
-              <span className="text-8xl">🃏</span>
+              <img 
+                src={logo} 
+                alt="Corporate Pranks" 
+                className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover mx-auto animate-gentle-float shadow-2xl ring-4 ring-primary/30"
+              />
             </div>
             <h1 className="font-display text-5xl lg:text-7xl mb-6 animate-fade-in-up">
               Unleash the <span className="text-gradient-joker">Chaos!</span>
@@ -61,8 +69,13 @@ export default function Index() {
               Your coworkers won't know what hit them! 😈
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animate-delay-200">
-              <Link to="/digital-products">
+              <Link to="/subscription-products">
                 <Button variant="joker" size="xl" className="gap-2 w-full sm:w-auto">
+                  <RefreshCw className="h-5 w-5" /> Subscriptions
+                </Button>
+              </Link>
+              <Link to="/digital-products">
+                <Button variant="outline" size="xl" className="gap-2 w-full sm:w-auto">
                   <Zap className="h-5 w-5" /> Digital Pranks
                 </Button>
               </Link>
@@ -80,8 +93,45 @@ export default function Index() {
           <div className="absolute top-40 right-20 text-3xl wiggle opacity-20">🪲</div>
         </section>
 
-        {/* Digital Pranks Section */}
+        {/* Subscription Products Section */}
         <section className="py-16 bg-secondary">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <RefreshCw className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="font-display text-3xl lg:text-4xl">Subscription Pranks</h2>
+                  <p className="text-muted-foreground">Gift the chaos that keeps on giving! 🎁</p>
+                </div>
+              </div>
+              <Link to="/subscription-products">
+                <Button variant="outline" className="gap-2">
+                  View All <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+
+            {loadingProducts ? (
+              <JokerLoader />
+            ) : subscriptionProducts.length === 0 ? (
+              <div className="text-center py-12 bg-card rounded-xl border">
+                <span className="text-5xl mb-4 inline-block">🔄</span>
+                <p className="text-muted-foreground">No subscription pranks available yet... Stay tuned! 😏</p>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {subscriptionProducts.map((product) => (
+                  <ProductCard key={product.id} {...product} type="subscription" />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Digital Pranks Section */}
+        <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -118,7 +168,7 @@ export default function Index() {
         </section>
 
         {/* Physical Pranks Section */}
-        <section className="py-16">
+        <section className="py-16 bg-secondary">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">

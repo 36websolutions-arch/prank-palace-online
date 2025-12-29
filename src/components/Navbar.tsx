@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useState } from "react";
+import logo from "@/assets/logo.png";
 
 export function Navbar() {
   const { user, nickname, isAdmin, signOut } = useAuth();
@@ -21,8 +22,12 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl">🃏</span>
+          <Link to="/" className="flex items-center gap-2 group">
+            <img 
+              src={logo} 
+              alt="Corporate Pranks Logo" 
+              className="h-10 w-10 rounded-full object-cover animate-gentle-float"
+            />
             <span className="font-display text-2xl text-primary">Corporate Pranks</span>
           </Link>
 
@@ -39,6 +44,12 @@ export function Navbar() {
               className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
             >
               Physical Pranks
+            </Link>
+            <Link 
+              to="/subscription-products" 
+              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+            >
+              Subscriptions
             </Link>
           </div>
 
@@ -110,6 +121,13 @@ export function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Physical Pranks
+              </Link>
+              <Link 
+                to="/subscription-products" 
+                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Subscriptions
               </Link>
               
               {user ? (

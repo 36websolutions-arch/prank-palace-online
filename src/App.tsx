@@ -11,10 +11,12 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import DigitalProducts from "./pages/DigitalProducts";
 import PhysicalProducts from "./pages/PhysicalProducts";
+import SubscriptionProducts from "./pages/SubscriptionProducts";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import DigitalCheckout from "./pages/DigitalCheckout";
+import SubscriptionCheckout from "./pages/SubscriptionCheckout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -36,10 +38,12 @@ const App = () => (
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/digital-products" element={<DigitalProducts />} />
               <Route path="/physical-products" element={<PhysicalProducts />} />
+              <Route path="/subscription-products" element={<SubscriptionProducts />} />
               <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/digital-checkout/:id" element={<DigitalCheckout />} />
+              <Route path="/subscription-checkout/:id" element={<SubscriptionCheckout />} />
               <Route path="/order-success" element={<OrderSuccess />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
