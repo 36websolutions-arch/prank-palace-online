@@ -122,7 +122,7 @@ export default function Auth() {
           <img 
             src={logo} 
             alt="Corporate Pranks" 
-            className="w-20 h-20 rounded-full object-cover mx-auto mb-4 animate-gentle-float shadow-xl ring-4 ring-primary/30"
+            className="w-20 h-20 rounded-full object-cover mx-auto mb-4 animate-gentle-float shadow-xl"
           />
           <h1 className="font-display text-4xl text-primary mb-2">Corporate Pranks</h1>
           <p className="text-muted-foreground">

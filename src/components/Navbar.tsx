@@ -34,22 +34,10 @@ export function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             <Link 
-              to="/digital-products" 
-              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
-            >
-              Digital Pranks
-            </Link>
-            <Link 
-              to="/physical-products" 
-              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
-            >
-              Physical Pranks
-            </Link>
-            <Link 
               to="/subscription-products" 
               className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
             >
-              Subscriptions
+              Strange Interests Initiative
             </Link>
           </div>
 
@@ -109,25 +97,11 @@ export function Navbar() {
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col gap-4">
               <Link 
-                to="/digital-products" 
-                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Digital Pranks
-              </Link>
-              <Link 
-                to="/physical-products" 
-                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Physical Pranks
-              </Link>
-              <Link 
                 to="/subscription-products" 
                 className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Subscriptions
+                Strange Interests Initiative
               </Link>
               
               {user ? (

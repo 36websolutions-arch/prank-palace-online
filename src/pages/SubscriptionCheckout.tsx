@@ -330,6 +330,9 @@ export default function SubscriptionCheckout() {
                   <MapPin className="h-5 w-5" />
                   Recipient Information
                 </h2>
+                <p className="text-sm font-bold text-primary mb-4">
+                  🎭 The delivery will be anonymous
+                </p>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="recipient-name">Recipient Name</Label>

@@ -27,13 +27,8 @@ export function Footer() {
             <h4 className="font-display text-lg mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/digital-products" className="text-muted-foreground hover:text-primary transition-colors">
-                  Digital Pranks
-                </Link>
-              </li>
-              <li>
-                <Link to="/physical-products" className="text-muted-foreground hover:text-primary transition-colors">
-                  Physical Pranks
+                <Link to="/subscription-products" className="text-muted-foreground hover:text-primary transition-colors">
+                  Strange Interests Initiative
                 </Link>
               </li>
               <li>
