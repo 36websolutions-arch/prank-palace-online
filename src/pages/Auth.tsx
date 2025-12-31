@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, Navigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,10 +29,12 @@ export default function Auth() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isSigningUp = useRef(false);
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
-  if (user) return <Navigate to="/" replace />;
+  // Don't redirect if we're in the middle of signing up
+  if (user && !isSigningUp.current) return <Navigate to="/coming-soon" replace />;
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,15 +98,32 @@ export default function Auth() {
         return;
       }
 
+      // Set flag before signup to prevent auto-redirect to home
+      if (mode === "signup") {
+        isSigningUp.current = true;
+      }
+
       const { error } = mode === "login" 
         ? await signIn(email, password) 
         : await signUp(email, password, nickname, phone || undefined);
 
       if (error) {
+        isSigningUp.current = false;
         toast({ title: "Oops!", description: error.message, variant: "destructive" });
       } else {
-        toast({ title: mode === "login" ? "Welcome back, Prankster! 🃏" : "Welcome to the chaos! 😈", description: mode === "login" ? "Time to spread some mischief!" : "Your prank journey begins now!" });
-        navigate("/");
+        if (mode === "signup") {
+          // Send welcome email (fire and forget)
+          supabase.functions.invoke('send-welcome-email', {
+            body: { email, nickname }
+          }).catch(err => console.error("Failed to send welcome email:", err));
+          
+          toast({ title: "Welcome to the chaos! 😈", description: "Your prank journey begins now!" });
+          navigate("/coming-soon", { replace: true });
+          isSigningUp.current = false;
+        } else {
+          toast({ title: "Welcome back, Prankster! 🃏", description: "Time to spread some mischief!" });
+          navigate("/coming-soon", { replace: true });
+        }
       }
     } catch (err) {
       toast({ title: "Error", description: "Something went wrong", variant: "destructive" });

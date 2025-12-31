@@ -20,6 +20,7 @@ import SubscriptionCheckout from "./pages/SubscriptionCheckout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import ComingSoon from "./pages/ComingSoon";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="/subscription-checkout/:id" element={<SubscriptionCheckout />} />
               <Route path="/order-success" element={<OrderSuccess />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/coming-soon" element={<ComingSoon />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

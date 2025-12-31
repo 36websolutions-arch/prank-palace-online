@@ -2,3 +2,6 @@ project_id = "xfptozziptcpvhtkezba"
 
 [functions.paypal]
 verify_jwt = false
+
+[functions.send-welcome-email]
+verify_jwt = false

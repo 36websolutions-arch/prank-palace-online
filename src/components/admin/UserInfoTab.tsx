@@ -3,8 +3,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Users, Search, Mail, Phone, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Users, Search, Mail, Phone, User, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Profile {
   id: string;
@@ -18,6 +31,8 @@ export function UserInfoTab() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchProfiles();
@@ -36,6 +51,38 @@ export function UserInfoTab() {
       setProfiles(data || []);
     }
     setLoading(false);
+  };
+
+  const handleDeleteUser = async (userId: string, nickname: string) => {
+    setDeletingId(userId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({ title: "Error", description: "Not authenticated", variant: "destructive" });
+        return;
+      }
+
+      const response = await supabase.functions.invoke("delete-user", {
+        body: { userId },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      if (response.data?.error) {
+        throw new Error(response.data.error);
+      }
+
+      setProfiles((prev) => prev.filter((p) => p.id !== userId));
+      toast({ title: "User Deleted", description: `${nickname} has been removed.` });
+    } catch (error: unknown) {
+      console.error("Error deleting user:", error);
+      const message = error instanceof Error ? error.message : "Failed to delete user";
+      toast({ title: "Error", description: message, variant: "destructive" });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const filteredProfiles = profiles.filter(
@@ -98,6 +145,7 @@ export function UserInfoTab() {
                     </div>
                   </TableHead>
                   <TableHead>Joined</TableHead>
+                  <TableHead className="w-20">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -108,6 +156,37 @@ export function UserInfoTab() {
                     <TableCell>{profile.phone || "—"}</TableCell>
                     <TableCell>
                       {format(new Date(profile.created_at), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            disabled={deletingId === profile.id}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete User</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete <strong>{profile.nickname}</strong> ({profile.email})? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteUser(profile.id, profile.nickname)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                 ))}
