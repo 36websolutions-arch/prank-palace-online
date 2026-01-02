@@ -14,7 +14,10 @@ import logo from "@/assets/logo.png";
 const authSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  nickname: z.string().min(2, "Nickname must be at least 2 characters").optional(),
+  nickname: z
+    .string()
+    .min(2, "Nickname must be at least 2 characters")
+    .optional(),
   phone: z.string().optional(),
 });
 
@@ -34,31 +37,47 @@ export default function Auth() {
   const navigate = useNavigate();
 
   // Don't redirect if we're in the middle of signing up
-  if (user && !isSigningUp.current) return <Navigate to="/coming-soon" replace />;
+  if (user && !isSigningUp.current)
+    return <Navigate to="/coming-soon" replace />;
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) {
-      toast({ title: "Email Required", description: "Please enter your email address", variant: "destructive" });
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth?mode=reset`,
       });
-      
+
       if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
-        toast({ title: "Check your email! 📧", description: "We've sent you a password reset link." });
+        toast({
+          title: "Check your email! 📧",
+          description: "We've sent you a password reset link.",
+        });
         setMode("login");
       }
     } catch (err) {
-      toast({ title: "Error", description: "Something went wrong", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -66,34 +85,46 @@ export default function Auth() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (mode === "forgot") {
       return handleForgotPassword(e);
     }
-    
+
     // Check for terms and privacy acceptance on signup
     if (mode === "signup") {
       if (!termsAccepted) {
-        toast({ title: "Terms Required", description: "Please accept the Terms and Conditions", variant: "destructive" });
+        toast({
+          title: "Terms Required",
+          description: "Please accept the Terms and Conditions",
+          variant: "destructive",
+        });
         return;
       }
       if (!privacyAccepted) {
-        toast({ title: "Privacy Policy Required", description: "Please accept the Privacy Policy", variant: "destructive" });
+        toast({
+          title: "Privacy Policy Required",
+          description: "Please accept the Privacy Policy",
+          variant: "destructive",
+        });
         return;
       }
     }
-    
+
     setLoading(true);
 
     try {
-      const validation = authSchema.safeParse({ 
-        email, 
-        password, 
+      const validation = authSchema.safeParse({
+        email,
+        password,
         nickname: mode === "login" ? undefined : nickname,
-        phone: mode === "login" ? undefined : phone || undefined 
+        phone: mode === "login" ? undefined : phone || undefined,
       });
       if (!validation.success) {
-        toast({ title: "Validation Error", description: validation.error.errors[0].message, variant: "destructive" });
+        toast({
+          title: "Validation Error",
+          description: validation.error.errors[0].message,
+          variant: "destructive",
+        });
         setLoading(false);
         return;
       }
@@ -103,47 +134,69 @@ export default function Auth() {
         isSigningUp.current = true;
       }
 
-      const { error } = mode === "login" 
-        ? await signIn(email, password) 
-        : await signUp(email, password, nickname, phone || undefined);
+      const { error } =
+        mode === "login"
+          ? await signIn(email, password)
+          : await signUp(email, password, nickname, phone || undefined);
 
       if (error) {
         isSigningUp.current = false;
-        toast({ title: "Oops!", description: error.message, variant: "destructive" });
+        toast({
+          title: "Oops!",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
         if (mode === "signup") {
           // Send welcome email (fire and forget)
-          supabase.functions.invoke('send-welcome-email', {
-            body: { email, nickname }
-          }).catch(err => console.error("Failed to send welcome email:", err));
-          
-          toast({ title: "Welcome to the chaos! 😈", description: "Your prank journey begins now!" });
+          supabase.functions
+            .invoke("send-welcome-email", {
+              body: { email, nickname },
+            })
+            .catch((err) =>
+              console.error("Failed to send welcome email:", err)
+            );
+
+          toast({
+            title: "Welcome to the chaos! 😈",
+            description: "Your prank journey begins now!",
+          });
           navigate("/coming-soon", { replace: true });
           isSigningUp.current = false;
         } else {
-          toast({ title: "Welcome back, Prankster! 🃏", description: "Time to spread some mischief!" });
+          toast({
+            title: "Welcome back, Prankster! 🃏",
+            description: "Time to spread some mischief!",
+          });
           navigate("/coming-soon", { replace: true });
         }
       }
     } catch (err) {
-      toast({ title: "Error", description: "Something went wrong", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const canSubmitSignup = mode === "login" || mode === "forgot" || (termsAccepted && privacyAccepted);
+  const canSubmitSignup =
+    mode === "login" || mode === "forgot" || (termsAccepted && privacyAccepted);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-secondary joker-pattern p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img 
-            src={logo} 
-            alt="Corporate Pranks" 
-            className="w-20 h-20 rounded-full object-cover mx-auto mb-4 animate-gentle-float shadow-xl"
+          <img
+            src={logo}
+            alt="Corporate Pranks"
+            className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover mx-auto animate-gentle-float"
           />
-          <h1 className="font-display text-4xl text-primary mb-2">Corporate Pranks</h1>
+          <h1 className="font-display text-4xl text-primary mb-2">
+            Corporate Pranks
+          </h1>
           <p className="text-muted-foreground">
             {mode === "login" && "Welcome back, mischief maker!"}
             {mode === "signup" && "Join the chaos crew!"}
@@ -157,78 +210,121 @@ export default function Auth() {
               <>
                 <div className="space-y-2">
                   <Label htmlFor="nickname">Nickname</Label>
-                  <Input id="nickname" placeholder="PrankMaster3000" value={nickname} onChange={(e) => setNickname(e.target.value)} required />
+                  <Input
+                    id="nickname"
+                    placeholder="PrankMaster3000"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number <span className="text-muted-foreground text-xs">(optional)</span></Label>
-                  <Input id="phone" type="tel" placeholder="+1 234 567 8900" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                  <Label htmlFor="phone">
+                    Phone Number{" "}
+                    <span className="text-muted-foreground text-xs">
+                      (optional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+1 234 567 8900"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
                 </div>
               </>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="prankster@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input
+                id="email"
+                type="email"
+                placeholder="prankster@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
-            
+
             {mode !== "forgot" && (
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
             )}
-            
+
             {mode === "login" && (
               <div className="text-right">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  onClick={() => setMode("forgot")}
-                >
+                  onClick={() => setMode("forgot")}>
                   Forgot password?
                 </button>
               </div>
             )}
-            
+
             {mode === "signup" && (
               <div className="space-y-3 pt-2">
                 <div className="flex items-start space-x-3">
-                  <Checkbox 
-                    id="terms" 
-                    checked={termsAccepted} 
-                    onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                  <Checkbox
+                    id="terms"
+                    checked={termsAccepted}
+                    onCheckedChange={(checked) =>
+                      setTermsAccepted(checked === true)
+                    }
                   />
-                  <label htmlFor="terms" className="text-sm text-muted-foreground leading-tight cursor-pointer">
+                  <label
+                    htmlFor="terms"
+                    className="text-sm text-muted-foreground leading-tight cursor-pointer">
                     I have read and agree to the{" "}
-                    <Link to="/terms" className="text-primary hover:underline font-medium">
+                    <Link
+                      to="/terms"
+                      className="text-primary hover:underline font-medium">
                       Terms and Conditions
                     </Link>
                   </label>
                 </div>
-                
+
                 <div className="flex items-start space-x-3">
-                  <Checkbox 
-                    id="privacy" 
-                    checked={privacyAccepted} 
-                    onCheckedChange={(checked) => setPrivacyAccepted(checked === true)}
+                  <Checkbox
+                    id="privacy"
+                    checked={privacyAccepted}
+                    onCheckedChange={(checked) =>
+                      setPrivacyAccepted(checked === true)
+                    }
                   />
-                  <label htmlFor="privacy" className="text-sm text-muted-foreground leading-tight cursor-pointer">
+                  <label
+                    htmlFor="privacy"
+                    className="text-sm text-muted-foreground leading-tight cursor-pointer">
                     I have read and agree to the{" "}
-                    <Link to="/privacy" className="text-primary hover:underline font-medium">
+                    <Link
+                      to="/privacy"
+                      className="text-primary hover:underline font-medium">
                       Privacy Policy
                     </Link>
                   </label>
                 </div>
               </div>
             )}
-            
-            <Button 
-              type="submit" 
-              variant="joker" 
-              className="w-full" 
-              size="lg" 
-              disabled={loading || !canSubmitSignup}
-            >
-              {loading ? <JokerSpinner /> : (
+
+            <Button
+              type="submit"
+              variant="joker"
+              className="w-full"
+              size="lg"
+              disabled={loading || !canSubmitSignup}>
+              {loading ? (
+                <JokerSpinner />
+              ) : (
                 <>
                   {mode === "login" && "Unleash the Pranks! 🎭"}
                   {mode === "signup" && "Join the Mischief! 😈"}
@@ -240,20 +336,20 @@ export default function Auth() {
 
           <div className="mt-6 text-center space-y-2">
             {mode === "forgot" ? (
-              <button 
-                type="button" 
-                className="text-sm text-muted-foreground hover:text-primary transition-colors" 
-                onClick={() => setMode("login")}
-              >
+              <button
+                type="button"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                onClick={() => setMode("login")}>
                 Back to login
               </button>
             ) : (
-              <button 
-                type="button" 
-                className="text-sm text-muted-foreground hover:text-primary transition-colors" 
-                onClick={() => setMode(mode === "login" ? "signup" : "login")}
-              >
-                {mode === "login" ? "New prankster? Sign up here!" : "Already a member? Log in!"}
+              <button
+                type="button"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                onClick={() => setMode(mode === "login" ? "signup" : "login")}>
+                {mode === "login"
+                  ? "New prankster? Sign up here!"
+                  : "Already a member? Log in!"}
               </button>
             )}
           </div>
