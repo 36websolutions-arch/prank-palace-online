@@ -14,9 +14,7 @@ export default function Privacy() {
         </Link>
 
         <div className="bg-card rounded-2xl shadow-card p-8 border">
-          <h1 className="font-display text-3xl text-primary mb-2">
-            Privacy Policy
-          </h1>
+          <h1 className="text-3xl text-primary mb-2">Privacy Policy</h1>
           <p className="text-foreground font-medium mb-6">
             Effective Date: January 3rd, 2026
           </p>
