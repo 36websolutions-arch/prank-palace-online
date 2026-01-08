@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -46,23 +46,11 @@
     --joker-gold: 45 93% 58%;
     --joker-purple: 270 60% 50%;
     --joker-green: 145 60% 45%;
-
+    
     /* Gradients */
-    --gradient-joker: linear-gradient(
-      135deg,
-      hsl(0 84% 50%) 0%,
-      hsl(0 84% 40%) 100%
-    );
-    --gradient-gold: linear-gradient(
-      135deg,
-      hsl(45 93% 58%) 0%,
-      hsl(40 93% 48%) 100%
-    );
-    --gradient-mischief: linear-gradient(
-      135deg,
-      hsl(0 84% 50%) 0%,
-      hsl(330 84% 45%) 100%
-    );
+    --gradient-joker: linear-gradient(135deg, hsl(0 84% 50%) 0%, hsl(0 84% 40%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(45 93% 58%) 0%, hsl(40 93% 48%) 100%);
+    --gradient-mischief: linear-gradient(135deg, hsl(0 84% 50%) 0%, hsl(330 84% 45%) 100%);
 
     /* Shadows */
     --shadow-joker: 0 10px 40px -10px hsl(0 84% 50% / 0.3);
@@ -127,11 +115,11 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
-  .font-display {
-    font-family: "Bangers", cursive;
+  h1, h2, h3, .font-display {
+    font-family: 'Bangers', cursive;
     letter-spacing: 0.05em;
   }
 }
@@ -139,21 +127,10 @@
 @layer components {
   /* Joker Card Pattern Background */
   .joker-pattern {
-    background-image: radial-gradient(
-        circle at 20% 80%,
-        hsl(var(--primary) / 0.05) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        circle at 80% 20%,
-        hsl(var(--accent) / 0.05) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        circle at 50% 50%,
-        hsl(var(--primary) / 0.02) 0%,
-        transparent 70%
-      );
+    background-image: 
+      radial-gradient(circle at 20% 80%, hsl(var(--primary) / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsl(var(--accent) / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.02) 0%, transparent 70%);
   }
 
   /* Floating Animation */
@@ -193,7 +170,7 @@
   }
 
   .btn-joker::before {
-    content: "";
+    content: '';
     @apply absolute inset-0 opacity-0 transition-opacity duration-300;
     background: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(0 84% 45%) 100%);
   }
@@ -265,8 +242,7 @@
 
 /* Keyframes */
 @keyframes float {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
@@ -275,8 +251,7 @@
 }
 
 @keyframes gentleFloat {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px);
   }
   50% {
@@ -289,8 +264,7 @@
 }
 
 @keyframes wiggle {
-  0%,
-  100% {
+  0%, 100% {
     transform: rotate(-3deg);
   }
   50% {
@@ -299,8 +273,7 @@
 }
 
 @keyframes pulseGlow {
-  0%,
-  100% {
+  0%, 100% {
     box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
   }
   50% {

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Navigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { JokerLoader } from "@/components/JokerLoader";
 import { EmptyState } from "@/components/EmptyState";
-import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw } from "lucide-react";
@@ -27,13 +26,12 @@ interface Product {
 }
 
 export default function SubscriptionProducts() {
-  const { user, loading: authLoading } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) fetchProducts();
-  }, [user]);
+    fetchProducts();
+  }, []);
 
   const fetchProducts = async () => {
     const { data } = await supabase
@@ -43,8 +41,6 @@ export default function SubscriptionProducts() {
     setProducts(data || []);
     setLoading(false);
   };
-
-  if (!authLoading && !user) return <Navigate to="/auth" replace />;
 
   return (
     <div className="min-h-screen flex flex-col">

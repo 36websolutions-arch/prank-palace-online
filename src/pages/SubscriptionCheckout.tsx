@@ -53,7 +53,15 @@ export default function SubscriptionCheckout() {
   const [buyerName, setBuyerName] = useState("");
   const [buyerEmail, setBuyerEmail] = useState("");
   const [recipientName, setRecipientName] = useState("");
-  const [recipientAddress, setRecipientAddress] = useState("");
+  const [recipientTitle, setRecipientTitle] = useState("");
+  const [recipientCompany, setRecipientCompany] = useState("");
+  const [recipientAddressLine1, setRecipientAddressLine1] = useState("");
+  const [recipientAddressLine2, setRecipientAddressLine2] = useState("");
+  const [recipientCity, setRecipientCity] = useState("");
+  const [recipientState, setRecipientState] = useState("");
+  const [recipientZipcode, setRecipientZipcode] = useState("");
+  const [recipientCountry, setRecipientCountry] = useState("United States");
+  const [recipientEmail, setRecipientEmail] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>();
   const [selectedSubscription, setSelectedSubscription] = useState<string>("");
@@ -65,12 +73,17 @@ export default function SubscriptionCheckout() {
       buyerName.trim() !== "" &&
       buyerEmail.trim() !== "" &&
       recipientName.trim() !== "" &&
-      recipientAddress.trim() !== "" &&
+      recipientAddressLine1.trim() !== "" &&
+      recipientCity.trim() !== "" &&
+      recipientState.trim() !== "" &&
+      recipientZipcode.trim() !== "" &&
+      recipientCountry.trim() !== "" &&
+      recipientEmail.trim() !== "" &&
       recipientPhone.trim() !== "" &&
       deliveryDate !== undefined &&
       selectedSubscription !== "";
     setFormValid(isValid);
-  }, [buyerName, buyerEmail, recipientName, recipientAddress, recipientPhone, deliveryDate, selectedSubscription]);
+  }, [buyerName, buyerEmail, recipientName, recipientAddressLine1, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone, deliveryDate, selectedSubscription]);
 
   // Fetch product
   useEffect(() => {
@@ -207,7 +220,16 @@ export default function SubscriptionCheckout() {
             buyer_name: buyerName,
             buyer_email: buyerEmail,
             recipient_name: recipientName,
-            recipient_address: recipientAddress,
+            recipient_title: recipientTitle || null,
+            recipient_company: recipientCompany || null,
+            recipient_address: `${recipientAddressLine1}${recipientAddressLine2 ? ', ' + recipientAddressLine2 : ''}, ${recipientCity}, ${recipientState} ${recipientZipcode}, ${recipientCountry}`,
+            recipient_address_line1: recipientAddressLine1,
+            recipient_address_line2: recipientAddressLine2 || null,
+            recipient_city: recipientCity,
+            recipient_state: recipientState,
+            recipient_zipcode: recipientZipcode,
+            recipient_country: recipientCountry,
+            recipient_email: recipientEmail,
             recipient_phone: recipientPhone,
             delivery_date: deliveryDate?.toISOString().split('T')[0],
             amount_paid: subscriptionDetails.price,
@@ -238,7 +260,7 @@ export default function SubscriptionCheckout() {
         toast({ title: "Payment Error", description: "There was an error processing your payment", variant: "destructive" });
       },
     }).render("#paypal-button-container");
-  }, [paypalLoaded, product, formValid, selectedSubscription, buyerName, buyerEmail, recipientName, recipientAddress, recipientPhone, deliveryDate, user, navigate]);
+  }, [paypalLoaded, product, formValid, selectedSubscription, buyerName, buyerEmail, recipientName, recipientTitle, recipientCompany, recipientAddressLine1, recipientAddressLine2, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone, deliveryDate, user, navigate]);
 
   if (!authLoading && !user) return <Navigate to="/auth" replace />;
 
@@ -334,8 +356,9 @@ export default function SubscriptionCheckout() {
                   🎭 The delivery will be anonymous
                 </p>
                 <div className="space-y-4">
+                  {/* Full Name */}
                   <div className="space-y-2">
-                    <Label htmlFor="recipient-name">Recipient Name</Label>
+                    <Label htmlFor="recipient-name">Full Name <span className="text-destructive">*</span></Label>
                     <Input
                       id="recipient-name"
                       placeholder="Jane Smith"
@@ -344,20 +367,113 @@ export default function SubscriptionCheckout() {
                       required
                     />
                   </div>
+
+                  {/* Title & Company */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="recipient-title">Title</Label>
+                      <Input
+                        id="recipient-title"
+                        placeholder="Mr./Ms./Dr."
+                        value={recipientTitle}
+                        onChange={(e) => setRecipientTitle(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="recipient-company">Company</Label>
+                      <Input
+                        id="recipient-company"
+                        placeholder="Company Name"
+                        value={recipientCompany}
+                        onChange={(e) => setRecipientCompany(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Address Lines */}
                   <div className="space-y-2">
-                    <Label htmlFor="recipient-address">Delivery Address</Label>
-                    <Textarea
-                      id="recipient-address"
-                      placeholder="123 Main St, City, State, ZIP"
-                      value={recipientAddress}
-                      onChange={(e) => setRecipientAddress(e.target.value)}
-                      rows={2}
+                    <Label htmlFor="recipient-address1">Address 1 <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="recipient-address1"
+                      placeholder="123 Main Street"
+                      value={recipientAddressLine1}
+                      onChange={(e) => setRecipientAddressLine1(e.target.value)}
                       required
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="recipient-address2">Address 2</Label>
+                    <Input
+                      id="recipient-address2"
+                      placeholder="Apt, Suite, Unit, etc."
+                      value={recipientAddressLine2}
+                      onChange={(e) => setRecipientAddressLine2(e.target.value)}
+                    />
+                  </div>
+
+                  {/* City & Country */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-phone">Recipient Phone</Label>
+                      <Label htmlFor="recipient-city">City <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="recipient-city"
+                        placeholder="New York"
+                        value={recipientCity}
+                        onChange={(e) => setRecipientCity(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="recipient-country">Country <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="recipient-country"
+                        placeholder="United States"
+                        value={recipientCountry}
+                        onChange={(e) => setRecipientCountry(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* State & Zipcode */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="recipient-state">State <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="recipient-state"
+                        placeholder="NY"
+                        value={recipientState}
+                        onChange={(e) => setRecipientState(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="recipient-zipcode">Zipcode <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="recipient-zipcode"
+                        placeholder="10001"
+                        value={recipientZipcode}
+                        onChange={(e) => setRecipientZipcode(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email & Phone */}
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="recipient-email">Email <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="recipient-email"
+                        type="email"
+                        placeholder="jane@example.com"
+                        value={recipientEmail}
+                        onChange={(e) => setRecipientEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="recipient-phone">Phone <span className="text-destructive">*</span></Label>
                       <Input
                         id="recipient-phone"
                         type="tel"
@@ -367,33 +483,35 @@ export default function SubscriptionCheckout() {
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label>Delivery Date</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !deliveryDate && "text-muted-foreground"
-                            )}
-                          >
-                            <Calendar className="mr-2 h-4 w-4" />
-                            {deliveryDate ? format(deliveryDate, "PPP") : "Pick a date"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <CalendarComponent
-                            mode="single"
-                            selected={deliveryDate}
-                            onSelect={setDeliveryDate}
-                            disabled={(date) => date < new Date()}
-                            initialFocus
-                            className={cn("p-3 pointer-events-auto")}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
+                  </div>
+
+                  {/* Delivery Date */}
+                  <div className="space-y-2">
+                    <Label>Delivery Date <span className="text-destructive">*</span></Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !deliveryDate && "text-muted-foreground"
+                          )}
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          {deliveryDate ? format(deliveryDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={deliveryDate}
+                          onSelect={setDeliveryDate}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               </div>

@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { JokerLoader } from "@/components/JokerLoader";
 import { EmptyState } from "@/components/EmptyState";
-import { useAuth } from "@/contexts/AuthContext";
 
 interface Product {
   id: string;
@@ -18,21 +16,18 @@ interface Product {
 }
 
 export default function PhysicalProducts() {
-  const { user, loading: authLoading } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) fetchProducts();
-  }, [user]);
+    fetchProducts();
+  }, []);
 
   const fetchProducts = async () => {
     const { data } = await supabase.from("products").select("*").eq("type", "physical");
     setProducts(data || []);
     setLoading(false);
   };
-
-  if (!authLoading && !user) return <Navigate to="/auth" replace />;
 
   return (
     <div className="min-h-screen flex flex-col">

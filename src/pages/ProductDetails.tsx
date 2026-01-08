@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Navigate, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -23,17 +23,17 @@ interface Product {
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user && id) {
+    if (id) {
       fetchProduct();
     }
-  }, [user, id]);
+  }, [id]);
 
   const fetchProduct = async () => {
     const { data, error } = await supabase
@@ -50,16 +50,22 @@ export default function ProductDetails() {
   };
 
   const handleAddToCart = async () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
     if (product) {
       await addToCart(product.id);
     }
   };
 
   const handleBuyNow = () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
     navigate(`/digital-checkout/${product?.id}`);
   };
-
-  if (!authLoading && !user) return <Navigate to="/auth" replace />;
 
   if (loading) {
     return (

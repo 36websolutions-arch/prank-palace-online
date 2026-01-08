@@ -26,7 +26,7 @@ export function Navbar() {
             <img 
               src={logo} 
               alt="Corporate Pranks Logo" 
-              className="h-10 w-10 rounded-full object-cover animate-gentle-float"
+              className="h-10 w-10 object-contain animate-gentle-float"
             />
             <span className="font-display text-2xl text-primary">Corporate Pranks</span>
           </Link>

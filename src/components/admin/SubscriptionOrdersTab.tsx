@@ -12,7 +12,16 @@ interface SubscriptionOrder {
   buyer_name: string;
   buyer_email: string;
   recipient_name: string;
+  recipient_title: string | null;
+  recipient_company: string | null;
   recipient_address: string;
+  recipient_address_line1: string | null;
+  recipient_address_line2: string | null;
+  recipient_city: string | null;
+  recipient_state: string | null;
+  recipient_zipcode: string | null;
+  recipient_country: string | null;
+  recipient_email: string | null;
   recipient_phone: string;
   delivery_date: string;
   product_name: string;
@@ -137,7 +146,30 @@ export function SubscriptionOrdersTab() {
                         <MapPin className="h-4 w-4" /> Recipient Information
                       </h4>
                       <p className="text-sm"><span className="text-muted-foreground">Name:</span> {order.recipient_name}</p>
-                      <p className="text-sm"><span className="text-muted-foreground">Address:</span> {order.recipient_address}</p>
+                      {order.recipient_title && (
+                        <p className="text-sm"><span className="text-muted-foreground">Title:</span> {order.recipient_title}</p>
+                      )}
+                      {order.recipient_company && (
+                        <p className="text-sm"><span className="text-muted-foreground">Company:</span> {order.recipient_company}</p>
+                      )}
+                      <div className="pt-2">
+                        <p className="text-sm font-medium text-muted-foreground">Address:</p>
+                        <p className="text-sm">{order.recipient_address_line1 || order.recipient_address}</p>
+                        {order.recipient_address_line2 && (
+                          <p className="text-sm">{order.recipient_address_line2}</p>
+                        )}
+                        {order.recipient_city && (
+                          <p className="text-sm">
+                            {order.recipient_city}, {order.recipient_state} {order.recipient_zipcode}
+                          </p>
+                        )}
+                        {order.recipient_country && (
+                          <p className="text-sm">{order.recipient_country}</p>
+                        )}
+                      </div>
+                      {order.recipient_email && (
+                        <p className="text-sm"><span className="text-muted-foreground">Email:</span> {order.recipient_email}</p>
+                      )}
                       <p className="text-sm flex items-center gap-1">
                         <Phone className="h-3 w-3 text-muted-foreground" /> {order.recipient_phone}
                       </p>

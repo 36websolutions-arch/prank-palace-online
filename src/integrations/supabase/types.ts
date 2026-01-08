@@ -240,8 +240,17 @@ export type Database = {
           product_id: string
           product_name: string
           recipient_address: string
+          recipient_address_line1: string | null
+          recipient_address_line2: string | null
+          recipient_city: string | null
+          recipient_company: string | null
+          recipient_country: string | null
+          recipient_email: string | null
           recipient_name: string
           recipient_phone: string
+          recipient_state: string | null
+          recipient_title: string | null
+          recipient_zipcode: string | null
           status: string
           subscription_name: string
           subscription_price: number
@@ -261,8 +270,17 @@ export type Database = {
           product_id: string
           product_name: string
           recipient_address: string
+          recipient_address_line1?: string | null
+          recipient_address_line2?: string | null
+          recipient_city?: string | null
+          recipient_company?: string | null
+          recipient_country?: string | null
+          recipient_email?: string | null
           recipient_name: string
           recipient_phone: string
+          recipient_state?: string | null
+          recipient_title?: string | null
+          recipient_zipcode?: string | null
           status?: string
           subscription_name: string
           subscription_price: number
@@ -282,8 +300,17 @@ export type Database = {
           product_id?: string
           product_name?: string
           recipient_address?: string
+          recipient_address_line1?: string | null
+          recipient_address_line2?: string | null
+          recipient_city?: string | null
+          recipient_company?: string | null
+          recipient_country?: string | null
+          recipient_email?: string | null
           recipient_name?: string
           recipient_phone?: string
+          recipient_state?: string | null
+          recipient_title?: string | null
+          recipient_zipcode?: string | null
           status?: string
           subscription_name?: string
           subscription_price?: number
