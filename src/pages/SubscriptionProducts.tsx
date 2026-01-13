@@ -76,7 +76,7 @@ export default function SubscriptionProducts() {
                   )}
                   <Badge className="absolute top-3 right-3 gap-1">
                     <RefreshCw className="h-3 w-3" />
-                    Subscription
+                    Ongoing Shenanigans
                   </Badge>
                 </div>
 

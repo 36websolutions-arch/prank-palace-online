@@ -48,7 +48,7 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
               ? "bg-primary text-primary-foreground"
               : "bg-joker-gold text-foreground"
           }`}>
-            {type === "digital" ? "⚡ Digital" : type === "subscription" ? "🔄 Subscription" : "📦 Physical"}
+            {type === "digital" ? "⚡ Digital" : type === "subscription" ? "🔄 Ongoing Shenanigans" : "📦 Physical"}
           </div>
         </div>
 

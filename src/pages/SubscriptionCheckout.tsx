@@ -6,15 +6,11 @@ import { Footer } from "@/components/Footer";
 import { JokerLoader } from "@/components/JokerLoader";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { RefreshCw, Lock, ArrowLeft, User, MapPin, Calendar } from "lucide-react";
+import { RefreshCw, Lock, ArrowLeft, User, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
-import { format } from "date-fns";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 declare global {
@@ -63,7 +59,7 @@ export default function SubscriptionCheckout() {
   const [recipientCountry, setRecipientCountry] = useState("United States");
   const [recipientEmail, setRecipientEmail] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
-  const [deliveryDate, setDeliveryDate] = useState<Date | undefined>();
+  
   const [selectedSubscription, setSelectedSubscription] = useState<string>("");
   const [formValid, setFormValid] = useState(false);
 
@@ -79,11 +75,9 @@ export default function SubscriptionCheckout() {
       recipientZipcode.trim() !== "" &&
       recipientCountry.trim() !== "" &&
       recipientEmail.trim() !== "" &&
-      recipientPhone.trim() !== "" &&
-      deliveryDate !== undefined &&
       selectedSubscription !== "";
     setFormValid(isValid);
-  }, [buyerName, buyerEmail, recipientName, recipientAddressLine1, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone, deliveryDate, selectedSubscription]);
+  }, [buyerName, buyerEmail, recipientName, recipientAddressLine1, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, selectedSubscription]);
 
   // Fetch product
   useEffect(() => {
@@ -230,8 +224,8 @@ export default function SubscriptionCheckout() {
             recipient_zipcode: recipientZipcode,
             recipient_country: recipientCountry,
             recipient_email: recipientEmail,
-            recipient_phone: recipientPhone,
-            delivery_date: deliveryDate?.toISOString().split('T')[0],
+            recipient_phone: recipientPhone || null,
+            delivery_date: new Date().toISOString().split('T')[0],
             amount_paid: subscriptionDetails.price,
             payment_method: "paypal",
             payment_provider: "paypal",
@@ -260,7 +254,7 @@ export default function SubscriptionCheckout() {
         toast({ title: "Payment Error", description: "There was an error processing your payment", variant: "destructive" });
       },
     }).render("#paypal-button-container");
-  }, [paypalLoaded, product, formValid, selectedSubscription, buyerName, buyerEmail, recipientName, recipientTitle, recipientCompany, recipientAddressLine1, recipientAddressLine2, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone, deliveryDate, user, navigate]);
+  }, [paypalLoaded, product, formValid, selectedSubscription, buyerName, buyerEmail, recipientName, recipientTitle, recipientCompany, recipientAddressLine1, recipientAddressLine2, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone, user, navigate]);
 
   if (!authLoading && !user) return <Navigate to="/auth" replace />;
 
@@ -473,45 +467,15 @@ export default function SubscriptionCheckout() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-phone">Phone <span className="text-destructive">*</span></Label>
+                      <Label htmlFor="recipient-phone">Phone <span className="text-muted-foreground">(optional)</span></Label>
                       <Input
                         id="recipient-phone"
                         type="tel"
                         placeholder="+1 234 567 8900"
                         value={recipientPhone}
                         onChange={(e) => setRecipientPhone(e.target.value)}
-                        required
                       />
                     </div>
-                  </div>
-
-                  {/* Delivery Date */}
-                  <div className="space-y-2">
-                    <Label>Delivery Date <span className="text-destructive">*</span></Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !deliveryDate && "text-muted-foreground"
-                          )}
-                        >
-                          <Calendar className="mr-2 h-4 w-4" />
-                          {deliveryDate ? format(deliveryDate, "PPP") : "Pick a date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent
-                          mode="single"
-                          selected={deliveryDate}
-                          onSelect={setDeliveryDate}
-                          disabled={(date) => date < new Date()}
-                          initialFocus
-                          className={cn("p-3 pointer-events-auto")}
-                        />
-                      </PopoverContent>
-                    </Popover>
                   </div>
                 </div>
               </div>

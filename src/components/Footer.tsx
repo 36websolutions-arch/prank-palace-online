@@ -17,8 +17,8 @@ export function Footer() {
               <span className="font-display text-2xl text-primary">Corporate Pranks</span>
             </Link>
             <p className="text-muted-foreground max-w-md">
-              The ultimate destination for office mischief and digital mayhem. 
-              Spread joy (and chaos) one prank at a time! 😈
+              The ultimate destination for office mischief and digital mayhem.
+              Delivering laughs with just enough disruption. One prank at a time.
             </p>
           </div>
 
@@ -42,10 +42,21 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h4 className="font-display text-lg mb-4">Contact</h4>
-            <ul className="space-y-2 text-muted-foreground">
-              <li>orders@corporatepranks.com</li>
-              <li>Mischief Headquarters</li>
-              <li>Prank City, PC 12345</li>
+            <ul className="space-y-4 text-muted-foreground">
+              <li>
+                <p className="font-medium text-foreground text-sm">Email</p>
+                <p>Info@corporatepranks.com</p>
+              </li>
+              <li>
+                <p className="font-medium text-foreground text-sm">Mischief Headquarters</p>
+                <p>Prank City, PC 12345</p>
+              </li>
+              <li>
+                <p className="font-medium text-foreground text-sm">Mailing Address</p>
+                <p>331 Newman Springs Rd., Bldg. 1, 4th Floor</p>
+                <p>Suite 143</p>
+                <p>Red Bank, NJ 07701</p>
+              </li>
             </ul>
           </div>
         </div>
