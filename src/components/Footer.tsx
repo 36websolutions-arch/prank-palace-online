@@ -9,16 +9,19 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4 group">
-              <img 
-                src={logo} 
-                alt="Corporate Pranks Logo" 
+              <img
+                src={logo}
+                alt="Corporate Pranks Logo"
                 className="h-10 w-10 rounded-full object-cover animate-gentle-float"
               />
-              <span className="font-display text-2xl text-primary">Corporate Pranks</span>
+              <span className="font-display text-2xl text-primary">
+                Corporate Pranks
+              </span>
             </Link>
             <p className="text-muted-foreground max-w-md">
               The ultimate destination for office mischief and digital mayhem.
-              Delivering laughs with just enough disruption. One prank at a time.
+              Delivering laughs with just enough disruption. One prank at a
+              time.
             </p>
           </div>
 
@@ -27,12 +30,16 @@ export function Footer() {
             <h4 className="font-display text-lg mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/subscription-products" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  to="/subscription-products"
+                  className="text-muted-foreground hover:text-primary transition-colors">
                   Strange Interests Initiative
                 </Link>
               </li>
               <li>
-                <Link to="/cart" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  to="/cart"
+                  className="text-muted-foreground hover:text-primary transition-colors">
                   Cart
                 </Link>
               </li>
@@ -48,11 +55,20 @@ export function Footer() {
                 <p>Info@corporatepranks.com</p>
               </li>
               <li>
-                <p className="font-medium text-foreground text-sm">Mischief Headquarters</p>
-                <p>Prank City, PC 12345</p>
+                <p className="font-medium text-foreground text-sm">
+                  Mischief Headquarters
+                </p>
+                <p>
+                  331 Newman Springs Rd., Bldg. 1, 4th Floor Suite 143 Red Bank,
+                  NJ 07701
+                </p>
+                <p>Suite 143 </p>
+                <p>Red Bank, NJ 07701</p>
               </li>
               <li>
-                <p className="font-medium text-foreground text-sm">Mailing Address</p>
+                <p className="font-medium text-foreground text-sm">
+                  Mailing Address
+                </p>
                 <p>331 Newman Springs Rd., Bldg. 1, 4th Floor</p>
                 <p>Suite 143</p>
                 <p>Red Bank, NJ 07701</p>
@@ -62,8 +78,13 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Corporate Pranks. All rights reserved.</p>
-          <p className="text-sm mt-2">No pranks were harmed in the making of this website 🎭</p>
+          <p>
+            &copy; {new Date().getFullYear()} Corporate Pranks. All rights
+            reserved.
+          </p>
+          <p className="text-sm mt-2">
+            No pranks were harmed in the making of this website 🎭
+          </p>
         </div>
       </div>
     </footer>
