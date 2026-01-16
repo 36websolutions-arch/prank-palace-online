@@ -10,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 import { JokerSpinner } from "@/components/JokerLoader";
 import { z } from "zod";
 import logo from "@/assets/logo.png";
+import { trackSignUpAttempt, trackSignUpSuccess, trackSignUpFailure } from "@/lib/analytics";
 
 const authSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -101,6 +102,7 @@ export default function Auth() {
       // Set flag before signup to prevent auto-redirect to home
       if (mode === "signup") {
         isSigningUp.current = true;
+        trackSignUpAttempt();
       }
 
       const { error } = mode === "login" 
@@ -109,9 +111,13 @@ export default function Auth() {
 
       if (error) {
         isSigningUp.current = false;
+        if (mode === "signup") {
+          trackSignUpFailure(error.message);
+        }
         toast({ title: "Oops!", description: error.message, variant: "destructive" });
       } else {
         if (mode === "signup") {
+          trackSignUpSuccess();
           // Send welcome email (fire and forget)
           supabase.functions.invoke('send-welcome-email', {
             body: { email, nickname }

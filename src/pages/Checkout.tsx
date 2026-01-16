@@ -13,6 +13,7 @@ import { JokerSpinner } from "@/components/JokerLoader";
 import { toast } from "@/hooks/use-toast";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { trackPurchase } from "@/lib/analytics";
 
 declare global {
   interface Window {
@@ -145,6 +146,16 @@ export default function Checkout() {
           });
 
           if (dbError) throw dbError;
+
+          // Track purchase in GA4
+          trackPurchase(
+            data.orderID,
+            totalPrice,
+            items.map(item => ({
+              item_name: item.product.name,
+              price: item.product.price
+            }))
+          );
 
           // Clear the cart
           await clearCart();

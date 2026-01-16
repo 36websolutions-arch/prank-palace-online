@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { Zap, Lock, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { trackPurchase } from "@/lib/analytics";
 
 declare global {
   interface Window {
@@ -203,6 +204,13 @@ export default function DigitalCheckout() {
           });
 
           if (orderError) throw orderError;
+
+          // Track purchase in GA4
+          trackPurchase(
+            data.orderID,
+            product.price,
+            [{ item_name: product.name, price: product.price }]
+          );
 
           toast({
             title: "Payment Successful! 🎉",

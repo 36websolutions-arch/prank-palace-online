@@ -118,7 +118,7 @@ export default function Index() {
             <h2 className="font-display text-4xl text-center mb-12">Why Choose Us?</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { icon: <RefreshCw className="h-8 w-8" />, title: "Recurring Mischief", desc: "Subscribe and send pranks on a schedule. The gift that keeps on giving!" },
+                { icon: <RefreshCw className="h-8 w-8" />, title: "Recurring Mischief", desc: "Join the prank pipeline and send pranks on a schedule. The gift that keeps on giving!" },
                 { icon: <Zap className="h-8 w-8" />, title: "Instant Setup", desc: "Set up your subscription in minutes and start spreading chaos right away!" },
                 { icon: <ShieldCheck className="h-8 w-8" />, title: "Secure Checkout", desc: "PayPal protected payments. Your prank purchases are safe and sound." },
               ].map((feature, i) => (
@@ -138,9 +138,9 @@ export default function Index() {
         <section className="py-20 bg-gradient-joker text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <Laugh className="h-16 w-16 mx-auto mb-6 animate-wiggle" />
-            <h2 className="font-display text-4xl mb-4">Ready to Start Pranking?</h2>
+            <h2 className="font-display text-4xl mb-4">Ready to become that coworker? ✅</h2>
             <p className="text-lg opacity-90 mb-8 max-w-xl mx-auto">
-              Browse our subscription plans and become the office legend you were meant to be!
+              Enter the Prank Pipeline. Ridiculousness delivered.
             </p>
             <Link to="/subscription-products">
               <Button variant="gold" size="xl">Join the Initiative</Button>

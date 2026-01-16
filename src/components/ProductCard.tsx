@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { ShoppingCart, Zap, RefreshCw } from "lucide-react";
+import { trackAddToCart } from "@/lib/analytics";
 
 interface ProductCardProps {
   id: string;
@@ -18,7 +19,12 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    trackAddToCart(name, price);
     addToCart(id);
+  };
+
+  const handleBuyClick = () => {
+    trackAddToCart(name, price);
   };
 
   const productLink = type === "subscription" ? `/subscription-checkout/${id}` : `/product/${id}`;
@@ -70,14 +76,14 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
             </span>
 
             {type === "digital" ? (
-              <Button variant="joker" size="sm" className="gap-2">
+              <Button variant="joker" size="sm" className="gap-2" onClick={handleBuyClick}>
                 <Zap className="h-4 w-4" />
                 Buy Now
               </Button>
             ) : type === "subscription" ? (
-              <Button variant="joker" size="sm" className="gap-2">
+              <Button variant="joker" size="sm" className="gap-2" onClick={handleBuyClick}>
                 <RefreshCw className="h-4 w-4" />
-                Subscribe
+                Activate
               </Button>
             ) : (
               <Button 

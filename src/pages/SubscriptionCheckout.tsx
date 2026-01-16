@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { trackPurchase } from "@/lib/analytics";
 
 declare global {
   interface Window {
@@ -234,6 +235,13 @@ export default function SubscriptionCheckout() {
           });
 
           if (orderError) throw orderError;
+
+          // Track purchase in GA4
+          trackPurchase(
+            data.orderID,
+            subscriptionDetails.price,
+            [{ item_name: `${product.name} - ${subscriptionDetails.name}`, price: subscriptionDetails.price }]
+          );
 
           toast({ title: "Payment Successful! 🎉", description: "Your subscription order is confirmed!" });
           navigate(`/order-success?type=subscription`);
