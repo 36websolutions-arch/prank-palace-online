@@ -19,6 +19,7 @@ import DigitalCheckout from "./pages/DigitalCheckout";
 import SubscriptionCheckout from "./pages/SubscriptionCheckout";
 import OrderSuccess from "./pages/OrderSuccess";
 import Admin from "./pages/Admin";
+import BlogDetails from "./pages/BlogDetails";
 import NotFound from "./pages/NotFound";
 
 
@@ -47,6 +48,7 @@ const App = () => (
               <Route path="/subscription-checkout/:id" element={<SubscriptionCheckout />} />
               <Route path="/order-success" element={<OrderSuccess />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/blog/:id" element={<BlogDetails />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -10,8 +10,9 @@ import { SubscriptionOrdersTab } from "@/components/admin/SubscriptionOrdersTab"
 import { AddProductTab } from "@/components/admin/AddProductTab";
 import { AddSubscriptionProductTab } from "@/components/admin/AddSubscriptionProductTab";
 import { ManageProductsTab } from "@/components/admin/ManageProductsTab";
+import { ManageBlogsTab } from "@/components/admin/ManageBlogsTab";
 import { UserInfoTab } from "@/components/admin/UserInfoTab";
-import { Package, Zap, PlusCircle, Settings, RefreshCw, Users } from "lucide-react";
+import { Package, Zap, PlusCircle, Settings, RefreshCw, Users, FileText } from "lucide-react";
 
 export default function Admin() {
   const { user, isAdmin, loading } = useAuth();
@@ -33,7 +34,7 @@ export default function Admin() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 mb-8">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 mb-8">
             <TabsTrigger value="digital-orders" className="gap-2">
               <Zap className="h-4 w-4" />
               <span className="hidden sm:inline">Digital</span>
@@ -62,6 +63,10 @@ export default function Admin() {
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Manage</span>
             </TabsTrigger>
+            <TabsTrigger value="blogs" className="gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Blogs</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="digital-orders">
@@ -84,6 +89,9 @@ export default function Admin() {
           </TabsContent>
           <TabsContent value="manage-products">
             <ManageProductsTab />
+          </TabsContent>
+          <TabsContent value="blogs">
+            <ManageBlogsTab />
           </TabsContent>
         </Tabs>
       </main>
