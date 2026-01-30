@@ -341,3 +341,24 @@
 .animate-delay-400 {
   animation-delay: 400ms;
 }
+
+/* Content Gate Animations */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 60px rgba(217, 119, 6, 0.3), 0 0 100px rgba(217, 119, 6, 0.1);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 80px rgba(217, 119, 6, 0.4), 0 0 120px rgba(217, 119, 6, 0.2);
+  }
+}
