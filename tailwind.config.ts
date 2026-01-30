@@ -14,7 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Bangers', 'cursive'],
+        display: ['Playfair Display', 'Georgia', 'serif'],
+        serif: ['Source Serif 4', 'Georgia', 'serif'],
         sans: ['Inter', 'sans-serif'],
       },
       colors: {
