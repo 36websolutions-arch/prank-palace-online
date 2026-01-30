@@ -221,8 +221,8 @@ export default function Index() {
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="font-display text-3xl lg:text-4xl">Prank Wisdom Blog</h2>
-                  <p className="text-muted-foreground">Tips, tricks, and tales of mischief! 📰</p>
+                  <h2 className="font-display text-3xl lg:text-4xl">The Chronicles</h2>
+                  <p className="text-muted-foreground">Satire from the Corporate Empire 📜</p>
                 </div>
               </div>
             </div>

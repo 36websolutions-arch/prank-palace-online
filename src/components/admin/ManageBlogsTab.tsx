@@ -198,14 +198,14 @@ export function ManageBlogsTab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl">Manage Blogs 📝</h2>
+        <h2 className="font-display text-2xl">Manage Chronicles 📜</h2>
         <Button
           onClick={() => setShowForm(!showForm)}
           variant={showForm ? "outline" : "joker"}
           className="gap-2"
         >
           {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-          {showForm ? "Cancel" : "New Blog Post"}
+          {showForm ? "Cancel" : "New Chronicle"}
         </Button>
       </div>
 
@@ -213,7 +213,7 @@ export function ManageBlogsTab() {
         <Card className="border-primary/20">
           <CardHeader>
             <CardTitle className="font-display">
-              {editingBlog ? "Edit Blog Post ✏️" : "Create New Blog Post 📰"}
+              {editingBlog ? "Edit Chronicle ✏️" : "Create New Chronicle 📜"}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -252,7 +252,7 @@ export function ManageBlogsTab() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">Blog Image</Label>
+                <Label htmlFor="image">Chronicle Image</Label>
                 <div className="flex items-center gap-4">
                   <Input
                     id="image"
@@ -299,9 +299,9 @@ export function ManageBlogsTab() {
       {blogs.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
-            <span className="text-5xl mb-4 inline-block">📝</span>
+            <span className="text-5xl mb-4 inline-block">📜</span>
             <p className="text-muted-foreground">
-              No blog posts yet... Time to share some prank wisdom! 😏
+              No chronicles yet... Time to document the empire! 🏛️
             </p>
           </CardContent>
         </Card>

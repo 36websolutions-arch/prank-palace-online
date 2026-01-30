@@ -33,8 +33,14 @@ export function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link 
-              to="/subscription-products" 
+            <Link
+              to="/home2"
+              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+            >
+              Chronicles
+            </Link>
+            <Link
+              to="/subscription-products"
               className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
             >
               Strange Interests Initiative
@@ -96,8 +102,15 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col gap-4">
-              <Link 
-                to="/subscription-products" 
+              <Link
+                to="/home2"
+                className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Chronicles
+              </Link>
+              <Link
+                to="/subscription-products"
                 className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
