@@ -234,10 +234,33 @@ export default function Home2() {
                       </div>
                     </Link>
                   ) : (
-                    <div className="bg-white dark:bg-stone-900 rounded-lg p-12 text-center border border-stone-200 dark:border-stone-800">
-                      <Scroll className="h-16 w-16 text-stone-300 dark:text-stone-700 mx-auto mb-4" />
-                      <p className="text-stone-500">The scribes are preparing the next chronicle...</p>
-                    </div>
+                    <Link
+                      to="/chronicle/the-performance-review"
+                      className="group block bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200 dark:border-stone-800"
+                    >
+                      <div className="aspect-[16/9] bg-gradient-to-br from-amber-100 to-stone-200 dark:from-amber-900/20 dark:to-stone-800 flex items-center justify-center">
+                        <Scroll className="h-20 w-20 text-amber-600/30" />
+                      </div>
+                      <div className="p-6 lg:p-8">
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full uppercase tracking-wider">
+                            Featured Chronicle
+                          </span>
+                          <span className="text-stone-500 text-sm">
+                            January 30, 2026
+                          </span>
+                        </div>
+                        <h3 className="font-display text-2xl lg:text-3xl mb-4 text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">
+                          The Performance Review
+                        </h3>
+                        <p className="text-stone-600 dark:text-stone-400 mb-4 line-clamp-3 font-serif">
+                          Marcus had survived twelve quarters. In the arena, they called him Marcellus the Adequate — not because he was merely adequate, but because adequacy was the highest praise the Senate would allow...
+                        </p>
+                        <span className="inline-flex items-center gap-2 text-amber-600 font-medium group-hover:gap-3 transition-all">
+                          Continue Reading <ArrowRight className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </Link>
                   )}
                 </div>
 
