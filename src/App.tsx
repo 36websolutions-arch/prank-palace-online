@@ -5,10 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
-import Home2 from "./pages/Home2";
+import Home from "./pages/Home";
 import Story from "./pages/Story";
 import PerformanceReview from "./pages/PerformanceReview";
 import TheAllHandsMeeting from "./pages/TheAllHandsMeeting";
+import TheReturnToOffice from "./pages/TheReturnToOffice";
 import Auth from "./pages/Auth";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
@@ -24,6 +25,9 @@ import OrderSuccess from "./pages/OrderSuccess";
 import Admin from "./pages/Admin";
 import BlogDetails from "./pages/BlogDetails";
 import NotFound from "./pages/NotFound";
+import Support from "./pages/Support";
+import Chronicles from "./pages/Chronicles";
+import Armory from "./pages/Armory";
 
 
 const queryClient = new QueryClient();
@@ -37,10 +41,11 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Home2 />} />
+              <Route path="/" element={<Home />} />
               <Route path="/story/:id" element={<Story />} />
               <Route path="/chronicle/the-performance-review" element={<PerformanceReview />} />
               <Route path="/chronicle/the-all-hands-meeting" element={<TheAllHandsMeeting />} />
+              <Route path="/chronicle/the-return-to-office" element={<TheReturnToOffice />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
@@ -55,7 +60,10 @@ const App = () => (
               <Route path="/order-success" element={<OrderSuccess />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/blog/:id" element={<BlogDetails />} />
-              
+              <Route path="/support" element={<Support />} />
+              <Route path="/chronicles" element={<Chronicles />} />
+              <Route path="/armory" element={<Armory />} />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

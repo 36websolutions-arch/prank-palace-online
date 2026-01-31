@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Scroll, Mail, MapPin } from "lucide-react";
+import { Scroll, Mail, MapPin, Heart, Shield } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 export function Footer() {
@@ -34,13 +34,21 @@ export function Footer() {
             <h4 className="font-display text-lg text-stone-100 mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-stone-400 hover:text-amber-500 transition-colors text-sm">
+                <Link to="/chronicles" className="text-stone-400 hover:text-amber-500 transition-colors text-sm flex items-center gap-2">
+                  <Scroll className="h-3 w-3" />
                   The Chronicles
                 </Link>
               </li>
               <li>
-                <Link to="/subscription-products" className="text-stone-400 hover:text-amber-500 transition-colors text-sm">
-                  Strange Interests Initiative
+                <Link to="/armory" className="text-stone-400 hover:text-amber-500 transition-colors text-sm flex items-center gap-2">
+                  <Shield className="h-3 w-3" />
+                  The Armory
+                </Link>
+              </li>
+              <li>
+                <Link to="/support" className="text-stone-400 hover:text-amber-500 transition-colors text-sm flex items-center gap-2">
+                  <Heart className="h-3 w-3" />
+                  Fund the Resistance
                 </Link>
               </li>
               <li>

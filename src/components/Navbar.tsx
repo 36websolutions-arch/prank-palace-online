@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll } from "lucide-react";
+import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll, ChevronDown, Shield, Package, Zap, Crown, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import logo from "@/assets/logo.png";
 
 export function Navbar() {
@@ -11,11 +11,52 @@ export function Navbar() {
   const { totalItems } = useCart();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [armoryDropdownOpen, setArmoryDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/auth");
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setArmoryDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const armoryItems = [
+    {
+      to: "/armory",
+      icon: Shield,
+      label: "The Full Armory",
+      description: "Browse all offerings",
+    },
+    {
+      to: "/physical-products",
+      icon: Package,
+      label: "Tools of Mischief",
+      description: "Physical goods",
+    },
+    {
+      to: "/digital-products",
+      icon: Zap,
+      label: "Senate Archives",
+      description: "Digital products",
+    },
+    {
+      to: "/subscription-products",
+      icon: Crown,
+      label: "Imperial Tribute",
+      description: "Subscriptions",
+    },
+  ];
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-stone-200 dark:border-stone-800 bg-white/95 dark:bg-stone-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-stone-950/60">
@@ -37,17 +78,54 @@ export function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             <Link
-              to="/"
+              to="/chronicles"
               className="flex items-center gap-1.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
             >
               <Scroll className="h-4 w-4" />
               Chronicles
             </Link>
+
+            {/* The Armory Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setArmoryDropdownOpen(!armoryDropdownOpen)}
+                className="flex items-center gap-1.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
+              >
+                <Shield className="h-4 w-4" />
+                The Armory
+                <ChevronDown className={`h-3 w-3 transition-transform ${armoryDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {armoryDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg shadow-lg overflow-hidden z-50">
+                  <div className="py-2">
+                    {armoryItems.map((item) => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setArmoryDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                          <item.icon className="h-4 w-4 text-amber-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-stone-900 dark:text-stone-100">{item.label}</p>
+                          <p className="text-xs text-stone-500">{item.description}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Link
-              to="/subscription-products"
-              className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
+              to="/support"
+              className="flex items-center gap-1.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
             >
-              Strange Interests Initiative
+              <Heart className="h-4 w-4" />
+              Fund the Resistance
             </Link>
           </div>
 
@@ -107,19 +185,42 @@ export function Navbar() {
           <div className="md:hidden py-4 border-t border-stone-200 dark:border-stone-800">
             <div className="flex flex-col gap-4">
               <Link
-                to="/"
+                to="/chronicles"
                 className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Scroll className="h-4 w-4" />
                 Chronicles
               </Link>
+
+              {/* Mobile Armory Section */}
+              <div className="space-y-2">
+                <p className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-400">
+                  <Shield className="h-4 w-4" />
+                  The Armory
+                </p>
+                <div className="pl-6 space-y-2">
+                  {armoryItems.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex items-center gap-2 text-sm text-stone-500 dark:text-stone-500 hover:text-amber-600 transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <item.icon className="h-3 w-3" />
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               <Link
-                to="/subscription-products"
-                className="text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors"
+                to="/support"
+                className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Strange Interests Initiative
+                <Heart className="h-4 w-4" />
+                Fund the Resistance
               </Link>
 
               {user ? (

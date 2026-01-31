@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { EmptyState } from "@/components/EmptyState";
-import { Package } from "lucide-react";
+import { Shield, Star } from "lucide-react";
 
 interface Product {
   id: string;
@@ -35,17 +35,22 @@ export default function PhysicalProducts() {
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-4">
-            <Package className="h-8 w-8 text-amber-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-amber-100 to-stone-100 dark:from-amber-900/30 dark:to-stone-800/30 mb-4">
+            <Shield className="h-8 w-8 text-amber-600" />
           </div>
-          <h1 className="font-display text-5xl text-stone-900 dark:text-stone-100 mb-4">Physical Products</h1>
-          <p className="text-stone-600 dark:text-stone-400 text-lg">Quality items delivered to your door.</p>
+          <h1 className="font-display text-5xl text-stone-900 dark:text-stone-100 mb-4">The Citizen's Armory</h1>
+          <p className="text-stone-600 dark:text-stone-400 text-lg font-serif italic">"Tools of Mischief. Quality goods delivered to your quarters."</p>
+          <div className="flex items-center justify-center gap-2 mt-4 text-amber-600">
+            <Star className="h-4 w-4" />
+            <span className="text-sm font-medium">Equip yourself for the corporate battlefield</span>
+            <Star className="h-4 w-4" />
+          </div>
         </div>
 
         {loading ? (
           <ChronicleLoader />
         ) : products.length === 0 ? (
-          <EmptyState icon="📦" title="No physical products yet..." description="Check back soon for new offerings!" />
+          <EmptyState icon="🛡️" title="The Armory is Being Restocked..." description="New tools of mischief arriving soon. Check back, gladiator." />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => (

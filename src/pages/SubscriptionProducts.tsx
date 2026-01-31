@@ -7,7 +7,7 @@ import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { RefreshCw } from "lucide-react";
+import { Crown, Star } from "lucide-react";
 
 interface SubscriptionOption {
   name: string;
@@ -47,17 +47,22 @@ export default function SubscriptionProducts() {
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-4">
-            <RefreshCw className="h-8 w-8 text-amber-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 mb-4">
+            <Crown className="h-8 w-8 text-amber-600" />
           </div>
-          <h1 className="font-display text-5xl text-stone-900 dark:text-stone-100 mb-4">Subscription Products</h1>
-          <p className="text-stone-600 dark:text-stone-400 text-lg">Regular deliveries for ongoing value.</p>
+          <h1 className="font-display text-5xl text-stone-900 dark:text-stone-100 mb-4">Imperial Tribute</h1>
+          <p className="text-stone-600 dark:text-stone-400 text-lg font-serif italic">"Regular offerings to the Senate. Ongoing value for loyal citizens."</p>
+          <div className="flex items-center justify-center gap-2 mt-4 text-amber-600">
+            <Star className="h-4 w-4" />
+            <span className="text-sm font-medium">Recurring subscriptions for the dedicated</span>
+            <Star className="h-4 w-4" />
+          </div>
         </div>
 
         {loading ? (
           <ChronicleLoader />
         ) : products.length === 0 ? (
-          <EmptyState icon="🔄" title="No subscription products yet..." description="Check back soon for recurring offerings!" />
+          <EmptyState icon="👑" title="The Imperial Treasury is Empty..." description="New tribute offerings are being prepared. Check back soon, citizen." />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => (
@@ -74,12 +79,16 @@ export default function SubscriptionProducts() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-6xl">🔄</div>
+                    <div className="w-full h-full flex items-center justify-center text-6xl">👑</div>
                   )}
-                  <Badge className="absolute top-3 right-3 gap-1 bg-amber-600 text-white">
-                    <RefreshCw className="h-3 w-3" />
-                    Ongoing
+                  <Badge className="absolute top-3 right-3 gap-1 bg-gradient-to-r from-amber-600 to-yellow-600 text-white">
+                    <Crown className="h-3 w-3" />
+                    Imperial
                   </Badge>
+                  {/* Wax Seal */}
+                  <div className="absolute bottom-3 left-3 w-10 h-10 bg-red-700 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-red-800">
+                    S.A.
+                  </div>
                 </div>
 
                 {/* Product Info */}
@@ -104,8 +113,8 @@ export default function SubscriptionProducts() {
                   )}
 
                   <Link to={`/subscription-checkout/${product.id}`}>
-                    <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white">
-                      Subscribe Now
+                    <Button className="w-full bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white">
+                      Pay Tribute
                     </Button>
                   </Link>
                 </div>

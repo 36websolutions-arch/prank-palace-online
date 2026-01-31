@@ -354,7 +354,7 @@ export default function TheAllHandsMeeting() {
                       </Button>
                     </div>
                     <div className="text-xs text-stone-400 uppercase tracking-wider">
-                      Scroll II of II
+                      Scroll II of III
                     </div>
                   </div>
 
@@ -514,7 +514,7 @@ export default function TheAllHandsMeeting() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-stone-400">Chronicles Read</span>
-                      <span className="text-white font-medium">2 / 2</span>
+                      <span className="text-white font-medium">2 / 3</span>
                     </div>
                     <div className="h-2 bg-stone-700 rounded-full overflow-hidden">
                       <div className="h-full w-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full" />
@@ -628,18 +628,21 @@ export default function TheAllHandsMeeting() {
                 </p>
               </Link>
 
-              <div className="bg-stone-800/50 rounded-xl p-6 border border-stone-700/50 opacity-60">
+              <Link
+                to="/chronicle/the-return-to-office"
+                className="bg-stone-800 rounded-xl p-6 border border-stone-700 hover:border-amber-500/50 transition-colors group"
+              >
                 <div className="flex items-center gap-2 mb-2">
-                  <Shield className="h-4 w-4 text-stone-500" />
-                  <span className="text-stone-500 text-xs font-bold tracking-wider">CHRONICLE III</span>
+                  <Shield className="h-4 w-4 text-amber-400" />
+                  <span className="text-amber-400 text-xs font-bold tracking-wider">CHRONICLE III</span>
                 </div>
-                <h3 className="font-display text-xl text-stone-400">
-                  Coming Soon...
+                <h3 className="font-display text-xl text-white group-hover:text-amber-400 transition-colors">
+                  The Return to Office
                 </h3>
-                <p className="text-stone-500 text-sm mt-2">
-                  More tales from the Corporate Empire
+                <p className="text-stone-400 text-sm mt-2">
+                  The Forum is our home. You are just visiting.
                 </p>
-              </div>
+              </Link>
             </div>
           </div>
         </section>

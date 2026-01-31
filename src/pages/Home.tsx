@@ -18,7 +18,10 @@ import {
   Instagram,
   Quote,
   Columns,
-  Users
+  Users,
+  ExternalLink,
+  Headphones,
+  Coffee
 } from "lucide-react";
 import { format } from "date-fns";
 import logo from "@/assets/logo.png";
@@ -40,12 +43,40 @@ interface Product {
   description: string | null;
 }
 
-export default function Home2() {
+export default function Home() {
   const [featuredStory, setFeaturedStory] = useState<Blog | null>(null);
   const [recentStories, setRecentStories] = useState<Blog[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(true);
+  const fallbackChronicles = [
+    {
+      title: "The Performance Review",
+      date: "January 30, 2026",
+      href: "/chronicle/the-performance-review",
+      excerpt:
+        "Marcus had survived twelve quarters. In the arena, they called him Marcellus the Adequate — not because he was merely adequate, but because adequacy was the highest praise the Senate would allow.",
+    },
+    {
+      title: "The All-Hands Meeting",
+      date: "January 31, 2026",
+      href: "/chronicle/the-all-hands-meeting",
+      excerpt:
+        "The horn sounded at the third hour. Attendance was mandatory. Enthusiasm was expected. Comprehension was optional.",
+    },
+    {
+      title: "The Return to Office",
+      date: "February 1, 2026",
+      href: "/chronicle/the-return-to-office",
+      excerpt:
+        "The Forum was remodeled, the banners were hung, and the Senate declared the return mandatory.",
+    },
+  ];
+  const additionalChronicles = fallbackChronicles.filter(
+    (chronicle) =>
+      chronicle.title !== featuredStory?.title &&
+      !recentStories.some((story) => story.title === chronicle.title)
+  );
 
   useEffect(() => {
     fetchContent();
@@ -133,7 +164,7 @@ export default function Home2() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button className="gap-2 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:from-purple-700 hover:via-pink-700 hover:to-orange-600 text-white border-0 px-8">
+                  <Button className="gap-2 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:from-purple-700 hover:via-pink-700 hover:to-orange-600 text-white border-0 px-8 animate-pulse-glow">
                     <Instagram className="h-5 w-5" />
                     Follow the Satire
                   </Button>
@@ -151,10 +182,13 @@ export default function Home2() {
           </div>
 
           {/* Decorative columns */}
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 hidden xl:block opacity-10">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 hidden xl:block opacity-10 animate-float">
             <div className="text-6xl">🏛️</div>
           </div>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden xl:block opacity-10">
+          <div
+            className="absolute right-4 top-1/2 -translate-y-1/2 hidden xl:block opacity-10 animate-float"
+            style={{ animationDelay: "1.5s" }}
+          >
             <div className="text-6xl">🏛️</div>
           </div>
         </section>
@@ -196,7 +230,7 @@ export default function Home2() {
                   {featuredStory ? (
                     <Link
                       to={`/blog/${featuredStory.id}`}
-                      className="group block bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200 dark:border-stone-800"
+                      className="group block bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200 dark:border-stone-800 transform hover:-translate-y-1"
                     >
                       {featuredStory.image ? (
                         <div className="aspect-[16/9] overflow-hidden">
@@ -236,7 +270,7 @@ export default function Home2() {
                   ) : (
                     <Link
                       to="/chronicle/the-performance-review"
-                      className="group block bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200 dark:border-stone-800"
+                      className="group block bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200 dark:border-stone-800 transform hover:-translate-y-1"
                     >
                       <div className="aspect-[16/9] bg-gradient-to-br from-amber-100 to-stone-200 dark:from-amber-900/20 dark:to-stone-800 flex items-center justify-center">
                         <Scroll className="h-20 w-20 text-amber-600/30" />
@@ -267,24 +301,40 @@ export default function Home2() {
                 {/* Sidebar - Monetization Zone */}
                 <div className="space-y-6">
                   {/* Support the Satire - Donation CTA */}
-                  <div className="bg-gradient-to-br from-stone-900 to-stone-800 dark:from-stone-800 dark:to-stone-900 rounded-lg p-6 text-white">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Heart className="h-5 w-5 text-red-400" />
-                      <h3 className="font-display text-lg">Fund the Resistance</h3>
+                  <div className="bg-gradient-to-br from-stone-900 to-stone-800 dark:from-stone-800 dark:to-stone-900 rounded-lg p-6 text-white relative overflow-hidden">
+                    {/* Parchment texture overlay */}
+                    <div className="absolute inset-0 opacity-5" style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M20 20c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zM0 0h20v20H0z'/%3E%3C/g%3E%3C/svg%3E")`
+                    }} />
+                    <div className="relative">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Heart className="h-5 w-5 text-red-400" />
+                        <h3 className="font-display text-lg">Fund the Resistance</h3>
+                      </div>
+                      <p className="text-amber-400 text-sm font-medium mb-2">
+                        This is what keeps us pranking.
+                      </p>
+                      <p className="text-stone-300 text-sm mb-4">
+                        The Senate has unlimited resources. We have... you. Every denarius helps us survive another quarter.
+                      </p>
+                      <Link to="/support">
+                        <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2">
+                          <Heart className="h-4 w-4" />
+                          Support the Chronicle
+                        </Button>
+                      </Link>
                     </div>
-                    <p className="text-stone-300 text-sm mb-4">
-                      Help us keep exposing the absurdity. Every denarius counts.
-                    </p>
-                    <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white">
-                      Support the Chronicle
-                    </Button>
                   </div>
 
                   {/* Featured Products - Contextual */}
-                  <div className="bg-white dark:bg-stone-900 rounded-lg p-6 border border-stone-200 dark:border-stone-800">
+                  <div className="bg-white dark:bg-stone-900 rounded-lg p-6 border border-stone-200 dark:border-stone-800 relative">
+                    {/* Senate Approved Badge */}
+                    <div className="absolute -top-3 -right-3 w-12 h-12 bg-red-700 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-red-800 rotate-12">
+                      S.A.
+                    </div>
                     <div className="flex items-center gap-2 mb-4">
                       <ShoppingBag className="h-5 w-5 text-amber-600" />
-                      <h3 className="font-display text-lg text-stone-900 dark:text-stone-100">Tools of Mischief</h3>
+                      <h3 className="font-display text-lg text-stone-900 dark:text-stone-100">The Armory</h3>
                     </div>
 
                     {products.length > 0 ? (
@@ -310,9 +360,9 @@ export default function Home2() {
                             </div>
                           </Link>
                         ))}
-                        <Link to="/subscription-products">
+                        <Link to="/armory">
                           <Button variant="outline" className="w-full mt-2 border-stone-300 dark:border-stone-700">
-                            View All Products
+                            Browse the Armory
                           </Button>
                         </Link>
                       </div>
@@ -321,15 +371,87 @@ export default function Home2() {
                     )}
                   </div>
 
+                  {/* Imperial Marketplace - Affiliate Products */}
+                  <div className="bg-gradient-to-br from-amber-50 to-stone-100 dark:from-amber-950/30 dark:to-stone-900 rounded-lg p-6 border border-stone-200 dark:border-stone-800 relative overflow-hidden">
+                    {/* Parchment texture */}
+                    <div className="absolute inset-0 opacity-[0.03]" style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+                    }} />
+                    <div className="relative">
+                      <p className="text-xs text-stone-500 uppercase tracking-wider mb-2 font-medium">The Imperial Marketplace</p>
+                      <p className="text-stone-600 dark:text-stone-400 text-xs italic mb-4">Goods the Empire would prefer you not have.</p>
+
+                      <div className="space-y-3">
+                        <a
+                          href="#"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-white/50 dark:hover:bg-stone-800/50 transition-colors"
+                        >
+                          <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                            <Headphones className="h-5 w-5 text-amber-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">
+                              Block Out the Synergy
+                            </p>
+                            <p className="text-xs text-stone-500">Noise-canceling salvation</p>
+                          </div>
+                          <ExternalLink className="h-3 w-3 text-stone-400" />
+                        </a>
+
+                        <a
+                          href="#"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-white/50 dark:hover:bg-stone-800/50 transition-colors"
+                        >
+                          <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                            <Coffee className="h-5 w-5 text-amber-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">
+                              Gladiator Fuel
+                            </p>
+                            <p className="text-xs text-stone-500">Survive another arena day</p>
+                          </div>
+                          <ExternalLink className="h-3 w-3 text-stone-400" />
+                        </a>
+
+                        <a
+                          href="#"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-white/50 dark:hover:bg-stone-800/50 transition-colors"
+                        >
+                          <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                            <BookOpen className="h-5 w-5 text-amber-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">
+                              Forbidden Readings
+                            </p>
+                            <p className="text-xs text-stone-500">What the Senate banned</p>
+                          </div>
+                          <ExternalLink className="h-3 w-3 text-stone-400" />
+                        </a>
+                      </div>
+
+                      <p className="text-xs text-stone-400 mt-4 text-center">
+                        Amazon affiliate links
+                      </p>
+                    </div>
+                  </div>
+
                   {/* Ad Space Placeholder */}
-                  <div className="bg-stone-100 dark:bg-stone-800/50 rounded-lg p-6 border border-dashed border-stone-300 dark:border-stone-700 text-center">
-                    <p className="text-stone-400 text-xs uppercase tracking-wider mb-2">Sponsored</p>
-                    <p className="text-stone-500 dark:text-stone-400 text-sm">
-                      Your brand here. <br />
-                      <a href="mailto:hello@corporateprank.com" className="text-amber-600 hover:underline">
-                        Contact for rates
-                      </a>
+                  <div className="bg-stone-100 dark:bg-stone-800/50 rounded-lg p-6 border border-dashed border-stone-300 dark:border-stone-700 text-center relative">
+                    <p className="text-stone-500 text-xs uppercase tracking-wider mb-3 font-medium">The Imperial Forum</p>
+                    <p className="text-stone-600 dark:text-stone-400 text-sm italic mb-3">
+                      Ambitious merchants may petition for space here.
                     </p>
+                    <a href="mailto:Info@corporatepranks.com" className="text-amber-600 hover:underline text-sm font-medium">
+                      Request an Audience
+                    </a>
                   </div>
                 </div>
               </div>
@@ -338,55 +460,95 @@ export default function Home2() {
         </section>
 
         {/* Recent Stories Grid */}
-        {recentStories.length > 0 && (
-          <section className="py-16 border-b border-stone-200 dark:border-stone-800">
-            <div className="container mx-auto px-4">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <BookOpen className="h-6 w-6 text-amber-600" />
-                  <h2 className="font-display text-3xl text-stone-900 dark:text-stone-100">More Chronicles</h2>
-                </div>
+        <section className="py-16 border-b border-stone-200 dark:border-stone-800">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <BookOpen className="h-6 w-6 text-amber-600" />
+                <h2 className="font-display text-3xl text-stone-900 dark:text-stone-100">More Chronicles</h2>
               </div>
+            </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {recentStories.map((story) => (
-                  <Link
-                    key={story.id}
-                    to={`/blog/${story.id}`}
-                    className="group bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800"
-                  >
-                    {story.image ? (
-                      <div className="aspect-[16/10] overflow-hidden">
-                        <img
-                          src={story.image}
-                          alt={story.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                    ) : (
-                      <div className="aspect-[16/10] bg-gradient-to-br from-amber-100 to-stone-200 dark:from-amber-900/20 dark:to-stone-800 flex items-center justify-center">
-                        <Scroll className="h-12 w-12 text-amber-600/30" />
-                      </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recentStories.map((story) => (
+                <Link
+                  key={story.id}
+                  to={`/blog/${story.id}`}
+                  className="group bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800 transform hover:-translate-y-1"
+                >
+                  {story.image ? (
+                    <div className="aspect-[16/10] overflow-hidden">
+                      <img
+                        src={story.image}
+                        alt={story.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-[16/10] bg-gradient-to-br from-amber-100 to-stone-200 dark:from-amber-900/20 dark:to-stone-800 flex items-center justify-center">
+                      <Scroll className="h-12 w-12 text-amber-600/30" />
+                    </div>
+                  )}
+                  <div className="p-5">
+                    {story.published_at && (
+                      <p className="text-stone-500 text-sm mb-2">
+                        {format(new Date(story.published_at), "MMM d, yyyy")}
+                      </p>
                     )}
+                    <h3 className="font-display text-xl text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">
+                      {story.title}
+                    </h3>
+                    <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 font-serif">
+                      {story.content.substring(0, 120)}...
+                    </p>
+                  </div>
+                </Link>
+              ))}
+              {additionalChronicles.map((chronicle) => (
+                <Link
+                  key={chronicle.href}
+                  to={chronicle.href}
+                  className="group bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800 transform hover:-translate-y-1"
+                >
+                  <div className="aspect-[16/10] bg-gradient-to-br from-amber-100 to-stone-200 dark:from-amber-900/20 dark:to-stone-800 flex items-center justify-center">
+                    <Scroll className="h-12 w-12 text-amber-600/30" />
+                  </div>
+                  <div className="p-5">
+                    <p className="text-stone-500 text-sm mb-2">{chronicle.date}</p>
+                    <h3 className="font-display text-xl text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">
+                      {chronicle.title}
+                    </h3>
+                    <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 font-serif">
+                      {chronicle.excerpt}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+              {recentStories.length === 0 && additionalChronicles.length === 0 && (
+                fallbackChronicles.map((chronicle) => (
+                  <Link
+                    key={chronicle.href}
+                    to={chronicle.href}
+                    className="group bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800 transform hover:-translate-y-1"
+                  >
+                    <div className="aspect-[16/10] bg-gradient-to-br from-amber-100 to-stone-200 dark:from-amber-900/20 dark:to-stone-800 flex items-center justify-center">
+                      <Scroll className="h-12 w-12 text-amber-600/30" />
+                    </div>
                     <div className="p-5">
-                      {story.published_at && (
-                        <p className="text-stone-500 text-sm mb-2">
-                          {format(new Date(story.published_at), "MMM d, yyyy")}
-                        </p>
-                      )}
+                      <p className="text-stone-500 text-sm mb-2">{chronicle.date}</p>
                       <h3 className="font-display text-xl text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">
-                        {story.title}
+                        {chronicle.title}
                       </h3>
                       <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 font-serif">
-                        {story.content.substring(0, 120)}...
+                        {chronicle.excerpt}
                       </p>
                     </div>
                   </Link>
-                ))}
-              </div>
+                ))
+              )}
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* The Roman Parallel - Brand Explainer */}
         <section className="py-16 bg-stone-900 text-white relative overflow-hidden">
