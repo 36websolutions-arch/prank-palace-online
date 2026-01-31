@@ -107,7 +107,7 @@ serve(async (req) => {
       const { data: donations } = await supabase
         .from("kofi_donations")
         .select("amount")
-        .or(`user_id.eq.${userId},email.eq.${data.email.toLowerCase()}`);
+        .or(`user_id.eq.${userId},email.eq."${data.email.toLowerCase()}"`);
 
       const totalDonated = donations?.reduce((sum, d) => sum + parseFloat(d.amount), 0) || 0;
 
