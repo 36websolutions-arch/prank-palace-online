@@ -5,10 +5,9 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { JokerLoader } from "@/components/JokerLoader";
+import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
-import { toast } from "@/hooks/use-toast";
 import { ShoppingCart, Zap, ArrowLeft, Package } from "lucide-react";
 
 interface Product {
@@ -69,10 +68,10 @@ export default function ProductDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
-          <JokerLoader />
+          <ChronicleLoader />
         </main>
         <Footer />
       </div>
@@ -81,14 +80,16 @@ export default function ProductDetails() {
 
   if (!product) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12 text-center">
-          <span className="text-6xl mb-4 inline-block">🎭</span>
-          <h1 className="font-display text-4xl mb-4">Product Not Found</h1>
-          <p className="text-muted-foreground mb-8">This prank seems to have disappeared...</p>
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-6">
+            <Package className="h-12 w-12 text-amber-600" />
+          </div>
+          <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-4">Product Not Found</h1>
+          <p className="text-stone-600 dark:text-stone-400 mb-8">This product doesn't seem to exist.</p>
           <Link to="/">
-            <Button variant="joker">Back to Home</Button>
+            <Button className="bg-amber-600 hover:bg-amber-700 text-white">Back to Home</Button>
           </Link>
         </main>
         <Footer />
@@ -97,23 +98,23 @@ export default function ProductDetails() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
       <Navbar />
-      
+
       <main className="flex-1 container mx-auto px-4 py-8">
         {/* Back Button */}
-        <Link 
+        <Link
           to={product.type === "digital" ? "/digital-products" : "/physical-products"}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to {product.type === "digital" ? "Digital" : "Physical"} Pranks
+          Back to {product.type === "digital" ? "Digital" : "Physical"} Products
         </Link>
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Product Image */}
           <div className="relative">
-            <div className="aspect-square bg-secondary rounded-2xl overflow-hidden flex items-center justify-center">
+            <div className="aspect-square bg-stone-100 dark:bg-stone-800 rounded-2xl overflow-hidden flex items-center justify-center">
               {product.image ? (
                 <img
                   src={product.image}
@@ -126,13 +127,13 @@ export default function ProductDetails() {
                 </span>
               )}
             </div>
-            
+
             {/* Type Badge */}
-            <Badge 
+            <Badge
               className={`absolute top-4 right-4 text-sm px-4 py-2 ${
-                product.type === "digital" 
-                  ? "bg-joker-green text-primary-foreground" 
-                  : "bg-joker-gold text-foreground"
+                product.type === "digital"
+                  ? "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400"
+                  : "bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300"
               }`}
             >
               {product.type === "digital" ? (
@@ -145,16 +146,16 @@ export default function ProductDetails() {
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <h1 className="font-display text-4xl lg:text-5xl mb-4">{product.name}</h1>
-            
-            <p className="text-4xl font-bold text-primary mb-6">
+            <h1 className="font-display text-4xl lg:text-5xl text-stone-900 dark:text-stone-100 mb-4">{product.name}</h1>
+
+            <p className="text-4xl font-bold text-amber-600 mb-6">
               ${Number(product.price).toFixed(2)}
             </p>
 
             {product.description && (
               <div className="mb-8">
-                <h3 className="font-semibold mb-2">Description</h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <h3 className="font-semibold text-stone-900 dark:text-stone-100 mb-2">Description</h3>
+                <p className="text-stone-600 dark:text-stone-400 leading-relaxed">
                   {product.description}
                 </p>
               </div>
@@ -163,10 +164,9 @@ export default function ProductDetails() {
             {/* Action Buttons */}
             <div className="space-y-4 mt-auto">
               {product.type === "digital" ? (
-                <Button 
-                  variant="joker" 
-                  size="xl" 
-                  className="w-full gap-2"
+                <Button
+                  size="lg"
+                  className="w-full gap-2 bg-amber-600 hover:bg-amber-700 text-white"
                   onClick={handleBuyNow}
                 >
                   <Zap className="h-5 w-5" />
@@ -174,20 +174,19 @@ export default function ProductDetails() {
                 </Button>
               ) : (
                 <>
-                  <Button 
-                    variant="joker" 
-                    size="xl" 
-                    className="w-full gap-2"
+                  <Button
+                    size="lg"
+                    className="w-full gap-2 bg-amber-600 hover:bg-amber-700 text-white"
                     onClick={handleAddToCart}
                   >
                     <ShoppingCart className="h-5 w-5" />
                     Add to Cart
                   </Button>
                   <Link to="/cart" className="block">
-                    <Button 
-                      variant="outline" 
-                      size="xl" 
-                      className="w-full"
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full border-stone-300 dark:border-stone-700 hover:border-amber-600 hover:text-amber-600"
                     >
                       View Cart
                     </Button>
@@ -197,21 +196,21 @@ export default function ProductDetails() {
             </div>
 
             {/* Trust Badges */}
-            <div className="mt-8 pt-8 border-t">
+            <div className="mt-8 pt-8 border-t border-stone-200 dark:border-stone-800">
               <div className="grid grid-cols-3 gap-4 text-center text-sm">
                 <div>
                   <span className="text-2xl mb-1 block">🔒</span>
-                  <p className="text-muted-foreground">Secure Checkout</p>
+                  <p className="text-stone-600 dark:text-stone-400">Secure Checkout</p>
                 </div>
                 <div>
                   <span className="text-2xl mb-1 block">⚡</span>
-                  <p className="text-muted-foreground">
+                  <p className="text-stone-600 dark:text-stone-400">
                     {product.type === "digital" ? "Instant Delivery" : "Fast Shipping"}
                   </p>
                 </div>
                 <div>
-                  <span className="text-2xl mb-1 block">😈</span>
-                  <p className="text-muted-foreground">Maximum Chaos</p>
+                  <span className="text-2xl mb-1 block">✨</span>
+                  <p className="text-stone-600 dark:text-stone-400">Quality Guaranteed</p>
                 </div>
               </div>
             </div>

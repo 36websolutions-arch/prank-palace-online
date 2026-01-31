@@ -17,7 +17,8 @@ import {
   Unlock,
   Shield,
   Award,
-  Swords
+  Users,
+  Megaphone
 } from "lucide-react";
 
 interface Product {
@@ -30,159 +31,203 @@ interface Product {
 }
 
 // The full story content
-const STORY_TITLE = "The Performance Review";
+const STORY_TITLE = "The All-Hands Meeting";
 const STORY_SUBTITLE = "A Chronicle from the Corporate Empire";
 
-const STORY_PREVIEW = `Marcus had survived twelve quarters.
+const STORY_PREVIEW = `The horn sounded at the third hour.
 
-In the arena, they called him Marcellus the Adequate — not because he was merely adequate, but because adequacy was the highest praise the Senate would allow. To call a gladiator "exceptional" was to invite his execution. Exceptional men became threats. Adequate men became assets.
+Every citizen of Rome knew what it meant: The Senate would address the people. Attendance was mandatory. Enthusiasm was expected. Comprehension was optional.
 
-This particular morning, Marcus stood before his provincial manager, a man named Gaius who had never held a sword in his life but somehow determined who deserved to hold one. Gaius was reviewing a scroll — the incident report.
+Cassius shuffled into the forum with three thousand other gladiators, slaves, and freedmen. The marble seats had been arranged in concentric circles — Senators at the center on cushioned benches, middle management on wooden chairs, and the workforce standing at the edges where the acoustics made everything sound like angry bees.
 
-"You understand why you're here," Gaius said. It wasn't a question.
+"Can you hear anything?" whispered Brutus, a fellow gladiator who had survived six quarters by mastering the art of looking engaged while thinking about lunch.
 
-Marcus understood. Everyone in Rome understood. The whole city was still talking about it.
+"I heard the word 'synergy,'" Cassius replied. "I think it means we're getting new sandals."
 
-"The Gratitude Incident," Gaius continued, reading from the scroll. "During the Festival of Saturn games, in front of forty thousand citizens and the entire Senate, you delivered an... unauthorized speech."
+"We got new sandals last year."
 
-Marcus said nothing.
+"Then it probably means we're losing them."
 
-"Would you like to explain yourself?"
+At the center of the forum, Consul Meridius Maximus — Chief Visionary Officer of the Roman Empire — raised his hands for silence. His robes cost more than most families earned in a decade. His teeth had been whitened using ground pearls. His smile had never once reached his eyes.
 
-"I was expressing gratitude."
+"Citizens of Rome!" his voice boomed. "What. A. Quarter."
 
-Gaius's eye twitched. "You thanked Senator Crassus for—" he checked the scroll "—'generously allowing gladiators to die for his entertainment while he eats grapes that cost more than our yearly wages.'"
+The crowd erupted in applause. Not because they felt applause, but because the last man to not applaud had been fed to the lions during a "culture realignment exercise."
 
-"I was being sincere."
+"I stand before you today humbled," Meridius continued, pressing his hand to his chest in the manner of someone who had never experienced humility. "Humbled by your dedication. Humbled by your sacrifice. Humbled by the way you continue to exceed expectations, quarter after quarter, even as those expectations become mathematically impossible."
 
-"You thanked the Senate for 'providing such excellent working conditions that only six gladiators died of infection this quarter instead of the usual twelve.'"
+More applause.
 
-"That's a fifty percent improvement. I thought leadership would want to celebrate wins."
+Cassius noticed the scribes at the side of the forum, furiously writing down how many people clapped and for how long. This data would be used in the next round of "voluntary separations."
 
-"You thanked the crowd for 'showing up to watch poor men kill each other so they can forget that they, too, are one bad harvest away from the arena themselves.'"
+"Now," Meridius said, his smile widening, "I know there have been some... concerns."`;
 
-Marcus remained still. "The crowd laughed."
+const STORY_FULL = `The horn sounded at the third hour.
 
-"THE CROWD WASN'T SUPPOSED TO LAUGH."
+Every citizen of Rome knew what it meant: The Senate would address the people. Attendance was mandatory. Enthusiasm was expected. Comprehension was optional.
 
-Gaius's composure cracked. He set down the scroll. For the first time since Marcus had known him, the manager looked genuinely disturbed.
+Cassius shuffled into the forum with three thousand other gladiators, slaves, and freedmen. The marble seats had been arranged in concentric circles — Senators at the center on cushioned benches, middle management on wooden chairs, and the workforce standing at the edges where the acoustics made everything sound like angry bees.
 
-"Do you understand what you did? You made them see it. For thirty seconds, forty thousand Romans looked at the Senate box and thought: these men are ridiculous. For thirty seconds, the whole system looked like what it is."
+"Can you hear anything?" whispered Brutus, a fellow gladiator who had survived six quarters by mastering the art of looking engaged while thinking about lunch.
 
-Marcus met his eyes. "A joke?"`;
+"I heard the word 'synergy,'" Cassius replied. "I think it means we're getting new sandals."
 
-const STORY_FULL = `Marcus had survived twelve quarters.
+"We got new sandals last year."
 
-In the arena, they called him Marcellus the Adequate — not because he was merely adequate, but because adequacy was the highest praise the Senate would allow. To call a gladiator "exceptional" was to invite his execution. Exceptional men became threats. Adequate men became assets.
+"Then it probably means we're losing them."
 
-This particular morning, Marcus stood before his provincial manager, a man named Gaius who had never held a sword in his life but somehow determined who deserved to hold one. Gaius was reviewing a scroll — the incident report.
+At the center of the forum, Consul Meridius Maximus — Chief Visionary Officer of the Roman Empire — raised his hands for silence. His robes cost more than most families earned in a decade. His teeth had been whitened using ground pearls. His smile had never once reached his eyes.
 
-"You understand why you're here," Gaius said. It wasn't a question.
+"Citizens of Rome!" his voice boomed. "What. A. Quarter."
 
-Marcus understood. Everyone in Rome understood. The whole city was still talking about it.
+The crowd erupted in applause. Not because they felt applause, but because the last man to not applaud had been fed to the lions during a "culture realignment exercise."
 
-"The Gratitude Incident," Gaius continued, reading from the scroll. "During the Festival of Saturn games, in front of forty thousand citizens and the entire Senate, you delivered an... unauthorized speech."
+"I stand before you today humbled," Meridius continued, pressing his hand to his chest in the manner of someone who had never experienced humility. "Humbled by your dedication. Humbled by your sacrifice. Humbled by the way you continue to exceed expectations, quarter after quarter, even as those expectations become mathematically impossible."
 
-Marcus said nothing.
+More applause.
 
-"Would you like to explain yourself?"
+Cassius noticed the scribes at the side of the forum, furiously writing down how many people clapped and for how long. This data would be used in the next round of "voluntary separations."
 
-"I was expressing gratitude."
-
-Gaius's eye twitched. "You thanked Senator Crassus for—" he checked the scroll "—'generously allowing gladiators to die for his entertainment while he eats grapes that cost more than our yearly wages.'"
-
-"I was being sincere."
-
-"You thanked the Senate for 'providing such excellent working conditions that only six gladiators died of infection this quarter instead of the usual twelve.'"
-
-"That's a fifty percent improvement. I thought leadership would want to celebrate wins."
-
-"You thanked the crowd for 'showing up to watch poor men kill each other so they can forget that they, too, are one bad harvest away from the arena themselves.'"
-
-Marcus remained still. "The crowd laughed."
-
-"THE CROWD WASN'T SUPPOSED TO LAUGH."
-
-Gaius's composure cracked. He set down the scroll. For the first time since Marcus had known him, the manager looked genuinely disturbed.
-
-"Do you understand what you did? You made them see it. For thirty seconds, forty thousand Romans looked at the Senate box and thought: these men are ridiculous. For thirty seconds, the whole system looked like what it is."
-
-Marcus met his eyes. "A joke?"
+"Now," Meridius said, his smile widening, "I know there have been some... concerns."
 
 ---
 
-Gaius leaned back. The anger faded into something worse — exhaustion. The expression of a man who had seen this before.
+The word "concerns" rippled through the crowd like poison through wine.
 
-"You're not the first clever one, Marcus. Every few years, someone figures out that if you use their own language against them, they can't punish you without admitting what they really are." He gestured at the scroll. "Every word you said was technically aligned with company values. 'Gratitude.' 'Recognition.' 'Celebrating wins.' I've seen the training materials. You quoted them exactly."
+Last quarter, the Senate had announced a "strategic realignment" that resulted in two hundred gladiators being "transitioned to alternative opportunities" — which meant the lions. The quarter before that, they had "optimized the food distribution process" by cutting rations in half while simultaneously releasing a scroll titled "10 Ways to Feel Full on an Empty Stomach (Number 7 Will Amaze You!)."
 
-"I'm a quick learner."
+"I want to address these concerns directly," Meridius continued. "Because here in Rome, we believe in transparency."
 
-"You made Senator Crassus's son cry. He's seven. He asked his father why the funny man said they were bad people."
+He gestured to a massive scroll that two slaves were unrolling behind him. On it was written a single sentence in letters the size of shields:
 
-Marcus felt nothing.
+WE ARE ALL IN THIS TOGETHER.
 
-"The boy will inherit six thousand slaves," he said. "He should start learning early."
+"As you can see from our updated values statement, we are committed to unity. To collaboration. To the understanding that when Rome wins, we all win."
 
-Gaius was quiet for a long moment. Then he picked up his stylus and began writing.
+Cassius did some mental math. Last quarter's conquests had generated approximately four hundred million denarii. The gladiators had received a "gratitude bonus" of three copper coins each — enough to buy half a loaf of bread, if you negotiated aggressively and didn't mind mold.
 
-"I'm marking this as 'needs improvement in stakeholder communication,'" he said. "You'll receive a formal PIP — a Performance Improvement Parchment. You'll have sixty days to demonstrate alignment with Senate values."
+The Senators, meanwhile, had built seven new villas, purchased a small island in the Aegean, and commissioned solid gold statues of themselves "to boost morale in the forum."
 
-"And if I don't?"
+"Now," Meridius said, "I'd like to open the floor for questions. Remember: there are no bad questions, only questions that affect your performance review."
 
-"The lions are hungry. They're always hungry. And unlike the crowd, they don't have a sense of humor."
+Silence.
 
-Gaius finished writing and stamped the scroll with the Senate seal. The same seal on every arena, every slave galley, every document that determined who lived and who died.
+Three thousand people stood frozen, each one calculating the risk-reward ratio of speaking versus remaining invisible.
 
-"For what it's worth," Gaius said quietly, "I laughed too. Everyone in the management box laughed. We just had to pretend we were coughing."
+Finally, a hand went up in the back. It belonged to a young slave named Felix, who had only been with the Empire for two quarters and hadn't yet learned that hope was a terminable offense.
 
-He handed Marcus the scroll.
+"Yes! You there!" Meridius pointed with genuine delight. He loved questions from new employees. They still believed the answers mattered.
 
-"Don't do it again. The system survives because everyone agrees to pretend it isn't absurd. The moment people stop pretending—" He didn't finish.
+Felix's voice cracked slightly. "Consul Maximus, with respect — you mentioned that we're all in this together. But the new aqueduct schedule means some of us are working eighteen-hour days while the Senate just voted to add a third nap period to their official duties. I was wondering if there were plans to... balance things out?"
+
+The silence that followed was so complete that Cassius could hear a Senator three rows away digesting his breakfast peacock.
+
+Meridius's smile never flickered. That was the terrifying part. His expression remained exactly as warm and exactly as empty as before.
+
+"What a fantastic question, Felix. I love the energy. That's exactly the kind of proactive thinking we need." He turned to the crowd. "Let's give Felix a round of applause for his courage!"
+
+The crowd clapped. Felix, who had been expecting either an answer or execution, stood paralyzed by the third option: being praised while being ignored.
+
+"Now, Felix raises an important point about perception," Meridius continued smoothly. "And perception is something we take very seriously. That's why I'm excited to announce our new initiative: 'Senate Shadows!'"
+
+A banner unfurled. It showed a smiling slave standing next to a reclining Senator, both giving thumbs up.
+
+"Starting next quarter, select employees will have the opportunity to shadow a Senator for one full day! You'll see firsthand the tremendous pressure of their responsibilities — the difficult decisions, the long brunches, the exhausting task of choosing which slaves to bring to the summer villa."
+
+"Is... is that supposed to make us feel better?" Brutus whispered.
+
+"I think it's supposed to make us feel something," Cassius replied. "Feeling things is very on-brand this quarter."
+
+---
+
+The meeting continued for another two hours.
+
+There were updates on the new chariot-sharing program (gladiators could now share a single chariot between twelve people, "reducing our carbon hoofprint"). There was a presentation on the renovated break room (a slightly larger rock to sit on had been installed near the weapons storage). There was a mandatory mindfulness exercise led by a Senator who had never once experienced a consequence.
+
+At the ninety-minute mark, Meridius introduced a "surprise guest" — the Emperor himself, appearing via a complicated system of mirrors and slaves holding torches at precise angles.
+
+The Emperor's holographic image flickered above the forum.
+
+"Greetings, citizens," his disembodied voice echoed. "I am speaking to you from my yacht. As you know, I am deeply committed to connecting with the common people, which is why I am recording this message while being fed grapes by hand."
+
+Cassius watched as a slave's arm appeared in the projection, depositing a grape into the imperial mouth.
+
+"I want you to know that I see you. I value you. Each and every one of you is essential to this Empire. Without you, there would be no Rome. There would be no glory. There would be no one to clean the vomitoriums after the festival banquets."
+
+The Emperor paused for what was clearly scripted to be an emotional moment.
+
+"In conclusion: you matter. Your work matters. Now please enjoy this inspirational video about a blind slave who taught himself to read so he could better understand his termination notice."
+
+The projection faded. The crowd applauded. Somewhere in the back, Felix was being escorted away by two Centurions for "a quick chat about forum decorum."
 
 ---
 
 THE PARALLEL
 
-Two thousand years later, someone in your office sent a company-wide email "thanking leadership" for the pizza party held the same week as layoffs.
+Two thousand years later, your CEO addresses the company via Zoom.
 
-The email was technically positive. Every word aligned with company values. It praised the "thoughtful gesture" and "strong culture of recognition." It thanked the CEO by name for "prioritizing morale during this difficult transition."
+He is in his home office, which costs more than most employees' annual salaries. Behind him, carefully curated books about leadership sit on shelves that have never been touched. His audio cuts out every thirty seconds because he refuses to use the provided headset ("not on brand").
 
-Everyone knew what it really meant.
+"What. A. Quarter," he says.
 
-HR couldn't do anything. The words were correct. The sentiment was devastating. For thirty seconds, a thousand employees looked at leadership and thought: these people are ridiculous.
+You look at Slack. Forty people have typed "so true!" The messages appeared within 0.3 seconds of each other, which means everyone had them pre-written.
 
-The email was deleted within an hour. The employee was "managed out" within the quarter — officially for "performance issues," unofficially for the crime of making the mask slip.
+"I know there have been some concerns about the recent restructuring," the CEO continues. "But I want you to know — we are all in this together."
 
-But screenshots spread. People laughed in private. The company's Glassdoor rating dropped two points.
+Behind you, through your shared apartment wall, you can hear your neighbor — who was laid off in the restructuring — crying into his cereal.
 
-The system survived, of course. It always survives. But for one moment, someone used their own language against them. Someone proved that the handbook, the values, the "we're all family here" — it was always a script. And scripts can be performed incorrectly on purpose.
+The CEO announces a new wellness initiative: fifteen minutes of optional meditation on Fridays, from 5:45 to 6:00 PM, unpaid, attendance tracked.
 
-Marcus was killed in his fourteenth quarter. Not by lions — the Senate wasn't stupid enough to make a martyr. They simply stopped scheduling his fights. Stopped renewing his contract. Let him fade into poverty until disease took him like it takes all former gladiators.
+There is a Q&A session. No one asks questions. The CEO seems disappointed. He likes when people ask questions; it gives him content for his LinkedIn posts about "authentic leadership."
 
-His file was marked "Voluntary Separation."
+Finally, someone in the chat types: "What's the plan for work-life balance?"
 
-The Gratitude Speech was never officially recorded. But for years afterward, gladiators would whisper his words to each other before entering the arena. A small rebellion. A private joke.
+The CEO smiles. "Great question. We're actually rolling out a new program called 'Executive Shadows' where select employees can spend a day seeing how hard the leadership team works."
 
-The system called it "a cultural alignment issue."
+Someone in the chat types a heart emoji. Someone else types "love this."
 
-The gladiators called it the only real thing that ever happened in the Colosseum.
+You mute yourself and scream into a pillow.
+
+The meeting ends with a video about a warehouse worker who lost his legs in an accident and now "inspires" people by continuing to work from a wheelchair, fourteen hours a day, while management uses his story in recruiting materials.
+
+The CEO reminds everyone that Q3 targets have been increased by 40%.
+
+"We believe in you," he says. "Now let's make it happen."
+
+He logs off. He's late for his trainer.
+
+You sit in silence for a moment. Then you open Slack and type "so inspiring!" because the performance review cycle starts next week.
 
 ---
 
-Your company has values on the wall. Your manager has never done your job. Your performance review will determine your survival, and the metrics will change next quarter to ensure you never quite succeed.
+Cassius survived another three quarters.
 
-But here's what Rome never figured out, and neither has corporate America:
+He learned to applaud at the right moments, to nod when the speeches required nodding, to ask questions that were actually compliments phrased as inquiries. He learned that the secret to survival wasn't talent or hard work — it was the ability to sit through a three-hour meeting about "Optimizing Your Gladiatorial Journey" without visibly dying inside.
 
-The system requires your participation in the lie.
+Felix was never seen again. His position was listed as "open" for two weeks, then eliminated entirely as part of a "role optimization initiative."
 
-And participation is a choice.
+But sometimes, late at night, gladiators would whisper about the day someone asked a real question. The day someone, for just a moment, pretended the forum was actually a place where people could speak.
+
+They called it "The Felix Incident."
+
+Management called it a "learning opportunity."
+
+---
+
+The next all-hands is scheduled for Thursday.
+
+Attendance is mandatory.
+
+Enthusiasm is expected.
+
+Comprehension remains, as always, optional.
 
 ---
 
 The Corporate Chronicle
 Satire Since Rome`;
 
-export default function PerformanceReview() {
+export default function TheAllHandsMeeting() {
   const [products, setProducts] = useState<Product[]>([]);
   const [email, setEmail] = useState("");
   const [showFullStory, setShowFullStory] = useState(false);
@@ -203,12 +248,11 @@ export default function PerformanceReview() {
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setShowFullStory(true);
-    // TODO: Integrate with email service
     alert("Ave, Citizen! You have been granted access to the Senate Archives.");
     setEmail("");
   };
 
-  const readTime = 8;
+  const readTime = 10;
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-100 dark:bg-stone-950">
@@ -243,7 +287,7 @@ export default function PerformanceReview() {
               <div className="inline-flex items-center gap-2 mb-6">
                 <div className="flex items-center gap-1 px-4 py-2 bg-amber-500/20 border border-amber-500/50 rounded-full">
                   <Shield className="h-4 w-4 text-amber-400" />
-                  <span className="text-amber-400 font-bold tracking-wider text-sm">CHRONICLE I</span>
+                  <span className="text-amber-400 font-bold tracking-wider text-sm">CHRONICLE II</span>
                 </div>
               </div>
 
@@ -251,7 +295,7 @@ export default function PerformanceReview() {
               <div className="flex items-center justify-center gap-4 mb-4">
                 <span className="text-3xl opacity-60">🏛️</span>
                 <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-                <Award className="h-8 w-8 text-amber-500" />
+                <Users className="h-8 w-8 text-amber-500" />
                 <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
                 <span className="text-3xl opacity-60">🏛️</span>
               </div>
@@ -275,8 +319,8 @@ export default function PerformanceReview() {
                   {readTime} min read
                 </span>
                 <span className="flex items-center gap-2">
-                  <Swords className="h-4 w-4" />
-                  Arena Tales
+                  <Megaphone className="h-4 w-4" />
+                  Forum Tales
                 </span>
               </div>
             </div>
@@ -310,7 +354,7 @@ export default function PerformanceReview() {
                       </Button>
                     </div>
                     <div className="text-xs text-stone-400 uppercase tracking-wider">
-                      Scroll I of I
+                      Scroll II of II
                     </div>
                   </div>
 
@@ -371,12 +415,12 @@ export default function PerformanceReview() {
 
                               <div className="flex items-center justify-center gap-2 mb-4">
                                 <div className="h-px w-8 bg-amber-500/50" />
-                                <Swords className="h-5 w-5 text-amber-500" />
+                                <Users className="h-5 w-5 text-amber-500" />
                                 <div className="h-px w-8 bg-amber-500/50" />
                               </div>
 
                               <h3 className="font-display text-2xl md:text-3xl mb-3">
-                                What Marcus Said Next Got Him Killed.
+                                Felix Asked a Real Question. He Was Never Seen Again.
                               </h3>
                               <p className="text-stone-300 mb-8 max-w-md mx-auto">
                                 Enter your email to unlock the full chronicle and join the Senate.
@@ -470,7 +514,7 @@ export default function PerformanceReview() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-stone-400">Chronicles Read</span>
-                      <span className="text-white font-medium">1 / 1</span>
+                      <span className="text-white font-medium">2 / 2</span>
                     </div>
                     <div className="h-2 bg-stone-700 rounded-full overflow-hidden">
                       <div className="h-full w-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full" />
@@ -569,18 +613,18 @@ export default function PerformanceReview() {
 
             <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               <Link
-                to="/chronicle/the-all-hands-meeting"
+                to="/chronicle/the-performance-review"
                 className="bg-stone-800 rounded-xl p-6 border border-stone-700 hover:border-amber-500/50 transition-colors group"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <Shield className="h-4 w-4 text-amber-400" />
-                  <span className="text-amber-400 text-xs font-bold tracking-wider">CHRONICLE II</span>
+                  <span className="text-amber-400 text-xs font-bold tracking-wider">CHRONICLE I</span>
                 </div>
                 <h3 className="font-display text-xl text-white group-hover:text-amber-400 transition-colors">
-                  The All-Hands Meeting
+                  The Performance Review
                 </h3>
                 <p className="text-stone-400 text-sm mt-2">
-                  Felix asked a real question. He was never seen again.
+                  Marcus expressed gratitude. It did not go well.
                 </p>
               </Link>
 

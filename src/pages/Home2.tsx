@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { JokerLoader } from "@/components/JokerLoader";
+import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Scroll,
@@ -188,7 +188,7 @@ export default function Home2() {
             </div>
 
             {loading ? (
-              <JokerLoader />
+              <ChronicleLoader />
             ) : (
               <div className="grid lg:grid-cols-3 gap-8">
                 {/* Main Featured Story */}

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { JokerLoader } from "@/components/JokerLoader";
+import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Scroll,
@@ -96,7 +96,7 @@ export default function Story() {
       <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 flex items-center justify-center">
-          <JokerLoader />
+          <ChronicleLoader />
         </main>
         <Footer />
       </div>
@@ -112,7 +112,7 @@ export default function Story() {
             <Scroll className="h-16 w-16 text-stone-300 mx-auto mb-4" />
             <h1 className="font-display text-2xl mb-2">Chronicle Not Found</h1>
             <p className="text-stone-500 mb-4">This scroll has been lost to history.</p>
-            <Link to="/home2">
+            <Link to="/">
               <Button>Return to the Chronicles</Button>
             </Link>
           </div>
@@ -134,7 +134,7 @@ export default function Story() {
         <header className="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900">
           <div className="container mx-auto px-4 py-8">
             <Link
-              to="/home2"
+              to="/"
               className="inline-flex items-center gap-2 text-stone-500 hover:text-amber-600 transition-colors mb-6"
             >
               <ArrowLeft className="h-4 w-4" />

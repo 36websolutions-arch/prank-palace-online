@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { JokerSpinner } from "@/components/JokerLoader";
+import { ChronicleSpinner } from "@/components/ChronicleLoader";
 import { Zap, Package, Upload, X, Image } from "lucide-react";
 
 export function AddProductTab() {
@@ -94,8 +94,8 @@ export function AddProductTab() {
   };
 
   return (
-    <div className="bg-card rounded-xl border p-6 max-w-2xl">
-      <h2 className="font-display text-2xl mb-6">Add New Product 🎭</h2>
+    <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6 max-w-2xl">
+      <h2 className="font-display text-2xl text-stone-900 dark:text-stone-100 mb-6">Add New Product</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid sm:grid-cols-2 gap-4">
@@ -226,8 +226,8 @@ export function AddProductTab() {
           </div>
         )}
 
-        <Button type="submit" variant="joker" size="lg" disabled={loading} className="w-full">
-          {loading ? <JokerSpinner /> : "Add Product to Store 🎪"}
+        <Button type="submit" size="lg" disabled={loading} className="w-full bg-amber-600 hover:bg-amber-700 text-white">
+          {loading ? <ChronicleSpinner /> : "Add Product to Store"}
         </Button>
       </form>
     </div>

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { JokerSpinner } from "@/components/JokerLoader";
+import { ChronicleSpinner } from "@/components/ChronicleLoader";
 import { Upload, X, Image, RefreshCw } from "lucide-react";
 
 interface SubscriptionOption {
@@ -127,10 +127,10 @@ export function AddSubscriptionProductTab() {
   };
 
   return (
-    <div className="bg-card rounded-xl border p-6 max-w-3xl">
-      <h2 className="font-display text-2xl mb-6 flex items-center gap-2">
-        <RefreshCw className="h-6 w-6 text-primary" />
-        Add Subscription Product 🔄
+    <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6 max-w-3xl">
+      <h2 className="font-display text-2xl text-stone-900 dark:text-stone-100 mb-6 flex items-center gap-2">
+        <RefreshCw className="h-6 w-6 text-amber-600" />
+        Add Subscription Product
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -254,8 +254,8 @@ export function AddSubscriptionProductTab() {
           ))}
         </div>
 
-        <Button type="submit" variant="joker" size="lg" disabled={loading} className="w-full">
-          {loading ? <JokerSpinner /> : "Add Subscription Product 🔄"}
+        <Button type="submit" size="lg" disabled={loading} className="w-full bg-amber-600 hover:bg-amber-700 text-white">
+          {loading ? <ChronicleSpinner /> : "Add Subscription Product"}
         </Button>
       </form>
     </div>

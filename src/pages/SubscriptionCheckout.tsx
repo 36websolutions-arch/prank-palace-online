@@ -3,14 +3,13 @@ import { useParams, Navigate, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { JokerLoader } from "@/components/JokerLoader";
+import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { RefreshCw, Lock, ArrowLeft, User, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { trackPurchase } from "@/lib/analytics";
 
@@ -60,13 +59,13 @@ export default function SubscriptionCheckout() {
   const [recipientCountry, setRecipientCountry] = useState("United States");
   const [recipientEmail, setRecipientEmail] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
-  
+
   const [selectedSubscription, setSelectedSubscription] = useState<string>("");
   const [formValid, setFormValid] = useState(false);
 
   // Validate form
   useEffect(() => {
-    const isValid = 
+    const isValid =
       buyerName.trim() !== "" &&
       buyerEmail.trim() !== "" &&
       recipientName.trim() !== "" &&
@@ -243,7 +242,7 @@ export default function SubscriptionCheckout() {
             [{ item_name: `${product.name} - ${subscriptionDetails.name}`, price: subscriptionDetails.price }]
           );
 
-          toast({ title: "Payment Successful! 🎉", description: "Your subscription order is confirmed!" });
+          toast({ title: "Payment Successful!", description: "Your subscription order is confirmed!" });
           navigate(`/order-success?type=subscription`);
         } catch (error) {
           console.error("Error processing payment:", error);
@@ -268,10 +267,10 @@ export default function SubscriptionCheckout() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
-          <JokerLoader />
+          <ChronicleLoader />
         </main>
         <Footer />
       </div>
@@ -280,14 +279,16 @@ export default function SubscriptionCheckout() {
 
   if (!product) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12 text-center">
-          <span className="text-6xl mb-4 inline-block">🎭</span>
-          <h1 className="font-display text-4xl mb-4">Product Not Found</h1>
-          <p className="text-muted-foreground mb-8">This subscription product doesn't exist.</p>
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-6">
+            <RefreshCw className="h-12 w-12 text-amber-600" />
+          </div>
+          <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-4">Product Not Found</h1>
+          <p className="text-stone-600 dark:text-stone-400 mb-8">This subscription product doesn't exist.</p>
           <Link to="/subscription-products">
-            <Button variant="joker">Browse Subscription Products</Button>
+            <Button className="bg-amber-600 hover:bg-amber-700 text-white">Browse Subscription Products</Button>
           </Link>
         </main>
         <Footer />
@@ -299,43 +300,44 @@ export default function SubscriptionCheckout() {
   const selectedSubDetails = getSelectedSubscriptionDetails();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
       <Navbar />
 
       <main className="flex-1 container mx-auto px-4 py-8">
         <Link
           to={`/subscription-products`}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Subscriptions
         </Link>
 
         <div className="max-w-5xl mx-auto">
-          <h1 className="font-display text-4xl mb-8 text-center">Complete Your Subscription</h1>
+          <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-8 text-center">Complete Your Subscription</h1>
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Form Section */}
             <div className="lg:col-span-2 space-y-6">
               {/* Your Information */}
-              <div className="bg-card border rounded-xl p-6">
-                <h2 className="font-semibold text-xl mb-4 flex items-center gap-2">
-                  <User className="h-5 w-5" />
+              <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-6">
+                <h2 className="font-semibold text-xl text-stone-900 dark:text-stone-100 mb-4 flex items-center gap-2">
+                  <User className="h-5 w-5 text-amber-600" />
                   Your Information
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="buyer-name">Your Name</Label>
+                    <Label htmlFor="buyer-name" className="text-stone-700 dark:text-stone-300">Your Name</Label>
                     <Input
                       id="buyer-name"
                       placeholder="John Doe"
                       value={buyerName}
                       onChange={(e) => setBuyerName(e.target.value)}
                       required
+                      className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="buyer-email">Your Email</Label>
+                    <Label htmlFor="buyer-email" className="text-stone-700 dark:text-stone-300">Your Email</Label>
                     <Input
                       id="buyer-email"
                       type="email"
@@ -343,96 +345,104 @@ export default function SubscriptionCheckout() {
                       value={buyerEmail}
                       onChange={(e) => setBuyerEmail(e.target.value)}
                       required
+                      className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Recipient Information */}
-              <div className="bg-card border rounded-xl p-6">
-                <h2 className="font-semibold text-xl mb-4 flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
+              <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-6">
+                <h2 className="font-semibold text-xl text-stone-900 dark:text-stone-100 mb-4 flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-amber-600" />
                   Recipient Information
                 </h2>
-                <p className="text-sm font-bold text-primary mb-4">
-                  🎭 The delivery will be anonymous
+                <p className="text-sm font-bold text-amber-600 mb-4">
+                  The delivery will be anonymous
                 </p>
                 <div className="space-y-4">
                   {/* Full Name */}
                   <div className="space-y-2">
-                    <Label htmlFor="recipient-name">Full Name <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="recipient-name" className="text-stone-700 dark:text-stone-300">Full Name <span className="text-red-500">*</span></Label>
                     <Input
                       id="recipient-name"
                       placeholder="Jane Smith"
                       value={recipientName}
                       onChange={(e) => setRecipientName(e.target.value)}
                       required
+                      className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                     />
                   </div>
 
                   {/* Title & Company */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-title">Title</Label>
+                      <Label htmlFor="recipient-title" className="text-stone-700 dark:text-stone-300">Title</Label>
                       <Input
                         id="recipient-title"
                         placeholder="Mr./Ms./Dr."
                         value={recipientTitle}
                         onChange={(e) => setRecipientTitle(e.target.value)}
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-company">Company</Label>
+                      <Label htmlFor="recipient-company" className="text-stone-700 dark:text-stone-300">Company</Label>
                       <Input
                         id="recipient-company"
                         placeholder="Company Name"
                         value={recipientCompany}
                         onChange={(e) => setRecipientCompany(e.target.value)}
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                       />
                     </div>
                   </div>
 
                   {/* Address Lines */}
                   <div className="space-y-2">
-                    <Label htmlFor="recipient-address1">Address 1 <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="recipient-address1" className="text-stone-700 dark:text-stone-300">Address 1 <span className="text-red-500">*</span></Label>
                     <Input
                       id="recipient-address1"
                       placeholder="123 Main Street"
                       value={recipientAddressLine1}
                       onChange={(e) => setRecipientAddressLine1(e.target.value)}
                       required
+                      className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="recipient-address2">Address 2</Label>
+                    <Label htmlFor="recipient-address2" className="text-stone-700 dark:text-stone-300">Address 2</Label>
                     <Input
                       id="recipient-address2"
                       placeholder="Apt, Suite, Unit, etc."
                       value={recipientAddressLine2}
                       onChange={(e) => setRecipientAddressLine2(e.target.value)}
+                      className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                     />
                   </div>
 
                   {/* City & Country */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-city">City <span className="text-destructive">*</span></Label>
+                      <Label htmlFor="recipient-city" className="text-stone-700 dark:text-stone-300">City <span className="text-red-500">*</span></Label>
                       <Input
                         id="recipient-city"
                         placeholder="New York"
                         value={recipientCity}
                         onChange={(e) => setRecipientCity(e.target.value)}
                         required
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-country">Country <span className="text-destructive">*</span></Label>
+                      <Label htmlFor="recipient-country" className="text-stone-700 dark:text-stone-300">Country <span className="text-red-500">*</span></Label>
                       <Input
                         id="recipient-country"
                         placeholder="United States"
                         value={recipientCountry}
                         onChange={(e) => setRecipientCountry(e.target.value)}
                         required
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                       />
                     </div>
                   </div>
@@ -440,23 +450,25 @@ export default function SubscriptionCheckout() {
                   {/* State & Zipcode */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-state">State <span className="text-destructive">*</span></Label>
+                      <Label htmlFor="recipient-state" className="text-stone-700 dark:text-stone-300">State <span className="text-red-500">*</span></Label>
                       <Input
                         id="recipient-state"
                         placeholder="NY"
                         value={recipientState}
                         onChange={(e) => setRecipientState(e.target.value)}
                         required
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-zipcode">Zipcode <span className="text-destructive">*</span></Label>
+                      <Label htmlFor="recipient-zipcode" className="text-stone-700 dark:text-stone-300">Zipcode <span className="text-red-500">*</span></Label>
                       <Input
                         id="recipient-zipcode"
                         placeholder="10001"
                         value={recipientZipcode}
                         onChange={(e) => setRecipientZipcode(e.target.value)}
                         required
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                       />
                     </div>
                   </div>
@@ -464,7 +476,7 @@ export default function SubscriptionCheckout() {
                   {/* Email & Phone */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-email">Email <span className="text-destructive">*</span></Label>
+                      <Label htmlFor="recipient-email" className="text-stone-700 dark:text-stone-300">Email <span className="text-red-500">*</span></Label>
                       <Input
                         id="recipient-email"
                         type="email"
@@ -472,16 +484,18 @@ export default function SubscriptionCheckout() {
                         value={recipientEmail}
                         onChange={(e) => setRecipientEmail(e.target.value)}
                         required
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="recipient-phone">Phone <span className="text-muted-foreground">(optional)</span></Label>
+                      <Label htmlFor="recipient-phone" className="text-stone-700 dark:text-stone-300">Phone <span className="text-stone-500">(optional)</span></Label>
                       <Input
                         id="recipient-phone"
                         type="tel"
                         placeholder="+1 234 567 8900"
                         value={recipientPhone}
                         onChange={(e) => setRecipientPhone(e.target.value)}
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                       />
                     </div>
                   </div>
@@ -489,9 +503,9 @@ export default function SubscriptionCheckout() {
               </div>
 
               {/* Subscription Selection - Cards Layout */}
-              <div className="bg-card border rounded-xl p-6">
-                <h2 className="font-semibold text-xl mb-4 flex items-center gap-2">
-                  <RefreshCw className="h-5 w-5" />
+              <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-6">
+                <h2 className="font-semibold text-xl text-stone-900 dark:text-stone-100 mb-4 flex items-center gap-2">
+                  <RefreshCw className="h-5 w-5 text-amber-600" />
                   Select Subscription Plan
                 </h2>
                 {subscriptionOptions && subscriptionOptions.length > 0 ? (
@@ -503,38 +517,38 @@ export default function SubscriptionCheckout() {
                         className={cn(
                           "relative border-2 rounded-xl p-5 cursor-pointer transition-all hover:shadow-lg",
                           selectedSubscription === option.name
-                            ? "border-primary bg-primary/10 shadow-lg ring-2 ring-primary/20"
-                            : "border-border hover:border-primary/50 bg-card"
+                            ? "border-amber-600 bg-amber-50 dark:bg-amber-900/20 shadow-lg ring-2 ring-amber-600/20"
+                            : "border-stone-200 dark:border-stone-700 hover:border-amber-500/50 bg-white dark:bg-stone-900"
                         )}
                       >
                         {/* Selected indicator */}
                         {selectedSubscription === option.name && (
-                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                            <span className="text-primary-foreground text-xs">✓</span>
+                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-amber-600 rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs">✓</span>
                           </div>
                         )}
-                        
+
                         {/* Price badge */}
                         <div className="text-center mb-3">
-                          <span className="text-3xl font-bold text-primary">${option.price.toFixed(2)}</span>
+                          <span className="text-3xl font-bold text-amber-600">${option.price.toFixed(2)}</span>
                         </div>
-                        
+
                         {/* Plan name */}
-                        <h3 className="text-lg font-semibold text-center mb-2">{option.name}</h3>
-                        
+                        <h3 className="text-lg font-semibold text-stone-900 dark:text-stone-100 text-center mb-2">{option.name}</h3>
+
                         {/* Description */}
                         {option.description && (
-                          <p className="text-sm text-muted-foreground text-center line-clamp-3">
+                          <p className="text-sm text-stone-600 dark:text-stone-400 text-center line-clamp-3">
                             {option.description}
                           </p>
                         )}
-                        
+
                         {/* Selection indicator */}
                         <div className={cn(
                           "mt-4 py-2 rounded-lg text-center text-sm font-medium transition-colors",
                           selectedSubscription === option.name
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-secondary text-muted-foreground"
+                            ? "bg-amber-600 text-white"
+                            : "bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400"
                         )}>
                           {selectedSubscription === option.name ? "Selected" : "Select Plan"}
                         </div>
@@ -542,7 +556,7 @@ export default function SubscriptionCheckout() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No subscription options available</p>
+                  <p className="text-stone-600 dark:text-stone-400">No subscription options available</p>
                 )}
               </div>
             </div>
@@ -550,11 +564,11 @@ export default function SubscriptionCheckout() {
             {/* Order Summary & Payment */}
             <div className="space-y-6">
               {/* Product Summary */}
-              <div className="bg-card border rounded-xl p-6">
-                <h2 className="font-semibold text-xl mb-4">Order Summary</h2>
+              <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-6">
+                <h2 className="font-semibold text-xl text-stone-900 dark:text-stone-100 mb-4">Order Summary</h2>
 
                 <div className="flex gap-4 mb-4">
-                  <div className="w-20 h-20 bg-secondary rounded-lg overflow-hidden flex-shrink-0">
+                  <div className="w-20 h-20 bg-stone-100 dark:bg-stone-800 rounded-lg overflow-hidden flex-shrink-0">
                     {product.image ? (
                       <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     ) : (
@@ -562,32 +576,32 @@ export default function SubscriptionCheckout() {
                     )}
                   </div>
                   <div>
-                    <h3 className="font-semibold">{product.name}</h3>
+                    <h3 className="font-semibold text-stone-900 dark:text-stone-100">{product.name}</h3>
                     {selectedSubDetails && (
-                      <p className="text-sm text-primary">{selectedSubDetails.name}</p>
+                      <p className="text-sm text-amber-600">{selectedSubDetails.name}</p>
                     )}
                   </div>
                 </div>
 
                 {selectedSubDetails && (
-                  <div className="border-t pt-4">
+                  <div className="border-t border-stone-200 dark:border-stone-800 pt-4">
                     <div className="flex justify-between text-lg font-bold">
-                      <span>Total</span>
-                      <span className="text-primary">${selectedSubDetails.price.toFixed(2)}</span>
+                      <span className="text-stone-900 dark:text-stone-100">Total</span>
+                      <span className="text-amber-600">${selectedSubDetails.price.toFixed(2)}</span>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Payment Section */}
-              <div className="bg-card border rounded-xl p-6">
-                <h2 className="font-semibold text-xl mb-4 flex items-center gap-2">
-                  <Lock className="h-5 w-5" />
+              <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-6">
+                <h2 className="font-semibold text-xl text-stone-900 dark:text-stone-100 mb-4 flex items-center gap-2">
+                  <Lock className="h-5 w-5 text-amber-600" />
                   Secure Payment
                 </h2>
 
                 {!formValid && (
-                  <div className="p-4 bg-secondary rounded-lg text-sm text-muted-foreground mb-4">
+                  <div className="p-4 bg-stone-100 dark:bg-stone-800 rounded-lg text-sm text-stone-600 dark:text-stone-400 mb-4">
                     Please fill in all required fields and select a subscription plan to proceed with payment.
                   </div>
                 )}
@@ -595,19 +609,19 @@ export default function SubscriptionCheckout() {
                 <div className="min-h-[150px] relative">
                   {!paypalLoaded && formValid && (
                     <div className="flex items-center justify-center h-[150px]">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
                     </div>
                   )}
                   {processing && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center h-[150px] gap-2 bg-card z-10">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                      <p className="text-sm text-muted-foreground">Processing payment...</p>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center h-[150px] gap-2 bg-white dark:bg-stone-900 z-10">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+                      <p className="text-sm text-stone-600 dark:text-stone-400">Processing payment...</p>
                     </div>
                   )}
                   <div id="paypal-button-container" className={!paypalLoaded || !formValid ? "hidden" : ""}></div>
                 </div>
 
-                <p className="text-xs text-muted-foreground text-center mt-4">
+                <p className="text-xs text-stone-500 dark:text-stone-400 text-center mt-4">
                   Your payment is secured by PayPal.
                 </p>
               </div>

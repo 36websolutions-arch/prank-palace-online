@@ -5,10 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
-import Index from "./pages/Index";
 import Home2 from "./pages/Home2";
 import Story from "./pages/Story";
 import PerformanceReview from "./pages/PerformanceReview";
+import TheAllHandsMeeting from "./pages/TheAllHandsMeeting";
 import Auth from "./pages/Auth";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
@@ -37,10 +37,10 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/home2" element={<Home2 />} />
+              <Route path="/" element={<Home2 />} />
               <Route path="/story/:id" element={<Story />} />
               <Route path="/chronicle/the-performance-review" element={<PerformanceReview />} />
+              <Route path="/chronicle/the-all-hands-meeting" element={<TheAllHandsMeeting />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />

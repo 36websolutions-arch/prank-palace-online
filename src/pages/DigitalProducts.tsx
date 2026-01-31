@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
-import { JokerLoader } from "@/components/JokerLoader";
+import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { EmptyState } from "@/components/EmptyState";
+import { Zap } from "lucide-react";
 
 interface Product {
   id: string;
@@ -30,19 +31,21 @@ export default function DigitalProducts() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <span className="text-5xl mb-4 inline-block">⚡</span>
-          <h1 className="font-display text-5xl mb-4">Digital Pranks</h1>
-          <p className="text-muted-foreground text-lg">Instant delivery. Maximum chaos. 😈</p>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-4">
+            <Zap className="h-8 w-8 text-amber-600" />
+          </div>
+          <h1 className="font-display text-5xl text-stone-900 dark:text-stone-100 mb-4">Digital Products</h1>
+          <p className="text-stone-600 dark:text-stone-400 text-lg">Instant delivery. Maximum value.</p>
         </div>
 
         {loading ? (
-          <JokerLoader />
+          <ChronicleLoader />
         ) : products.length === 0 ? (
-          <EmptyState icon="💻" title="No digital pranks yet..." description="No pranks sold yet… suspicious 😏" />
+          <EmptyState icon="💻" title="No digital products yet..." description="Check back soon for new offerings!" />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => (

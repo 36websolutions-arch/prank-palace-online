@@ -3,7 +3,7 @@ import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { JokerLoader } from "@/components/JokerLoader";
+import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { Zap, Lock, ArrowLeft } from "lucide-react";
@@ -36,7 +36,7 @@ export default function DigitalCheckout() {
   const { id } = useParams<{ id: string }>();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  
+
   const [product, setProduct] = useState<Product | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -213,7 +213,7 @@ export default function DigitalCheckout() {
           );
 
           toast({
-            title: "Payment Successful! 🎉",
+            title: "Payment Successful!",
             description: "Your digital product is ready!",
           });
 
@@ -253,10 +253,10 @@ export default function DigitalCheckout() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
-          <JokerLoader />
+          <ChronicleLoader />
         </main>
         <Footer />
       </div>
@@ -265,14 +265,16 @@ export default function DigitalCheckout() {
 
   if (!product) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12 text-center">
-          <span className="text-6xl mb-4 inline-block">🎭</span>
-          <h1 className="font-display text-4xl mb-4">Product Not Found</h1>
-          <p className="text-muted-foreground mb-8">This digital product doesn't exist.</p>
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-6">
+            <Zap className="h-12 w-12 text-amber-600" />
+          </div>
+          <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-4">Product Not Found</h1>
+          <p className="text-stone-600 dark:text-stone-400 mb-8">This digital product doesn't exist.</p>
           <Link to="/digital-products">
-            <Button variant="joker">Browse Digital Products</Button>
+            <Button className="bg-amber-600 hover:bg-amber-700 text-white">Browse Digital Products</Button>
           </Link>
         </main>
         <Footer />
@@ -281,31 +283,31 @@ export default function DigitalCheckout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
       <Navbar />
-      
+
       <main className="flex-1 container mx-auto px-4 py-8">
-        <Link 
+        <Link
           to={`/product/${product.id}`}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Product
         </Link>
 
         <div className="max-w-4xl mx-auto">
-          <h1 className="font-display text-4xl mb-8 text-center">Complete Your Purchase</h1>
+          <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-8 text-center">Complete Your Purchase</h1>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Product Summary */}
-            <div className="bg-card border rounded-xl p-6">
-              <h2 className="font-semibold text-xl mb-4 flex items-center gap-2">
-                <Zap className="h-5 w-5 text-joker-green" />
+            <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-6">
+              <h2 className="font-semibold text-xl text-stone-900 dark:text-stone-100 mb-4 flex items-center gap-2">
+                <Zap className="h-5 w-5 text-amber-600" />
                 Digital Product
               </h2>
-              
+
               <div className="flex gap-4 mb-6">
-                <div className="w-24 h-24 bg-secondary rounded-lg overflow-hidden flex-shrink-0">
+                <div className="w-24 h-24 bg-stone-100 dark:bg-stone-800 rounded-lg overflow-hidden flex-shrink-0">
                   {product.image ? (
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                   ) : (
@@ -313,22 +315,22 @@ export default function DigitalCheckout() {
                   )}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">{product.name}</h3>
+                  <h3 className="font-semibold text-lg text-stone-900 dark:text-stone-100">{product.name}</h3>
                   {product.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+                    <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-2">{product.description}</p>
                   )}
                 </div>
               </div>
 
-              <div className="border-t pt-4">
+              <div className="border-t border-stone-200 dark:border-stone-800 pt-4">
                 <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span className="text-primary">${product.price.toFixed(2)}</span>
+                  <span className="text-stone-900 dark:text-stone-100">Total</span>
+                  <span className="text-amber-600">${product.price.toFixed(2)}</span>
                 </div>
               </div>
 
-              <div className="mt-4 p-3 bg-joker-green/10 rounded-lg text-sm">
-                <p className="flex items-center gap-2 text-joker-green font-medium">
+              <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg text-sm">
+                <p className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-medium">
                   <Zap className="h-4 w-4" />
                   Instant delivery after payment
                 </p>
@@ -336,35 +338,35 @@ export default function DigitalCheckout() {
             </div>
 
             {/* Payment Section */}
-            <div className="bg-card border rounded-xl p-6">
-              <h2 className="font-semibold text-xl mb-4 flex items-center gap-2">
-                <Lock className="h-5 w-5" />
+            <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl p-6">
+              <h2 className="font-semibold text-xl text-stone-900 dark:text-stone-100 mb-4 flex items-center gap-2">
+                <Lock className="h-5 w-5 text-amber-600" />
                 Secure Payment
               </h2>
 
               {profile && (
                 <div className="mb-6 space-y-2 text-sm">
-                  <p><span className="text-muted-foreground">Account:</span> {profile.nickname}</p>
-                  <p><span className="text-muted-foreground">Email:</span> {profile.email}</p>
+                  <p className="text-stone-700 dark:text-stone-300"><span className="text-stone-500 dark:text-stone-400">Account:</span> {profile.nickname}</p>
+                  <p className="text-stone-700 dark:text-stone-300"><span className="text-stone-500 dark:text-stone-400">Email:</span> {profile.email}</p>
                 </div>
               )}
 
               <div className="min-h-[150px] relative">
                 {!paypalLoaded && (
                   <div className="flex items-center justify-center h-[150px]">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
                   </div>
                 )}
                 {processing && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center h-[150px] gap-2 bg-card z-10">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    <p className="text-sm text-muted-foreground">Processing payment...</p>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center h-[150px] gap-2 bg-white dark:bg-stone-900 z-10">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+                    <p className="text-sm text-stone-600 dark:text-stone-400">Processing payment...</p>
                   </div>
                 )}
                 <div id="paypal-button-container" className={!paypalLoaded ? "hidden" : ""}></div>
               </div>
 
-              <p className="text-xs text-muted-foreground text-center mt-4">
+              <p className="text-xs text-stone-500 dark:text-stone-400 text-center mt-4">
                 Your payment is secured by PayPal. You'll receive instant access after payment.
               </p>
             </div>

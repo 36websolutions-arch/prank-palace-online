@@ -97,7 +97,7 @@ export function UserInfoTab() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
+            <Users className="h-5 w-5 text-amber-600" />
             <CardTitle>User Information</CardTitle>
           </div>
           <div className="relative w-full sm:w-64">
@@ -114,7 +114,7 @@ export function UserInfoTab() {
       <CardContent>
         {loading ? (
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
           </div>
         ) : filteredProfiles.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">

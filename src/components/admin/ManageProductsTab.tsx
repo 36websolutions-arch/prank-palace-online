@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { JokerLoader, JokerSpinner } from "@/components/JokerLoader";
+import { ChronicleLoader, ChronicleSpinner } from "@/components/ChronicleLoader";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "@/hooks/use-toast";
 import { Edit, Trash2, Zap, Package, Upload, X, Image } from "lucide-react";
@@ -142,12 +142,12 @@ export function ManageProductsTab() {
 
   const filteredProducts = filter === "all" ? products : products.filter(p => p.type === filter);
 
-  if (loading) return <JokerLoader />;
+  if (loading) return <ChronicleLoader />;
 
   return (
-    <div className="bg-card rounded-xl border p-6">
+    <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h2 className="font-display text-2xl">Manage Products 🎪</h2>
+        <h2 className="font-display text-2xl text-stone-900 dark:text-stone-100">Manage Products</h2>
         <div className="flex gap-2">
           {(["all", "digital", "physical"] as const).map((f) => (
             <Button key={f} variant={filter === f ? "default" : "outline"} size="sm" onClick={() => setFilter(f)}>
@@ -267,8 +267,8 @@ export function ManageProductsTab() {
                             <Textarea value={editProduct.digital_content || ""} onChange={(e) => setEditProduct({ ...editProduct, digital_content: e.target.value })} />
                           </div>
                         )}
-                        <Button type="submit" variant="joker" className="w-full" disabled={editLoading}>
-                          {editLoading ? <JokerSpinner /> : "Save Changes"}
+                        <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 text-white" disabled={editLoading}>
+                          {editLoading ? <ChronicleSpinner /> : "Save Changes"}
                         </Button>
                       </form>
                     )}

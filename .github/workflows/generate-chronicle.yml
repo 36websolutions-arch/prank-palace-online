@@ -1,0 +1,32 @@
+name: Generate Daily Chronicle
+
+on:
+  schedule:
+    # Runs at 9 AM UTC every day
+    - cron: '0 9 * * *'
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Chronicle
+        run: |
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            https://xfptozziptcpvhtkezba.supabase.co/functions/v1/generate-chronicle)
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "Response: $body"
+          echo "HTTP Code: $http_code"
+
+          if [ "$http_code" != "200" ]; then
+            echo "Failed to generate chronicle"
+            exit 1
+          fi
+
+          echo "Chronicle generated successfully!"

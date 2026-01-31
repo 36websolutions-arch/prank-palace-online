@@ -3,9 +3,9 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { JokerLoader } from "@/components/JokerLoader";
+import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, Scroll } from "lucide-react";
 import { format } from "date-fns";
 
 interface Blog {
@@ -44,10 +44,10 @@ export default function BlogDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 flex items-center justify-center">
-          <JokerLoader />
+          <ChronicleLoader />
         </main>
         <Footer />
       </div>
@@ -56,16 +56,18 @@ export default function BlogDetails() {
 
   if (!blog) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-16 text-center">
-          <span className="text-6xl mb-6 inline-block">🔍</span>
-          <h1 className="font-display text-4xl mb-4">Blog Post Not Found</h1>
-          <p className="text-muted-foreground mb-8">
-            This prank wisdom seems to have vanished into thin air! 👻
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-6">
+            <Scroll className="h-12 w-12 text-amber-600" />
+          </div>
+          <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-4">Chronicle Not Found</h1>
+          <p className="text-stone-600 dark:text-stone-400 mb-8">
+            This chronicle has been lost to the ages.
           </p>
           <Link to="/">
-            <Button variant="joker" className="gap-2">
+            <Button className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
               <ArrowLeft className="h-4 w-4" />
               Back to Home
             </Button>
@@ -77,7 +79,7 @@ export default function BlogDetails() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
       <Navbar />
       <main className="flex-1">
         {/* Hero Image */}
@@ -88,14 +90,14 @@ export default function BlogDetails() {
               alt={blog.title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 to-transparent" />
           </div>
         )}
 
         <div className="container mx-auto px-4 py-8">
           {/* Back Button */}
           <Link to="/" className="inline-block mb-6">
-            <Button variant="ghost" className="gap-2">
+            <Button variant="ghost" className="gap-2 text-stone-600 dark:text-stone-400 hover:text-amber-600">
               <ArrowLeft className="h-4 w-4" />
               Back to Home
             </Button>
@@ -103,8 +105,8 @@ export default function BlogDetails() {
 
           {/* Title and Date */}
           <div className="max-w-3xl mx-auto">
-            <h1 className="font-display text-4xl md:text-5xl mb-4">{blog.title}</h1>
-            <div className="flex items-center gap-2 text-muted-foreground mb-8">
+            <h1 className="font-display text-4xl md:text-5xl text-stone-900 dark:text-stone-100 mb-4">{blog.title}</h1>
+            <div className="flex items-center gap-2 text-stone-600 dark:text-stone-400 mb-8">
               <Calendar className="h-4 w-4" />
               <span>
                 {blog.published_at
@@ -114,23 +116,25 @@ export default function BlogDetails() {
             </div>
 
             {/* Content */}
-            <article className="prose prose-lg max-w-none">
+            <article className="prose prose-lg max-w-none prose-stone dark:prose-invert">
               {blog.content.split("\n").map((paragraph, index) => (
-                <p key={index} className="mb-4 text-foreground/90 leading-relaxed">
+                <p key={index} className="mb-4 text-stone-700 dark:text-stone-300 leading-relaxed">
                   {paragraph}
                 </p>
               ))}
             </article>
 
             {/* Share CTA */}
-            <div className="mt-12 p-6 bg-secondary rounded-xl text-center">
-              <span className="text-3xl mb-3 inline-block">🎭</span>
-              <h3 className="font-display text-xl mb-2">Enjoyed this read?</h3>
-              <p className="text-muted-foreground mb-4">
-                Join the chaos community and spread the mischief!
+            <div className="mt-12 p-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/50 mb-3">
+                <Scroll className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="font-display text-xl text-stone-900 dark:text-stone-100 mb-2">Enjoyed this chronicle?</h3>
+              <p className="text-stone-600 dark:text-stone-400 mb-4">
+                Explore more stories from the Corporate Chronicle.
               </p>
               <Link to="/subscription-products">
-                <Button variant="joker">Explore the Prank Pipeline</Button>
+                <Button className="bg-amber-600 hover:bg-amber-700 text-white">Explore Subscriptions</Button>
               </Link>
             </div>
           </div>

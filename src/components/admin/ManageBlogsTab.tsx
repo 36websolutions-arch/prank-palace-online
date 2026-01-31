@@ -190,7 +190,7 @@ export function ManageBlogsTab() {
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="joker-spinner" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600" />
       </div>
     );
   }
@@ -201,8 +201,8 @@ export function ManageBlogsTab() {
         <h2 className="font-display text-2xl">Manage Chronicles 📜</h2>
         <Button
           onClick={() => setShowForm(!showForm)}
-          variant={showForm ? "outline" : "joker"}
-          className="gap-2"
+          className={showForm ? "gap-2" : "gap-2 bg-amber-600 hover:bg-amber-700 text-white"}
+          variant={showForm ? "outline" : "default"}
         >
           {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           {showForm ? "Cancel" : "New Chronicle"}
@@ -282,10 +282,9 @@ export function ManageBlogsTab() {
                 </Button>
                 <Button
                   type="button"
-                  variant="joker"
                   onClick={(e) => handleSubmit(e, true)}
                   disabled={submitting || !title || !content}
-                  className="gap-2"
+                  className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
                 >
                   <Upload className="h-4 w-4" />
                   {submitting ? "Publishing..." : "Publish Now"}
@@ -327,8 +326,8 @@ export function ManageBlogsTab() {
                         <span
                           className={`text-xs px-2 py-0.5 rounded-full ${
                             blog.is_published
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-700"
+                              ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
+                              : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
                           }`}
                         >
                           {blog.is_published ? "Published" : "Draft"}

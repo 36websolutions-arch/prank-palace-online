@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { JokerLoader } from "@/components/JokerLoader";
+import { ChronicleLoader } from "@/components/ChronicleLoader";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "@/hooks/use-toast";
 import { CheckCircle, Clock, MapPin, Phone, Calendar } from "lucide-react";
@@ -59,12 +59,12 @@ export function PhysicalOrdersTab() {
 
   const filteredOrders = filter === "all" ? orders : orders.filter(o => o.status === filter);
 
-  if (loading) return <JokerLoader />;
+  if (loading) return <ChronicleLoader />;
 
   return (
-    <div className="bg-card rounded-xl border p-6">
+    <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h2 className="font-display text-2xl">Physical Orders 📦</h2>
+        <h2 className="font-display text-2xl text-stone-900 dark:text-stone-100">Physical Orders</h2>
         <div className="flex gap-2">
           {(["all", "Pending", "Delivered"] as const).map((f) => (
             <Button
@@ -124,7 +124,7 @@ export function PhysicalOrdersTab() {
 
                 <div className="flex items-center">
                   {order.status === "Pending" && (
-                    <Button variant="joker" onClick={() => markAsDelivered(order.id)}>
+                    <Button className="bg-amber-600 hover:bg-amber-700 text-white" onClick={() => markAsDelivered(order.id)}>
                       Mark Delivered
                     </Button>
                   )}
