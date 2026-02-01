@@ -302,10 +302,10 @@ export default function Home2() {
               </FadeUp>
 
               {/* Main headline with character animation */}
-              <h1 className="font-display text-6xl md:text-8xl lg:text-9xl mb-6 tracking-tight">
+              <h1 className="font-display text-4xl sm:text-6xl md:text-8xl lg:text-9xl mb-6 tracking-tight">
                 <AnimatedText
                   text="THE CORPORATE"
-                  className="text-stone-900 dark:text-stone-100 block"
+                  className="text-stone-900 dark:text-stone-100 block whitespace-nowrap"
                   delay={0.2}
                 />
                 <span className="relative inline-block mt-2">
@@ -320,7 +320,7 @@ export default function Home2() {
 
               {/* Tagline with word animation */}
               <FadeUp delay={1.2}>
-                <p className="text-xl md:text-2xl text-stone-600 dark:text-stone-400 max-w-2xl mx-auto mb-4 font-serif italic">
+                <p className="text-lg sm:text-xl md:text-2xl text-stone-600 dark:text-stone-400 max-w-2xl mx-auto mb-4 font-serif italic px-2 sm:px-0">
                   <AnimatedWords
                     text="History doesn't repeat itself, but corporate America sure does."
                     delay={1.4}
@@ -330,7 +330,7 @@ export default function Home2() {
 
               {/* Feature badges with stagger */}
               <FadeUp delay={1.8}>
-                <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm text-stone-500 dark:text-stone-500 mb-10">
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-8 text-xs sm:text-sm text-stone-500 dark:text-stone-500 mb-10 px-2 sm:px-0">
                   {[
                     { icon: Columns, text: "Satire Since Rome" },
                     { icon: Scroll, text: "Ancient Parallels" },
@@ -338,10 +338,10 @@ export default function Home2() {
                   ].map((item, i) => (
                     <span
                       key={item.text}
-                      className="flex items-center gap-2 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]"
+                      className="flex items-center gap-1.5 sm:gap-2 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]"
                       style={{ animationDelay: `${2 + i * 0.15}s` }}
                     >
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       {item.text}
                     </span>
                   ))}
@@ -359,10 +359,10 @@ export default function Home2() {
         </section>
 
         {/* Stats Section - Social Proof */}
-        <section className="py-16 bg-amber-600 text-white relative overflow-hidden">
+        <section className="py-12 sm:py-16 bg-amber-600 text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-gradient" />
           <div className="container mx-auto px-4 relative">
-            <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div className="grid grid-cols-3 gap-4 sm:gap-8 text-center">
               {[
                 { number: "18,000+", label: "Citizens of the Empire", icon: "🏛️" },
                 { number: "1,000+", label: "New Recruits Weekly", icon: "⚔️" },
@@ -370,13 +370,13 @@ export default function Home2() {
               ].map((stat, i) => (
                 <FadeUp key={stat.label} delay={i * 0.2}>
                   <div className="group cursor-default">
-                    <div className="text-4xl mb-2 group-hover:scale-125 transition-transform duration-300">
+                    <div className="text-2xl sm:text-4xl mb-1 sm:mb-2 group-hover:scale-125 transition-transform duration-300">
                       {stat.icon}
                     </div>
-                    <div className="text-4xl md:text-5xl font-bold mb-2 font-display">
+                    <div className="text-xl sm:text-4xl md:text-5xl font-bold mb-1 sm:mb-2 font-display">
                       {stat.number}
                     </div>
-                    <div className="text-amber-100/80 text-sm uppercase tracking-wider">
+                    <div className="text-amber-100/80 text-[10px] sm:text-sm uppercase tracking-wider leading-tight">
                       {stat.label}
                     </div>
                   </div>
@@ -629,11 +629,11 @@ export default function Home2() {
         <section className="py-16 bg-stone-100 dark:bg-stone-900/50">
           <div className="container mx-auto px-4">
             <FadeUp>
-              <div className="text-center mb-12">
-                <h2 className="font-display text-3xl md:text-4xl text-stone-900 dark:text-stone-100 mb-4">
+              <div className="text-center mb-8 sm:mb-12 px-2 sm:px-0">
+                <h2 className="font-display text-2xl sm:text-3xl md:text-4xl text-stone-900 dark:text-stone-100 mb-4">
                   What Citizens Are Saying
                 </h2>
-                <p className="text-stone-600 dark:text-stone-400 max-w-2xl mx-auto">
+                <p className="text-stone-600 dark:text-stone-400 max-w-2xl mx-auto text-sm sm:text-base">
                   Dispatches from the arena floor
                 </p>
               </div>
@@ -687,14 +687,14 @@ export default function Home2() {
           <div className="container mx-auto px-4 relative">
             <div className="max-w-4xl mx-auto">
               <FadeUp>
-                <blockquote className="text-center mb-16">
-                  <div className="text-6xl text-amber-500/30 font-serif mb-4">"</div>
-                  <p className="font-serif text-3xl md:text-4xl lg:text-5xl italic text-stone-200 leading-relaxed">
+                <blockquote className="text-center mb-16 px-2 sm:px-0">
+                  <div className="text-4xl sm:text-6xl text-amber-500/30 font-serif mb-4">"</div>
+                  <p className="font-serif text-xl sm:text-3xl md:text-4xl lg:text-5xl italic text-stone-200 leading-relaxed">
                     <AnimatedWords
                       text="In Rome, they had bread and circuses. Today, we have pizza parties and mandatory fun."
                     />
                   </p>
-                  <footer className="mt-6 text-amber-500 font-medium">
+                  <footer className="mt-6 text-amber-500 font-medium text-sm sm:text-base">
                     — The Corporate Chronicle
                   </footer>
                 </blockquote>
@@ -737,7 +737,7 @@ export default function Home2() {
               </FadeUp>
 
               <FadeUp delay={0.1}>
-                <h2 className="font-display text-5xl md:text-6xl mb-6 text-stone-900 dark:text-stone-100">
+                <h2 className="font-display text-3xl sm:text-5xl md:text-6xl mb-6 text-stone-900 dark:text-stone-100">
                   Join the <span className="text-amber-600">Senate</span>
                 </h2>
               </FadeUp>
@@ -782,16 +782,16 @@ export default function Home2() {
           <div className="container mx-auto px-4">
             <FadeUp>
               <div className="max-w-4xl mx-auto">
-                <div className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 rounded-3xl p-10 md:p-16 text-white text-center overflow-hidden group">
+                <div className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-16 text-white text-center overflow-hidden group">
                   {/* Animated background shimmer */}
                   <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250%_250%] animate-gradient" />
 
                   <div className="relative">
-                    <Instagram className="h-20 w-20 mx-auto mb-8 opacity-90 group-hover:rotate-12 transition-transform duration-500" />
-                    <h2 className="font-display text-4xl md:text-5xl mb-6">
+                    <Instagram className="h-12 w-12 sm:h-20 sm:w-20 mx-auto mb-6 sm:mb-8 opacity-90 group-hover:rotate-12 transition-transform duration-500" />
+                    <h2 className="font-display text-3xl sm:text-4xl md:text-5xl mb-4 sm:mb-6">
                       The Daily Dispatch
                     </h2>
-                    <p className="text-white/90 mb-8 text-lg max-w-xl mx-auto">
+                    <p className="text-white/90 mb-6 sm:mb-8 text-base sm:text-lg max-w-xl mx-auto px-2 sm:px-0">
                       New stories drop daily. Follow for the first half of each chronicle, then come back here for the full story.
                     </p>
                     <a
