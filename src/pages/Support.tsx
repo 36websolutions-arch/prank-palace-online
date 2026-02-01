@@ -34,6 +34,7 @@ export default function Support() {
 
               <p className="text-stone-500 dark:text-stone-500 max-w-xl mx-auto mb-8">
                 The Senate has unlimited resources. We have... you. Your support keeps the satire flowing and the corporate empire trembling.
+                If it made you laugh, consider tipping to keep the comedy alive!
               </p>
 
               <div className="bg-stone-900 dark:bg-stone-800 rounded-lg p-6 max-w-md mx-auto text-white">

@@ -106,6 +106,10 @@ export default {
           "70%": { transform: "scale(0.9)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -115,6 +119,7 @@ export default {
         "pulse-glow": "pulseGlow 2s ease-in-out infinite",
         "card-spin": "cardSpin 3s ease-in-out infinite",
         "bounce-in": "bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+        "fade-in": "fadeIn 0.5s ease-out forwards",
       },
     },
   },

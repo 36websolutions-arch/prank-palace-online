@@ -317,12 +317,19 @@ export default function Home() {
                       <p className="text-stone-300 text-sm mb-4">
                         The Senate has unlimited resources. We have... you. Every denarius helps us survive another quarter.
                       </p>
-                      <Link to="/support">
-                        <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2">
-                          <Heart className="h-4 w-4" />
-                          Support the Chronicle
-                        </Button>
-                      </Link>
+                      <div className="space-y-2">
+                        <Link to="/support">
+                          <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2">
+                            <Heart className="h-4 w-4" />
+                            Support the Chronicle
+                          </Button>
+                        </Link>
+                        <a href="https://ko-fi.com/corporatepranks" target="_blank" rel="noopener noreferrer">
+                          <Button variant="outline" className="w-full border-amber-500/40 text-amber-100 hover:text-amber-50 hover:border-amber-400">
+                            Tip on Ko-fi
+                          </Button>
+                        </a>
+                      </div>
                     </div>
                   </div>
 

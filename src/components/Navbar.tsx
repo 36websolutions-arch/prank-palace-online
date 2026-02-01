@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll, ChevronDown, Shield, Package, Zap, Crown, Heart } from "lucide-react";
+import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll, ChevronDown, Shield, Package, Zap, Crown, Heart, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -131,6 +131,28 @@ export function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-4">
+            <Link to="/chronicles">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-stone-600 dark:text-stone-400 hover:text-amber-600"
+              >
+                <Scroll className="h-5 w-5" />
+              </Button>
+            </Link>
+            <a
+              href="https://www.instagram.com/corporatepranks"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-stone-600 dark:text-stone-400 hover:text-pink-600"
+              >
+                <Instagram className="h-5 w-5" />
+              </Button>
+            </a>
             {user ? (
               <>
                 <Link to="/cart" className="relative">
@@ -169,15 +191,39 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden text-stone-600 dark:text-stone-400"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </Button>
+          {/* Mobile: Chronicles + Instagram + Menu Toggle */}
+          <div className="flex items-center gap-1 md:hidden">
+            <Link to="/chronicles">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-stone-600 dark:text-stone-400 hover:text-amber-600"
+              >
+                <Scroll className="h-5 w-5" />
+              </Button>
+            </Link>
+            <a
+              href="https://www.instagram.com/corporatepranks"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-stone-600 dark:text-stone-400 hover:text-pink-600"
+              >
+                <Instagram className="h-5 w-5" />
+              </Button>
+            </a>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-stone-600 dark:text-stone-400"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
         </div>
 
         {/* Mobile Menu */}

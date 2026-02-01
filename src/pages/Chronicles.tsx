@@ -15,32 +15,49 @@ interface Blog {
   image: string | null;
   published_at: string | null;
   content: string;
+  href?: string; // For static chronicles
+  isStatic?: boolean;
 }
 
+// Static chronicles that have dedicated pages
+const staticChronicles: Blog[] = [
+  {
+    id: "the-performance-review",
+    title: "The Performance Review",
+    image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&h=500&fit=crop",
+    published_at: "2026-01-30",
+    content: "Marcus had survived twelve quarters. In the arena, they called him Marcellus the Adequate — not because he was merely adequate, but because adequacy was the highest praise the Senate would allow.",
+    href: "/chronicle/the-performance-review",
+    isStatic: true,
+  },
+  {
+    id: "the-all-hands-meeting",
+    title: "The All-Hands Meeting",
+    image: "https://images.unsplash.com/photo-1529260830199-42c24126f198?w=800&h=500&fit=crop",
+    published_at: "2026-01-31",
+    content: "The horn sounded at the third hour. Attendance was mandatory. Enthusiasm was expected. Comprehension was optional.",
+    href: "/chronicle/the-all-hands-meeting",
+    isStatic: true,
+  },
+  {
+    id: "the-return-to-office",
+    title: "The Return to Office",
+    image: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&h=500&fit=crop",
+    published_at: "2026-02-01",
+    content: "The Forum was remodeled, the banners were hung, and the Senate declared the return mandatory. Remote work, they said, was destroying the culture.",
+    href: "/chronicle/the-return-to-office",
+    isStatic: true,
+  },
+];
+
 export default function Chronicles() {
-  const [stories, setStories] = useState<Blog[]>([]);
-  const [filteredStories, setFilteredStories] = useState<Blog[]>([]);
+  const [dbStories, setDbStories] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchStories();
   }, []);
-
-  useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setFilteredStories(stories);
-    } else {
-      const query = searchQuery.toLowerCase();
-      setFilteredStories(
-        stories.filter(
-          (story) =>
-            story.title.toLowerCase().includes(query) ||
-            story.content.toLowerCase().includes(query)
-        )
-      );
-    }
-  }, [searchQuery, stories]);
 
   const fetchStories = async () => {
     const { data } = await supabase
@@ -49,10 +66,21 @@ export default function Chronicles() {
       .eq("is_published", true)
       .order("published_at", { ascending: false });
 
-    setStories(data || []);
-    setFilteredStories(data || []);
+    setDbStories(data || []);
     setLoading(false);
   };
+
+  // Combine static and database chronicles
+  const allStories = [...staticChronicles, ...dbStories];
+
+  // Filter based on search
+  const filteredStories = searchQuery.trim() === ""
+    ? allStories
+    : allStories.filter(
+        (story) =>
+          story.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          story.content.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
   // Group stories by year for the archive view
   const storiesByYear = filteredStories.reduce((acc, story) => {
@@ -113,7 +141,7 @@ export default function Chronicles() {
           </div>
         </section>
 
-        {/* Featured Static Chronicles */}
+        {/* Featured Chronicles */}
         <section className="py-12 border-b border-stone-200 dark:border-stone-800 bg-amber-50/50 dark:bg-amber-950/10">
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-3 mb-6">
@@ -121,50 +149,42 @@ export default function Chronicles() {
               <h2 className="font-display text-xl text-stone-900 dark:text-stone-100">Featured Chronicles</h2>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <Link
-                to="/chronicle/the-performance-review"
-                className="group bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800"
-              >
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full">
-                      Featured
+            <div className="grid md:grid-cols-3 gap-6">
+              {staticChronicles.map((chronicle) => (
+                <Link
+                  key={chronicle.id}
+                  to={chronicle.href!}
+                  className="group bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800"
+                >
+                  <div className="aspect-[16/10] overflow-hidden relative">
+                    <img
+                      src={chronicle.image!}
+                      alt={chronicle.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <div className="absolute bottom-3 left-3">
+                      <span className="px-2 py-1 bg-amber-600 text-white text-xs font-medium rounded-full">
+                        Featured
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-stone-500 text-sm mb-2">
+                      {chronicle.published_at && format(new Date(chronicle.published_at), "MMMM d, yyyy")}
+                    </p>
+                    <h3 className="font-display text-xl text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">
+                      {chronicle.title}
+                    </h3>
+                    <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 font-serif mb-4">
+                      {chronicle.content.substring(0, 100)}...
+                    </p>
+                    <span className="inline-flex items-center gap-2 text-amber-600 text-sm font-medium group-hover:gap-3 transition-all">
+                      Read Chronicle <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>
-                  <h3 className="font-display text-xl text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">
-                    The Performance Review
-                  </h3>
-                  <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 font-serif mb-4">
-                    Marcus had survived twelve quarters. In the arena, they called him Marcellus the Adequate...
-                  </p>
-                  <span className="inline-flex items-center gap-2 text-amber-600 text-sm font-medium group-hover:gap-3 transition-all">
-                    Read Chronicle <ArrowRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </Link>
-
-              <Link
-                to="/chronicle/the-all-hands-meeting"
-                className="group bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800"
-              >
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full">
-                      Featured
-                    </span>
-                  </div>
-                  <h3 className="font-display text-xl text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">
-                    The All-Hands Meeting
-                  </h3>
-                  <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 font-serif mb-4">
-                    When the Emperor summons all citizens to the Colosseum, attendance is mandatory...
-                  </p>
-                  <span className="inline-flex items-center gap-2 text-amber-600 text-sm font-medium group-hover:gap-3 transition-all">
-                    Read Chronicle <ArrowRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </Link>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
@@ -213,16 +233,17 @@ export default function Chronicles() {
                       {storiesByYear[year].map((story) => (
                         <Link
                           key={story.id}
-                          to={`/blog/${story.id}`}
+                          to={story.href || `/blog/${story.id}`}
                           className="group bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800"
                         >
                           {story.image ? (
-                            <div className="aspect-[16/10] overflow-hidden">
+                            <div className="aspect-[16/10] overflow-hidden relative">
                               <img
                                 src={story.image}
                                 alt={story.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                             </div>
                           ) : (
                             <div className="aspect-[16/10] bg-gradient-to-br from-amber-100 to-stone-200 dark:from-amber-900/20 dark:to-stone-800 flex items-center justify-center">

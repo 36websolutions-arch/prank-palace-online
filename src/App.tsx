@@ -2,10 +2,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import Home from "./pages/Home";
+import Home2 from "./pages/Home2";
 import Story from "./pages/Story";
 import PerformanceReview from "./pages/PerformanceReview";
 import TheAllHandsMeeting from "./pages/TheAllHandsMeeting";
@@ -41,7 +42,9 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home2 />} />
+              <Route path="/home" element={<Navigate to="/" replace />} />
+              <Route path="/home2" element={<Home />} />
               <Route path="/story/:id" element={<Story />} />
               <Route path="/chronicle/the-performance-review" element={<PerformanceReview />} />
               <Route path="/chronicle/the-all-hands-meeting" element={<TheAllHandsMeeting />} />
