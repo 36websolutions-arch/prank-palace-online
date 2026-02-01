@@ -63,13 +63,13 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group shrink-0">
             <img
               src={logo}
               alt="Corporate Chronicle Logo"
               className="h-10 w-10 object-contain"
             />
-            <div className="flex flex-col">
+            <div className="hidden sm:flex flex-col">
               <span className="font-display text-xl text-stone-900 dark:text-stone-100">The Corporate</span>
               <span className="font-display text-sm text-amber-600 -mt-1">Chronicle</span>
             </div>
@@ -191,8 +191,8 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Mobile: Chronicles + Instagram + Menu Toggle */}
-          <div className="flex items-center gap-1 md:hidden">
+          {/* Mobile: Chronicles + Instagram + Menu Toggle - Centered */}
+          <div className="flex flex-1 items-center justify-center gap-2 md:hidden">
             <Link to="/chronicles">
               <Button
                 variant="ghost"
