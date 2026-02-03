@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { staticChronicles, Blog } from "@/data/chronicles";
 import {
   Scroll,
   Crown,
@@ -188,6 +191,36 @@ function DrawUnderline({ className = "" }: { className?: string }) {
 export default function Home2() {
   const [email, setEmail] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [recentChronicles, setRecentChronicles] = useState<Blog[]>([]);
+
+  useEffect(() => {
+    fetchLatestChronicles();
+  }, []);
+
+  const fetchLatestChronicles = async () => {
+    // Fetch from Supabase
+    const { data } = await supabase
+      .from("blogs")
+      .select("*")
+      .eq("is_published", true)
+      .order("published_at", { ascending: false })
+      .limit(5);
+
+    const dbStories = (data || []) as Blog[];
+
+    // Combine and sort
+    const allStories = [...staticChronicles, ...dbStories]
+      .sort((a, b) => {
+        const dateA = new Date(a.published_at || 0).getTime();
+        const dateB = new Date(b.published_at || 0).getTime();
+        return dateB - dateA;
+      });
+
+    setRecentChronicles(allStories);
+  };
+
+  const topChronicle = recentChronicles[0];
+  const moreChronicles = recentChronicles.slice(1, 3);
 
   // Parallax effect on mouse move
   useEffect(() => {
@@ -348,7 +381,7 @@ export default function Home2() {
                 </div>
               </FadeUp>
 
-                          </div>
+            </div>
           </div>
 
           {/* Scroll indicator */}
@@ -399,36 +432,44 @@ export default function Home2() {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Main Featured Story */}
               <FadeUp className="lg:col-span-2">
-                <Link
-                  to="/chronicle/the-performance-review"
-                  className="group block bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200 dark:border-stone-800 transform hover:-translate-y-1"
-                >
-                  <div className="aspect-[16/9] overflow-hidden relative">
-                    <img
-                      src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&h=500&fit=crop"
-                      alt="The Performance Review"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  </div>
-                  <div className="p-6 lg:p-8">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full uppercase tracking-wider">
-                        Featured Chronicle
-                      </span>
-                      <span className="text-stone-500 text-sm">January 30, 2026</span>
+                {topChronicle ? (
+                  <Link
+                    to={topChronicle.href || `/blog/${topChronicle.id}`}
+                    className="group block bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200 dark:border-stone-800 transform hover:-translate-y-1"
+                  >
+                    <div className="aspect-[16/9] overflow-hidden relative">
+                      <img
+                        src={topChronicle.image || "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&h=500&fit=crop"}
+                        alt={topChronicle.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     </div>
-                    <h3 className="font-display text-2xl lg:text-3xl mb-4 text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">
-                      The Performance Review
-                    </h3>
-                    <p className="text-stone-600 dark:text-stone-400 mb-4 line-clamp-3 font-serif">
-                      Marcus had survived twelve quarters. In the arena, they called him Marcellus the Adequate — not because he was merely adequate, but because adequacy was the highest praise the Senate would allow...
-                    </p>
-                    <span className="inline-flex items-center gap-2 text-amber-600 font-medium group-hover:gap-3 transition-all">
-                      Continue Reading <ArrowRight className="h-4 w-4" />
-                    </span>
+                    <div className="p-6 lg:p-8">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full uppercase tracking-wider">
+                          Featured Chronicle
+                        </span>
+                        <span className="text-stone-500 text-sm">
+                          {topChronicle.published_at && format(new Date(topChronicle.published_at), "MMMM d, yyyy")}
+                        </span>
+                      </div>
+                      <h3 className="font-display text-2xl lg:text-3xl mb-4 text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">
+                        {topChronicle.title}
+                      </h3>
+                      <p className="text-stone-600 dark:text-stone-400 mb-4 line-clamp-3 font-serif">
+                        {topChronicle.content.substring(0, 150)}...
+                      </p>
+                      <span className="inline-flex items-center gap-2 text-amber-600 font-medium group-hover:gap-3 transition-all">
+                        Continue Reading <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </Link>
+                ) : (
+                  <div className="h-full flex items-center justify-center bg-stone-100 dark:bg-stone-900 rounded-lg border border-dashed border-stone-300">
+                    <p className="text-stone-500">Loading archives...</p>
                   </div>
-                </Link>
+                )}
               </FadeUp>
 
               {/* Sidebar */}
@@ -581,41 +622,28 @@ export default function Home2() {
             </FadeUp>
 
             <div className="grid md:grid-cols-2 gap-6">
-              {[
-                {
-                  title: "The All-Hands Meeting",
-                  date: "January 31, 2026",
-                  href: "/chronicle/the-all-hands-meeting",
-                  excerpt: "The horn sounded at the third hour. Attendance was mandatory. Enthusiasm was expected...",
-                  image: "https://images.unsplash.com/photo-1529260830199-42c24126f198?w=800&h=500&fit=crop",
-                },
-                {
-                  title: "The Return to Office",
-                  date: "February 1, 2026",
-                  href: "/chronicle/the-return-to-office",
-                  excerpt: "The Forum was remodeled, the banners were hung, and the Senate declared the return mandatory...",
-                  image: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&h=500&fit=crop",
-                },
-              ].map((chronicle, i) => (
-                <FadeUp key={chronicle.title} delay={i * 0.1}>
+              {moreChronicles.map((chronicle, i) => (
+                <FadeUp key={chronicle.id} delay={i * 0.1}>
                   <Link
-                    to={chronicle.href}
+                    to={chronicle.href || `/blog/${chronicle.id}`}
                     className="group flex bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800"
                   >
                     <div className="w-32 md:w-40 flex-shrink-0 overflow-hidden relative">
                       <img
-                        src={chronicle.image}
+                        src={chronicle.image || "https://images.unsplash.com/photo-1555462542-a8a1e94b1617?w=800&h=500&fit=crop"}
                         alt={chronicle.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
                     <div className="p-4 flex-1">
-                      <p className="text-stone-500 text-xs mb-1">{chronicle.date}</p>
+                      <p className="text-stone-500 text-xs mb-1">
+                        {chronicle.published_at && format(new Date(chronicle.published_at), "MMMM d, yyyy")}
+                      </p>
                       <h3 className="font-display text-lg text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">
                         {chronicle.title}
                       </h3>
                       <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 font-serif">
-                        {chronicle.excerpt}
+                        {chronicle.content.substring(0, 100)}...
                       </p>
                     </div>
                   </Link>
@@ -719,10 +747,10 @@ export default function Home2() {
               </div>
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Newsletter Section */}
-        <section id="newsletter" className="py-24 bg-gradient-to-b from-amber-50 to-stone-100 dark:from-amber-950/20 dark:to-stone-900 relative overflow-hidden">
+        < section id="newsletter" className="py-24 bg-gradient-to-b from-amber-50 to-stone-100 dark:from-amber-950/20 dark:to-stone-900 relative overflow-hidden" >
           <div className="absolute inset-0 opacity-[0.03]" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
           }} />
@@ -775,10 +803,10 @@ export default function Home2() {
               </FadeUp>
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Instagram CTA */}
-        <section className="py-20">
+        < section className="py-20" >
           <div className="container mx-auto px-4">
             <FadeUp>
               <div className="max-w-4xl mx-auto">
@@ -816,10 +844,10 @@ export default function Home2() {
               </div>
             </FadeUp>
           </div>
-        </section>
-      </main>
+        </section >
+      </main >
 
       <Footer />
-    </div>
+    </div >
   );
 }

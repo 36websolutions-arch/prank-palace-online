@@ -1,0 +1,38 @@
+[
+  {
+    "id": "12c32d46-d871-456e-acc4-142872887876",
+    "name": "Modern Cat Magazine",
+    "price": 25,
+    "type": "subscription",
+    "image": "https://xfptozziptcpvhtkezba.supabase.co/storage/v1/object/public/product-images/products/367a0158-6d68-4e08-bd1f-d27836e366be.jpg",
+    "description": "Modern Cat Magazine is a lifestyle publication for cat enthusiasts and unsuspecting recipients.",
+    "digital_content": null,
+    "created_at": "2026-01-13T02:38:16.308634+00:00",
+    "updated_at": "2026-01-13T02:38:16.308634+00:00",
+    "subscription_options": [
+      {
+        "name": "2 years subscription",
+        "price": 25,
+        "description": "Modern Cat Magazine is a lifestyle publication for cat enthusiasts and unsuspecting recipients."
+      }
+    ]
+  },
+  {
+    "id": "5249635c-d7d4-409f-bef6-aed8fd4db65a",
+    "name": "Modern Dog Magazine",
+    "price": 25,
+    "type": "subscription",
+    "image": "https://xfptozziptcpvhtkezba.supabase.co/storage/v1/object/public/product-images/products/35cfd767-7de7-4852-aa03-c67e89a98e14.png",
+    "description": "Modern Dog Magazine explores the modern canine lifestyle, featuring wellness tips, training advice, and bi-annual confusion delivered straight to their office",
+    "digital_content": null,
+    "created_at": "2026-01-13T02:39:53.818095+00:00",
+    "updated_at": "2026-01-13T02:39:53.818095+00:00",
+    "subscription_options": [
+      {
+        "name": "2 years subscription",
+        "price": 25,
+        "description": "Modern Dog Magazine explores the modern canine lifestyle, featuring wellness tips, training advice, and bi-annual confusion delivered straight to their office"
+      }
+    ]
+  }
+]

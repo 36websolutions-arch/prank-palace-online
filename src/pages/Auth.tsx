@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { useNavigate, Navigate, Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate, Navigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -35,8 +35,19 @@ export default function Auth() {
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
-  // Don't redirect if we're in the middle of signing up
-  if (user && !isSigningUp.current) return <Navigate to="/" replace />;
+  const location = useLocation();
+  const from = (location.state as any)?.from?.pathname || "/";
+
+  // Check for admin redirect
+  useEffect(() => {
+    if (user && !loading && !isSigningUp.current) {
+      // If coming from admin, or is admin, go to admin
+      // Note: 'isAdmin' comes from useAuth, which might be slightly delayed after login
+      // We will trust the 'from' state or default to home, 
+      // but if they are really an admin, the Navbar will show the link.
+      navigate(from, { replace: true });
+    }
+  }, [user, loading, from, navigate]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,11 +136,11 @@ export default function Auth() {
           }).catch(err => console.error("Failed to send welcome email:", err));
 
           toast({ title: "Welcome, Citizen!", description: "Your journey with the Chronicle begins now." });
-          navigate("/", { replace: true });
+          navigate(from, { replace: true });
           isSigningUp.current = false;
         } else {
           toast({ title: "Welcome back, Citizen!", description: "The Senate awaits." });
-          navigate("/", { replace: true });
+          navigate(from, { replace: true });
         }
       }
     } catch (err) {

@@ -11,6 +11,7 @@ import Story from "./pages/Story";
 import PerformanceReview from "./pages/PerformanceReview";
 import TheAllHandsMeeting from "./pages/TheAllHandsMeeting";
 import TheReturnToOffice from "./pages/TheReturnToOffice";
+import TheDepartmentOfImperialEfficiency from "./pages/TheDepartmentOfImperialEfficiency";
 import Auth from "./pages/Auth";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/chronicle/the-performance-review" element={<PerformanceReview />} />
               <Route path="/chronicle/the-all-hands-meeting" element={<TheAllHandsMeeting />} />
               <Route path="/chronicle/the-return-to-office" element={<TheReturnToOffice />} />
+              <Route path="/chronicle/the-department-of-imperial-efficiency" element={<TheDepartmentOfImperialEfficiency />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />

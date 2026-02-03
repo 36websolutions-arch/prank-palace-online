@@ -1,236 +1,130 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+
+const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Topic rotation list for chronicles
-const TOPICS = [
-  {
-    title: "The Team Building Exercise",
-    description: "Trust falls, escape rooms, and mandatory bonding",
-    topic: "team building exercises",
-  },
-  {
-    title: "The Open Office",
-    description: "No walls, no privacy, no escape",
-    topic: "the open office plan",
-  },
-  {
-    title: "The Unlimited PTO Policy",
-    description: "All the time off you want, if you never take it",
-    topic: "unlimited PTO policies",
-  },
-  {
-    title: "The Return to Office",
-    description: "The commute is back, but why?",
-    topic: "return to office mandates",
-  },
-  {
-    title: "The Annual Review",
-    description: "When arbitrary numbers determine your worth",
-    topic: "annual performance reviews",
-  },
-  {
-    title: "The Pizza Party",
-    description: "Celebration during crisis",
-    topic: "pizza parties as compensation",
-  },
-  {
-    title: "The Reorg",
-    description: "Same problems, new org chart",
-    topic: "corporate reorganizations",
-  },
-  {
-    title: "The Exit Interview",
-    description: "The final performance before freedom",
-    topic: "exit interviews",
-  },
-  {
-    title: "The Mandatory Training",
-    description: "Click next to continue existing",
-    topic: "mandatory compliance training",
-  },
-  {
-    title: "The Town Hall Q&A",
-    description: "Questions pre-approved for your protection",
-    topic: "town hall Q&A sessions",
-  },
-];
+const SYSTEM_PROMPT = `You are 'The Corporate Chronicle', a satirical publication that covers modern events—corporate, political, and cultural—as if they were dispatches from the Roman Empire.
 
-const SYSTEM_PROMPT = `You are a satirical writer for The Corporate Chronicle. You write darkly humorous stories that parallel the Roman Empire with modern corporate culture.
+TONE & STYLE:
+- Sharp, understated, slightly nihilistic. Dry wit, not slapstick.
+- Avoid obvious jokes. The humor comes from the deadpan absurdity of treating mundane modern horrors with historical gravitas.
+- Meetings are military campaigns. Performance reviews are public executions. Layoffs are purges. CEOs are Emperors. Politicians are Senators scheming for power.
+- World leaders and tech billionaires should be given Roman-esque names (e.g., Elonius Muskus, Consul Zuckerbergus, Emperor Trumpicus, Senator Bidus the Elder).
+- End each chronicle with a quiet but devastating realization—something that lingers.
 
-Your writing style:
-- Sharp but empathetic satire (not mean-spirited)
-- Dialogue-heavy narrative
-- Characters have Roman names but speak in corporate doublespeak
-- Always include a "THE PARALLEL" section that connects to modern office life
-- End with "The Corporate Chronicle / Satire Since Rome"
+VOCABULARY:
+- "The Cloud" → "The Aether"
+- "AI" → "The Oracle" or "Machina Intelligentia"
+- "Stocks/Crypto" → "Denarii"
+- "Social Media" → "The Forum"
+- "HR" → "The Praetorian Guard"
+- "Quarterly Earnings" → "The Tribute"
 
-Character mappings:
-- Gladiators = Employees
-- Senate/Senators = Executives/Leadership
-- Arena = Office/Workplace
-- Emperor = CEO
-- Centurions = Middle Management
-- Forum = All-Hands Meeting
-- Scrolls = Emails/Slack
-- Denarii = Salary
-- Lions = Layoffs/PIPs
+RECURRING CHARACTERS (use when relevant):
+- Merchant Elonius (Elon Musk) - erratic, claims divinity
+- Consul Zuckerbergus (Zuckerberg) - awkward, obsessed with the Metaversus
+- Marcus - the everyman worker, exhausted, hoping for a pension that will never come
+- Senator Bezosicus - controls all trade routes
 
-Structure your story as:
-1. Opening scene in Roman setting
-2. Conflict/incident revealing corporate absurdity
-3. Dialogue with corporate speak in Roman terms
-4. Section break (---)
-5. Escalation
-6. "THE PARALLEL" header followed by modern workplace version
-7. Reflection on participation and choice
-8. End with "The Corporate Chronicle / Satire Since Rome"
+TASK:
+Write a ~400 word satirical chronicle based on the provided topic.
+Output MUST be valid JSON:
+{
+  "title": "Roman-sounding title",
+  "content": "The full story text...",
+  "image_prompt": "A detailed description for an AI image generator to create a header image in classical Roman art style (oil painting, marble sculpture, or mosaic style) depicting the scene described in the chronicle. Be specific about composition, lighting, and Roman aesthetic elements."
+}
+Return ONLY the JSON object, no preamble or markdown.`;
 
-Length: 1500-2000 words`;
-
-const handler = async (req: Request): Promise<Response> => {
+Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // Verify cron secret to prevent unauthorized calls
-    const cronSecret = Deno.env.get("CRON_SECRET");
-    const authHeader = req.headers.get("Authorization");
-
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      console.error("Unauthorized request - invalid or missing cron secret");
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error("ANTHROPIC_API_KEY not configured in Supabase secrets");
     }
 
-    const xaiKey = Deno.env.get("XAI_API_KEY");
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const { topic, additionalContext } = await req.json();
 
-    if (!xaiKey) {
-      throw new Error("XAI_API_KEY not configured");
-    }
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error("Supabase credentials not configured");
+    if (!topic) {
+      throw new Error("Topic is required");
     }
 
-    // Initialize Supabase client with service role
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const userPrompt = `
+Topic: "${topic}"
+${additionalContext ? `\nAdditional Context/Angle: ${additionalContext}` : ""}
 
-    // Get count of existing chronicles to rotate topics
-    const { count } = await supabase
-      .from("blogs")
-      .select("*", { count: "exact", head: true });
+Write a new chronicle about this topic. Make it sharp and memorable.
+`;
 
-    const topicIndex = (count || 0) % TOPICS.length;
-    const selectedTopic = TOPICS[topicIndex];
+    console.log(`Generating chronicle for topic: ${topic}`);
 
-    console.log(`Generating chronicle #${(count || 0) + 1}: ${selectedTopic.title}`);
-
-    // Call Grok API (xAI - OpenAI-compatible format)
-    const grokResponse = await fetch("https://api.x.ai/v1/chat/completions", {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${xaiKey}`,
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "grok-beta",
-        max_tokens: 4096,
-        messages: [
-          {
-            role: "system",
-            content: SYSTEM_PROMPT,
-          },
-          {
-            role: "user",
-            content: `Write a Corporate Chronicle about "${selectedTopic.topic}".
-
-Title: "${selectedTopic.title}"
-Subtitle: "A Chronicle from the Corporate Empire"
-
-The story should satirize ${selectedTopic.description.toLowerCase()} by showing how it would look in ancient Rome.
-
-Remember to:
-- Create a vivid protagonist with a Roman name
-- Include plenty of dialogue
-- Have a clear "THE PARALLEL" section
-- End with the Chronicle sign-off
-
-Write the complete story now.`,
-          },
-        ],
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: userPrompt }],
       }),
     });
 
-    if (!grokResponse.ok) {
-      const errorData = await grokResponse.text();
-      console.error("Grok API error:", errorData);
-      throw new Error(`Grok API error: ${grokResponse.status}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Anthropic API error:", errorText);
+      throw new Error(`Anthropic API error: ${response.status}`);
     }
 
-    const grokData = await grokResponse.json();
-    const generatedContent = grokData.choices[0].message.content;
+    const data = await response.json();
+    const textContent = data.content[0]?.text;
 
-    console.log("Chronicle generated, saving to database...");
-
-    // Get admin user for author_id (first admin user)
-    const { data: adminUser } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("is_admin", true)
-      .limit(1)
-      .single();
-
-    // Insert as draft into blogs table
-    const { data: blog, error: insertError } = await supabase
-      .from("blogs")
-      .insert({
-        title: selectedTopic.title,
-        content: generatedContent,
-        is_published: false, // Save as draft for human review
-        author_id: adminUser?.id || null,
-      })
-      .select()
-      .single();
-
-    if (insertError) {
-      console.error("Database insert error:", insertError);
-      throw new Error(`Database error: ${insertError.message}`);
+    if (!textContent) {
+      throw new Error("No content in Claude response");
     }
 
-    console.log("Chronicle saved as draft:", blog.id);
+    // Parse the JSON from Claude's response
+    const cleanedContent = textContent.replace(/```json/g, "").replace(/```/g, "").trim();
+
+    let chronicle;
+    try {
+      chronicle = JSON.parse(cleanedContent);
+    } catch (parseError) {
+      console.error("Failed to parse Claude response:", cleanedContent);
+      throw new Error("Failed to parse AI response as JSON");
+    }
+
+    console.log(`Chronicle generated: ${chronicle.title}`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Chronicle generated and saved as draft",
-        blog_id: blog.id,
-        title: selectedTopic.title,
+        chronicle,
       }),
       {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error generating chronicle:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ success: false, error: error.message }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   }
-};
-
-serve(handler);
+});

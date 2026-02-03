@@ -7,8 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Pencil, Trash2, Eye, EyeOff, Plus, X, Upload } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff, Plus, X, Upload, Sparkles } from "lucide-react";
 import { format } from "date-fns";
+import { staticChronicles, Blog as StaticBlog } from "@/data/chronicles";
 
 interface Blog {
   id: string;
@@ -18,6 +19,7 @@ interface Blog {
   published_at: string | null;
   is_published: boolean;
   created_at: string;
+  isStatic?: boolean;
 }
 
 export function ManageBlogsTab() {
@@ -26,7 +28,7 @@ export function ManageBlogsTab() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
-  
+
   // Form state
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -35,20 +37,79 @@ export function ManageBlogsTab() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // AI Generation state
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [aiTopic, setAiTopic] = useState("");
+  const [aiContext, setAiContext] = useState("");
+  const [generating, setGenerating] = useState(false);
+  const [generatedImagePrompt, setGeneratedImagePrompt] = useState<string | null>(null);
+
   useEffect(() => {
     fetchBlogs();
   }, []);
 
+  const generateWithAI = async () => {
+    if (!aiTopic.trim()) {
+      toast.error("Please enter a topic for the chronicle");
+      return;
+    }
+
+    setGenerating(true);
+    try {
+      const response = await supabase.functions.invoke("generate-chronicle", {
+        body: { topic: aiTopic, additionalContext: aiContext },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      const { chronicle } = response.data;
+
+      // Pre-fill the form with generated content
+      setTitle(chronicle.title);
+      setContent(chronicle.content);
+      setGeneratedImagePrompt(chronicle.image_prompt);
+      setShowAIModal(false);
+      setShowForm(true);
+      setAiTopic("");
+      setAiContext("");
+
+      toast.success("Chronicle generated! Review and publish when ready. 📜");
+    } catch (error: any) {
+      console.error("AI generation error:", error);
+      toast.error(`Generation failed: ${error.message}`);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   const fetchBlogs = async () => {
+    // Fetch DB blogs
     const { data, error } = await supabase
       .from("blogs")
       .select("*")
       .order("created_at", { ascending: false });
 
+    // Convert static chronicles to Blog format
+    const staticBlogs: Blog[] = staticChronicles.map(c => ({
+      id: c.id,
+      title: c.title,
+      content: c.content,
+      image: c.image,
+      published_at: c.published_at,
+      is_published: true,
+      created_at: c.published_at || new Date().toISOString(),
+      isStatic: true,
+    }));
+
     if (error) {
-      toast.error("Failed to fetch blogs");
+      toast.error("Failed to fetch blogs from database");
+      // Still show static chronicles
+      setBlogs(staticBlogs);
     } else {
-      setBlogs(data || []);
+      // Merge: DB blogs first, then static ones
+      setBlogs([...(data || []), ...staticBlogs]);
     }
     setLoading(false);
   };
@@ -104,7 +165,7 @@ export function ManageBlogsTab() {
 
     try {
       let imageUrl = editingBlog?.image || null;
-      
+
       if (imageFile) {
         imageUrl = await uploadImage(imageFile);
         if (!imageUrl && imageFile) {
@@ -197,17 +258,106 @@ export function ManageBlogsTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <h2 className="font-display text-2xl">Manage Chronicles 📜</h2>
-        <Button
-          onClick={() => setShowForm(!showForm)}
-          className={showForm ? "gap-2" : "gap-2 bg-amber-600 hover:bg-amber-700 text-white"}
-          variant={showForm ? "outline" : "default"}
-        >
-          {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-          {showForm ? "Cancel" : "New Chronicle"}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setShowAIModal(true)}
+            className="gap-2 bg-purple-600 hover:bg-purple-700 text-white"
+            disabled={generating}
+          >
+            <Sparkles className="h-4 w-4" />
+            {generating ? "Generating..." : "Generate with AI"}
+          </Button>
+          <Button
+            onClick={() => setShowForm(!showForm)}
+            className={showForm ? "gap-2" : "gap-2 bg-amber-600 hover:bg-amber-700 text-white"}
+            variant={showForm ? "outline" : "default"}
+          >
+            {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+            {showForm ? "Cancel" : "New Chronicle"}
+          </Button>
+        </div>
       </div>
+
+      {/* AI Generation Modal */}
+      {showAIModal && (
+        <Card className="border-purple-200 dark:border-purple-900 bg-purple-50/50 dark:bg-purple-950/20">
+          <CardHeader>
+            <CardTitle className="font-display flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-purple-600" />
+              Generate Chronicle with AI
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="ai-topic">Topic / News Event *</Label>
+              <Input
+                id="ai-topic"
+                value={aiTopic}
+                onChange={(e) => setAiTopic(e.target.value)}
+                placeholder="e.g., Tech layoffs, Return to office mandates, AI taking jobs..."
+                disabled={generating}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ai-context">Additional Context (optional)</Label>
+              <Textarea
+                id="ai-context"
+                value={aiContext}
+                onChange={(e) => setAiContext(e.target.value)}
+                placeholder="Any specific angle, characters to include, or details..."
+                rows={3}
+                disabled={generating}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowAIModal(false)}
+                variant="outline"
+                disabled={generating}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={generateWithAI}
+                disabled={generating || !aiTopic.trim()}
+                className="gap-2 bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                <Sparkles className="h-4 w-4" />
+                {generating ? "Consulting the Oracle..." : "Generate Chronicle"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Generated Image Prompt Display */}
+      {generatedImagePrompt && showForm && (
+        <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">
+              🎨 AI Image Prompt (copy to generate image)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-blue-900 dark:text-blue-100 font-mono bg-blue-100 dark:bg-blue-900/50 p-3 rounded">
+              {generatedImagePrompt}
+            </p>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="mt-2 text-blue-600"
+              onClick={() => {
+                navigator.clipboard.writeText(generatedImagePrompt);
+                toast.success("Image prompt copied!");
+              }}
+            >
+              Copy to Clipboard
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {showForm && (
         <Card className="border-primary/20">
@@ -219,23 +369,23 @@ export function ManageBlogsTab() {
           <CardContent>
             <form className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title">Edict Title</Label>
                 <Input
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter an attention-grabbing title..."
+                  placeholder="Proclaim the news from the Forum..."
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="content">Content</Label>
+                <Label htmlFor="content">Scroll Content</Label>
                 <Textarea
                   id="content"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder="Write your blog post here... Share the chaos! 😈"
+                  placeholder="Scribe your chronicle here... The citizens are waiting! 🏛️"
                   rows={10}
                   required
                 />
@@ -323,15 +473,20 @@ export function ManageBlogsTab() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-display text-xl">{blog.title}</h3>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full ${
-                            blog.is_published
+                        {blog.isStatic ? (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">
+                            Static
+                          </span>
+                        ) : (
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full ${blog.is_published
                               ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
                               : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
-                          }`}
-                        >
-                          {blog.is_published ? "Published" : "Draft"}
-                        </span>
+                              }`}
+                          >
+                            {blog.is_published ? "Published" : "Draft"}
+                          </span>
+                        )}
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">
                         {blog.published_at
@@ -343,33 +498,42 @@ export function ManageBlogsTab() {
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => togglePublish(blog)}
-                        title={blog.is_published ? "Unpublish" : "Publish"}
-                      >
-                        {blog.is_published ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleEdit(blog)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => handleDelete(blog.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {!blog.isStatic && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => togglePublish(blog)}
+                            title={blog.is_published ? "Unpublish" : "Publish"}
+                          >
+                            {blog.is_published ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleEdit(blog)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => handleDelete(blog.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
+                      {blog.isStatic && (
+                        <span className="text-xs text-muted-foreground italic px-2">
+                          Edit in code
+                        </span>
+                      )}
                     </div>
                   </div>
                 </CardContent>

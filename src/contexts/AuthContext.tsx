@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           // Defer profile fetch
           setTimeout(() => {
@@ -67,23 +67,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { data: profile } = await supabase
         .from("profiles")
-        .select("nickname, citizen_tier, total_donated")
+        .select("nickname, role") // Fetch role from profiles
         .eq("id", userId)
         .maybeSingle();
 
       if (profile) {
         setNickname(profile.nickname);
-        setCitizenTier((profile.citizen_tier as CitizenTier) || "citizen");
-        setTotalDonated(profile.total_donated || 0);
+        setCitizenTier("citizen");
+        setTotalDonated(0);
+
+        // Check profile role directly
+        if (profile.role === "admin") {
+          setIsAdmin(true);
+        }
       }
 
+      // Also check user_roles table (legacy/rbac)
       const { data: roles } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", userId);
 
-      if (roles) {
-        setIsAdmin(roles.some(r => r.role === "admin"));
+      if (roles && roles.length > 0) {
+        setIsAdmin(prev => prev || roles.some(r => r.role === "admin"));
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -98,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (email: string, password: string, nickname: string, phone?: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -110,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       },
     });
-    
+
     return { error: error as Error | null };
   };
 
@@ -119,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
     });
-    
+
     return { error: error as Error | null };
   };
 

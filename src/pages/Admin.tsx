@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -13,13 +13,36 @@ import { ManageProductsTab } from "@/components/admin/ManageProductsTab";
 import { ManageBlogsTab } from "@/components/admin/ManageBlogsTab";
 import { UserInfoTab } from "@/components/admin/UserInfoTab";
 import { Package, Zap, PlusCircle, Settings, RefreshCw, Users, FileText, Scroll } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Admin() {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading, nickname } = useAuth();
   const [activeTab, setActiveTab] = useState("digital-orders");
+  const location = useLocation();
 
-  if (!loading && !user) return <Navigate to="/auth" replace />;
-  if (!loading && !isAdmin) return <Navigate to="/" replace />;
+  // Show loading while auth or profile is being fetched
+  if (loading || (user && !nickname)) {
+    return (
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-8">
+          <div className="mb-8">
+            <Skeleton className="h-10 w-64 mb-2" />
+            <Skeleton className="h-5 w-96" />
+          </div>
+          <div className="flex gap-2 mb-6">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <Skeleton className="h-64 w-full rounded-lg" />
+        </main>
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/auth" state={{ from: location }} replace />;
+  if (!isAdmin) return <Navigate to="/" replace />;
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
@@ -63,9 +86,9 @@ export default function Admin() {
               <Settings className="h-4 w-4" />
               <span className="hidden sm:inline">Manage</span>
             </TabsTrigger>
-            <TabsTrigger value="blogs" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900 data-[state=active]:text-amber-600">
-              <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Blogs</span>
+            <TabsTrigger value="chronicles" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900 data-[state=active]:text-amber-600">
+              <Scroll className="h-4 w-4" />
+              <span className="hidden sm:inline">Chronicles</span>
             </TabsTrigger>
           </TabsList>
 
@@ -90,7 +113,7 @@ export default function Admin() {
           <TabsContent value="manage-products">
             <ManageProductsTab />
           </TabsContent>
-          <TabsContent value="blogs">
+          <TabsContent value="chronicles">
             <ManageBlogsTab />
           </TabsContent>
         </Tabs>
