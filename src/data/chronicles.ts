@@ -12,7 +12,7 @@ export const staticChronicles: Blog[] = [
     {
         id: "the-department-of-imperial-efficiency",
         title: "The Department of Imperial Efficiency",
-        image: "/src/assets/department_of_imperial_efficiency.png",
+        image: "/department_of_imperial_efficiency.png",
         published_at: "2026-02-02",
         content: "The Emperor has appointed Merchant Elonius to the new Department of Imperial Efficiency. His first act? Firing the Aqueduct Guild.",
         href: "/chronicle/the-department-of-imperial-efficiency",
