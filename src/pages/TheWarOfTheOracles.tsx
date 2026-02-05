@@ -216,7 +216,7 @@ export default function TheWarOfTheOracles() {
               <div className="flex items-center justify-center gap-6 text-stone-400 text-sm">
                 <span className="flex items-center gap-2">
                   <Scroll className="h-4 w-4" />
-                  February IV, MMXXVI
+                  February V, MMXXVI
                 </span>
                 <span className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />

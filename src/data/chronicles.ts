@@ -13,7 +13,7 @@ export const staticChronicles: Blog[] = [
         id: "the-war-of-the-oracles",
         title: "The War of the Oracles",
         image: "/war_of_the_oracles.png",
-        published_at: "2026-02-04",
+        published_at: "2026-02-05",
         content: "Consul Altmanius is 'exceptionally testy.' The Anthropic faction bought time during the Festival of the Superb Owl. The bread is expensive. The circuses are sponsored by venture capital.",
         href: "/chronicle/the-war-of-the-oracles",
         isStatic: true,
