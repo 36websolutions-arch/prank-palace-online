@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LikeButton } from "@/components/LikeButton";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Scroll,
@@ -317,10 +318,7 @@ export default function TheReturnToOffice() {
                   {/* Social sharing */}
                   <div className="flex items-center justify-between mb-8 pb-6 border-b border-stone-200 dark:border-stone-700">
                     <div className="flex items-center gap-3">
-                      <Button variant="ghost" size="sm" className="gap-2 text-stone-600 dark:text-stone-400">
-                        <Heart className="h-4 w-4" />
-                        Salute
-                      </Button>
+                      <LikeButton chronicleId="the-return-to-office" />
                       <Button variant="ghost" size="sm" className="gap-2 text-stone-600 dark:text-stone-400">
                         <Share2 className="h-4 w-4" />
                         Share
