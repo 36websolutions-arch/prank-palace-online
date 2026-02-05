@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { AmbientToasts } from "@/components/AmbientToasts";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -42,6 +43,7 @@ const App = () => (
         <CartProvider>
           <Toaster />
           <Sonner />
+          <AmbientToasts />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home2 />} />

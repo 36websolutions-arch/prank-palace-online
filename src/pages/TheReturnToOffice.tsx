@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LikeButton } from "@/components/LikeButton";
+import { ShareButton } from "@/components/ShareButton";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Scroll,
   ArrowLeft,
   Heart,
-  Share2,
   ShoppingBag,
   Instagram,
   BookOpen,
@@ -319,10 +319,7 @@ export default function TheReturnToOffice() {
                   <div className="flex items-center justify-between mb-8 pb-6 border-b border-stone-200 dark:border-stone-700">
                     <div className="flex items-center gap-3">
                       <LikeButton chronicleId="the-return-to-office" />
-                      <Button variant="ghost" size="sm" className="gap-2 text-stone-600 dark:text-stone-400">
-                        <Share2 className="h-4 w-4" />
-                        Share
-                      </Button>
+                      <ShareButton title="The Return to Office" />
                     </div>
                     <div className="text-xs text-stone-400 uppercase tracking-wider">
                       Scroll III of III
@@ -503,9 +500,11 @@ export default function TheReturnToOffice() {
                   <p className="text-stone-500 dark:text-stone-400 text-sm mb-4">
                     Help us keep exposing the absurdity. Every denarius counts.
                   </p>
-                  <Button className="w-full bg-amber-500 hover:bg-amber-400 text-stone-900 font-semibold">
-                    Support the Chronicle
-                  </Button>
+                  <Link to="/support">
+                    <Button className="w-full bg-amber-500 hover:bg-amber-400 text-stone-900 font-semibold">
+                      Support the Chronicle
+                    </Button>
+                  </Link>
                 </div>
 
                 {/* Products */}
