@@ -10,6 +10,24 @@ export interface Blog {
 
 export const staticChronicles: Blog[] = [
     {
+        id: "the-festivitas-of-oil",
+        title: "The Festivitas of Oil",
+        image: "/festivitas_of_oil.png",
+        published_at: "2026-02-08",
+        content: "One thousand amphorae of oil. A pool filled at the Montague Baths. The host takes the fall. The guests go home. And the Empire keeps turning, slick and unbothered.",
+        href: "/chronicle/the-festivitas-of-oil",
+        isStatic: true,
+    },
+    {
+        id: "the-scrolls-of-the-island",
+        title: "The Scrolls of the Island",
+        image: "/scrolls_of_the_island.png",
+        published_at: "2026-02-06",
+        content: "The Praetorian Guard released 3.5 million scrolls. The redactions used washable ink. The powerful got protection. The victims got none. Nothing happens. Nothing was ever going to happen.",
+        href: "/chronicle/the-scrolls-of-the-island",
+        isStatic: true,
+    },
+    {
         id: "the-war-of-the-oracles",
         title: "The War of the Oracles",
         image: "/war_of_the_oracles.png",
@@ -55,3 +73,12 @@ export const staticChronicles: Blog[] = [
         isStatic: true,
     },
 ];
+
+export const getPublishedChronicles = () => {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    return staticChronicles.filter((c) => {
+        if (!c.published_at) return true;
+        return new Date(c.published_at + "T00:00:00") <= today;
+    });
+};

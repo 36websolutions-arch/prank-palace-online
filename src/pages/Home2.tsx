@@ -6,7 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { staticChronicles, Blog } from "@/data/chronicles";
+import { getPublishedChronicles, Blog } from "@/data/chronicles";
 import {
   Scroll,
   Crown,
@@ -209,7 +209,7 @@ export default function Home2() {
     const dbStories = (data || []) as Blog[];
 
     // Combine and sort
-    const allStories = [...staticChronicles, ...dbStories]
+    const allStories = [...getPublishedChronicles(), ...dbStories]
       .sort((a, b) => {
         const dateA = new Date(a.published_at || 0).getTime();
         const dateB = new Date(b.published_at || 0).getTime();

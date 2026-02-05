@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Scroll, ArrowRight, Search, BookOpen, Calendar } from "lucide-react";
 import { format } from "date-fns";
-import { staticChronicles, Blog } from "@/data/chronicles";
+import { getPublishedChronicles, Blog } from "@/data/chronicles";
 
 
 
-// Use shared staticChronicles from data file
+// Use shared getPublishedChronicles() from data file
 
 export default function Chronicles() {
   const [dbStories, setDbStories] = useState<Blog[]>([]);
@@ -35,7 +35,7 @@ export default function Chronicles() {
   };
 
   // Combine static and database chronicles
-  const allStories = [...staticChronicles, ...dbStories];
+  const allStories = [...getPublishedChronicles(), ...dbStories];
 
   // Filter based on search
   const filteredStories = searchQuery.trim() === ""
@@ -114,7 +114,7 @@ export default function Chronicles() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-              {staticChronicles.map((chronicle) => (
+              {getPublishedChronicles().map((chronicle) => (
                 <Link
                   key={chronicle.id}
                   to={chronicle.href!}
