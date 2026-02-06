@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Navigate, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,25 @@ import { toast } from "@/hooks/use-toast";
 import { ArrowLeft, ShoppingBag, Gift, Lock, CreditCard, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { trackPurchase } from "@/lib/analytics";
+
+// Animation variants
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
+};
+
+const slideInRight = {
+  hidden: { opacity: 0, x: 40 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { delay: 0.3, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
 
 declare global {
   interface Window {
@@ -99,6 +119,7 @@ function StripePaymentForm({
   recipientName,
   shipAnonymous,
   phone,
+  email,
   deliveryDate,
   formValid,
   paymentIntentId,
@@ -108,6 +129,7 @@ function StripePaymentForm({
   recipientName: string;
   shipAnonymous: boolean;
   phone: string;
+  email: string;
   deliveryDate: string;
   formValid: boolean;
   paymentIntentId: string;
@@ -360,21 +382,36 @@ function FunnelCheckout() {
       <Navbar />
 
       <main className="flex-1 container mx-auto px-4 py-8">
-        <Link
-          to="/you-smell-like-shit"
-          className="inline-flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors mb-8"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Product
-        </Link>
+        <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
+          <Link
+            to="/you-smell-like-shit"
+            className="inline-flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors mb-8"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Product
+          </Link>
+        </motion.div>
 
-        <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-8">Checkout</h1>
+        <motion.h1
+          className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-8"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          Checkout
+        </motion.h1>
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left: Shipping + Payment */}
           <div className="space-y-6">
             {/* Shipping Form */}
-            <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6">
+            <motion.div
+              className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6"
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={1}
+            >
               <h2 className="font-display text-2xl text-stone-900 dark:text-stone-100 mb-6 flex items-center gap-2">
                 <ShoppingBag className="h-6 w-6 text-amber-600" />
                 Shipping Details
@@ -483,10 +520,16 @@ function FunnelCheckout() {
                   />
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Payment Section */}
-            <div className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6">
+            <motion.div
+              className="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 p-6"
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+              custom={2}
+            >
               <h2 className="font-display text-2xl text-stone-900 dark:text-stone-100 mb-6 flex items-center gap-2">
                 <CreditCard className="h-6 w-6 text-amber-600" />
                 Payment
@@ -519,17 +562,22 @@ function FunnelCheckout() {
                     recipientName={recipientName}
                     shipAnonymous={shipToFriend}
                     phone={form.phone}
+                    email={form.email}
                     deliveryDate={form.deliveryDate}
                     formValid={formValid}
                     paymentIntentId={paymentIntentId}
                   />
                 </Elements>
               )}
-            </div>
+            </motion.div>
           </div>
 
           {/* Right: Order Summary */}
-          <div>
+          <motion.div
+            variants={slideInRight}
+            initial="hidden"
+            animate="visible"
+          >
             <div className="bg-stone-100 dark:bg-stone-800 rounded-xl p-6 sticky top-24">
               <h2 className="font-display text-2xl text-stone-900 dark:text-stone-100 mb-6">Order Summary</h2>
 
@@ -598,7 +646,7 @@ function FunnelCheckout() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </main>
 

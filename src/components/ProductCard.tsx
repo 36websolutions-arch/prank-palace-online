@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { ShoppingCart, Zap, RefreshCw } from "lucide-react";
@@ -15,10 +15,17 @@ interface ProductCardProps {
 
 export function ProductCard({ id, name, price, image, type, description }: ProductCardProps) {
   const { addToCart } = useCart();
+  const navigate = useNavigate();
+
+  const isYsls = name.toLowerCase().includes("you smell like shit");
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isYsls) {
+      navigate("/you-smell-like-shit");
+      return;
+    }
     trackAddToCart(name, price);
     addToCart(id);
   };
@@ -28,7 +35,7 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
   };
 
   const productLink =
-    name.toLowerCase().includes("you smell like shit") ? "/you-smell-like-shit" :
+    isYsls ? "/you-smell-like-shit" :
     type === "subscription" ? `/subscription-checkout/${id}` :
     `/product/${id}`;
 

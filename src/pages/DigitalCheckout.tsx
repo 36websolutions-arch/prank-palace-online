@@ -249,8 +249,6 @@ export default function DigitalCheckout() {
     }).render("#paypal-button-container");
   }, [paypalLoaded, product, profile, user, navigate]);
 
-  if (!authLoading && !user) return <Navigate to="/auth" replace />;
-
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">

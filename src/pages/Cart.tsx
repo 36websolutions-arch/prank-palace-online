@@ -11,8 +11,6 @@ export default function Cart() {
   const { user, loading } = useAuth();
   const { items, totalPrice, removeFromCart, updateQuantity } = useCart();
 
-  if (!loading && !user) return <Navigate to="/auth" replace />;
-
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
       <Navbar />
