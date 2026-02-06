@@ -524,7 +524,7 @@ export default function YouSmellLikeShit() {
               )}
 
               {/* CTA */}
-              <GlowButton onClick={handleCheckout} className="w-full" size="xl">
+              <GlowButton onClick={() => handleCheckout()} className="w-full" size="xl">
                 SEND THE MESSAGE — ${getBundlePrice(bundleQty).toFixed(2)}
               </GlowButton>
 
@@ -846,7 +846,7 @@ export default function YouSmellLikeShit() {
               Do the right thing.
             </p>
 
-            <GlowButton onClick={handleCheckout} className="w-full max-w-md mx-auto" size="xl">
+            <GlowButton onClick={() => handleCheckout()} className="w-full max-w-md mx-auto" size="xl">
               SEND THE MESSAGE — $19.99
             </GlowButton>
 
@@ -889,7 +889,7 @@ export default function YouSmellLikeShit() {
             <span className="text-xl font-black text-white">$19.99</span>
             <span className="text-sm text-stone-500 line-through ml-2">$29.99</span>
           </div>
-          <GlowButton onClick={handleCheckout} className="flex-1" size="md">
+          <GlowButton onClick={() => handleCheckout()} className="flex-1" size="md">
             SEND THE MESSAGE
           </GlowButton>
         </div>
