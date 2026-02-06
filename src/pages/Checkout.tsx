@@ -275,12 +275,20 @@ function FunnelCheckout() {
   const [form, setForm] = useState({
     email: user?.email || "",
     phone: "",
-    address: "",
+    street: "",
+    apt: "",
+    city: "",
+    state: "",
+    zip: "",
     deliveryDate: "",
   });
   const [recipientForm, setRecipientForm] = useState({
     recipientName: "",
-    recipientAddress: "",
+    street: "",
+    apt: "",
+    city: "",
+    state: "",
+    zip: "",
   });
   const [formValid, setFormValid] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -299,10 +307,10 @@ function FunnelCheckout() {
   useEffect(() => {
     const emailValid = form.email.trim() !== "" && form.email.includes("@");
     const baseValid = emailValid && form.phone.trim() !== "" && form.deliveryDate !== "";
-    const addressValid = shipToFriend
-      ? recipientForm.recipientName.trim() !== "" && recipientForm.recipientAddress.trim() !== ""
-      : form.address.trim() !== "";
-    setFormValid(baseValid && addressValid);
+    const addressFields = shipToFriend
+      ? recipientForm.recipientName.trim() !== "" && recipientForm.street.trim() !== "" && recipientForm.city.trim() !== "" && recipientForm.state.trim() !== "" && recipientForm.zip.trim() !== ""
+      : form.street.trim() !== "" && form.city.trim() !== "" && form.state.trim() !== "" && form.zip.trim() !== "";
+    setFormValid(baseValid && addressFields);
   }, [form, shipToFriend, recipientForm]);
 
   // Create PaymentIntent when we have a valid order + user
@@ -312,7 +320,9 @@ function FunnelCheckout() {
     const createPaymentIntent = async () => {
       setLoadingPayment(true);
       try {
-        const shippingAddress = shipToFriend ? recipientForm.recipientAddress : form.address;
+        const buildAddress = (s: { street: string; apt: string; city: string; state: string; zip: string }) =>
+          [s.street, s.apt, s.city, `${s.state} ${s.zip}`].filter(Boolean).join(", ");
+        const shippingAddress = shipToFriend ? buildAddress(recipientForm) : buildAddress(form);
         const recipientName = shipToFriend ? recipientForm.recipientName : nickname || "Customer";
 
         const { data, error } = await supabase.functions.invoke("stripe-checkout", {
@@ -374,7 +384,9 @@ function FunnelCheckout() {
 
   const shippingCost = funnelOrder.bundleQty >= 2 ? 0 : 4.99;
   const finalTotal = funnelOrder.totalPrice + shippingCost;
-  const shippingAddress = shipToFriend ? recipientForm.recipientAddress : form.address;
+  const buildAddress = (s: { street: string; apt: string; city: string; state: string; zip: string }) =>
+    [s.street, s.apt, s.city, `${s.state} ${s.zip}`].filter(Boolean).join(", ");
+  const shippingAddress = shipToFriend ? buildAddress(recipientForm) : buildAddress(form);
   const recipientName = shipToFriend ? recipientForm.recipientName : nickname || "Customer";
 
   return (
@@ -453,13 +465,54 @@ function FunnelCheckout() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="recipientAddress" className="text-stone-700 dark:text-stone-300">Recipient's Address *</Label>
-                        <Textarea
-                          id="recipientAddress"
-                          placeholder="123 Main Street, City, State 12345"
-                          value={recipientForm.recipientAddress}
-                          onChange={(e) => setRecipientForm({ ...recipientForm, recipientAddress: e.target.value })}
-                          rows={3}
+                        <Label htmlFor="rStreet" className="text-stone-700 dark:text-stone-300">Street Address *</Label>
+                        <Input
+                          id="rStreet"
+                          placeholder="123 Main Street"
+                          value={recipientForm.street}
+                          onChange={(e) => setRecipientForm({ ...recipientForm, street: e.target.value })}
+                          className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="rApt" className="text-stone-700 dark:text-stone-300">Apt / Suite / Unit</Label>
+                        <Input
+                          id="rApt"
+                          placeholder="Apt 4B"
+                          value={recipientForm.apt}
+                          onChange={(e) => setRecipientForm({ ...recipientForm, apt: e.target.value })}
+                          className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="rCity" className="text-stone-700 dark:text-stone-300">City *</Label>
+                          <Input
+                            id="rCity"
+                            placeholder="New York"
+                            value={recipientForm.city}
+                            onChange={(e) => setRecipientForm({ ...recipientForm, city: e.target.value })}
+                            className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="rState" className="text-stone-700 dark:text-stone-300">State *</Label>
+                          <Input
+                            id="rState"
+                            placeholder="NY"
+                            value={recipientForm.state}
+                            onChange={(e) => setRecipientForm({ ...recipientForm, state: e.target.value })}
+                            className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="rZip" className="text-stone-700 dark:text-stone-300">ZIP Code *</Label>
+                        <Input
+                          id="rZip"
+                          placeholder="10001"
+                          value={recipientForm.zip}
+                          onChange={(e) => setRecipientForm({ ...recipientForm, zip: e.target.value })}
                           className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
                         />
                       </div>
@@ -471,16 +524,59 @@ function FunnelCheckout() {
                 </div>
 
                 {!shipToFriend && (
-                  <div className="space-y-2">
-                    <Label htmlFor="address" className="text-stone-700 dark:text-stone-300">Your Address *</Label>
-                    <Textarea
-                      id="address"
-                      placeholder="123 Main Street, City, State 12345"
-                      value={form.address}
-                      onChange={(e) => setForm({ ...form, address: e.target.value })}
-                      rows={3}
-                      className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
-                    />
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="street" className="text-stone-700 dark:text-stone-300">Street Address *</Label>
+                      <Input
+                        id="street"
+                        placeholder="123 Main Street"
+                        value={form.street}
+                        onChange={(e) => setForm({ ...form, street: e.target.value })}
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="apt" className="text-stone-700 dark:text-stone-300">Apt / Suite / Unit</Label>
+                      <Input
+                        id="apt"
+                        placeholder="Apt 4B"
+                        value={form.apt}
+                        onChange={(e) => setForm({ ...form, apt: e.target.value })}
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="city" className="text-stone-700 dark:text-stone-300">City *</Label>
+                        <Input
+                          id="city"
+                          placeholder="New York"
+                          value={form.city}
+                          onChange={(e) => setForm({ ...form, city: e.target.value })}
+                          className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="state" className="text-stone-700 dark:text-stone-300">State *</Label>
+                        <Input
+                          id="state"
+                          placeholder="NY"
+                          value={form.state}
+                          onChange={(e) => setForm({ ...form, state: e.target.value })}
+                          className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="zip" className="text-stone-700 dark:text-stone-300">ZIP Code *</Label>
+                      <Input
+                        id="zip"
+                        placeholder="10001"
+                        value={form.zip}
+                        onChange={(e) => setForm({ ...form, zip: e.target.value })}
+                        className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                      />
+                    </div>
                   </div>
                 )}
 
