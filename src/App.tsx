@@ -34,6 +34,7 @@ import NotFound from "./pages/NotFound";
 import Support from "./pages/Support";
 import Chronicles from "./pages/Chronicles";
 import Armory from "./pages/Armory";
+import YouSmellLikeShit from "./pages/YouSmellLikeShit";
 
 
 const queryClient = new QueryClient();
@@ -76,6 +77,7 @@ const App = () => (
               <Route path="/support" element={<Support />} />
               <Route path="/chronicles" element={<Chronicles />} />
               <Route path="/armory" element={<Armory />} />
+              <Route path="/you-smell-like-shit" element={<YouSmellLikeShit />} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

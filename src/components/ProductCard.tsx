@@ -27,7 +27,10 @@ export function ProductCard({ id, name, price, image, type, description }: Produ
     trackAddToCart(name, price);
   };
 
-  const productLink = type === "subscription" ? `/subscription-checkout/${id}` : `/product/${id}`;
+  const productLink =
+    name.toLowerCase().includes("you smell like shit") ? "/you-smell-like-shit" :
+    type === "subscription" ? `/subscription-checkout/${id}` :
+    `/product/${id}`;
 
   return (
     <Link to={productLink}>
