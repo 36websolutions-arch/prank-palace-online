@@ -124,7 +124,7 @@ function StripePaymentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements || !user || !formValid) return;
+    if (!stripe || !elements || !formValid) return;
 
     setSubmitting(true);
 
@@ -133,7 +133,7 @@ function StripePaymentForm({
         elements,
         redirect: "if_required",
         confirmParams: {
-          receipt_email: user.email || undefined,
+          receipt_email: email || user?.email || undefined,
         },
       });
 
@@ -162,9 +162,9 @@ function StripePaymentForm({
         }];
 
         const { error: dbError } = await supabase.from("physical_orders").insert({
-          user_id: user.id,
-          nickname: nickname || "Citizen",
-          email: user.email || "",
+          user_id: user?.id || "guest",
+          nickname: nickname || "Guest",
+          email: email || user?.email || "",
           phone,
           address: shippingAddress,
           delivery_date: deliveryDate,
@@ -251,6 +251,7 @@ function FunnelCheckout() {
   const navigate = useNavigate();
   const [shipToFriend, setShipToFriend] = useState(true);
   const [form, setForm] = useState({
+    email: user?.email || "",
     phone: "",
     address: "",
     deliveryDate: "",
@@ -274,7 +275,8 @@ function FunnelCheckout() {
 
   // Validate form
   useEffect(() => {
-    const baseValid = form.phone.trim() !== "" && form.deliveryDate !== "";
+    const emailValid = form.email.trim() !== "" && form.email.includes("@");
+    const baseValid = emailValid && form.phone.trim() !== "" && form.deliveryDate !== "";
     const addressValid = shipToFriend
       ? recipientForm.recipientName.trim() !== "" && recipientForm.recipientAddress.trim() !== ""
       : form.address.trim() !== "";
@@ -283,7 +285,7 @@ function FunnelCheckout() {
 
   // Create PaymentIntent when we have a valid order + user
   useEffect(() => {
-    if (!funnelOrder || !user || clientSecret) return;
+    if (!funnelOrder || !formValid || clientSecret) return;
 
     const createPaymentIntent = async () => {
       setLoadingPayment(true);
@@ -305,9 +307,9 @@ function FunnelCheckout() {
             shipAnonymous: shipToFriend,
             phone: form.phone,
             deliveryDate: form.deliveryDate,
-            userId: user.id,
-            email: user.email,
-            nickname: nickname || "Citizen",
+            userId: user?.id || "guest",
+            email: form.email,
+            nickname: nickname || "Guest",
           },
         });
 
@@ -329,9 +331,7 @@ function FunnelCheckout() {
     };
 
     createPaymentIntent();
-  }, [user, funnelOrder?.totalPrice]);
-
-  if (!authLoading && !user) return <Navigate to="/auth" replace />;
+  }, [formValid, funnelOrder?.totalPrice]);
 
   if (!funnelOrder) {
     return (
@@ -446,6 +446,18 @@ function FunnelCheckout() {
                     />
                   </div>
                 )}
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-stone-700 dark:text-stone-300">Your Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    className="border-stone-300 dark:border-stone-700 focus:border-amber-500"
+                  />
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="text-stone-700 dark:text-stone-300">Your Phone Number *</Label>
@@ -736,8 +748,6 @@ function CartCheckout() {
       },
     }).render(paypalContainerRef.current);
   }, [paypalLoaded, formValid, totalPrice, items, user, nickname, form, navigate, clearCart]);
-
-  if (!authLoading && !user) return <Navigate to="/auth" replace />;
 
   if (items.length === 0) {
     return (

@@ -263,7 +263,7 @@ export default function SubscriptionCheckout() {
     }).render("#paypal-button-container");
   }, [paypalLoaded, product, formValid, selectedSubscription, buyerName, buyerEmail, recipientName, recipientTitle, recipientCompany, recipientAddressLine1, recipientAddressLine2, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone, user, navigate]);
 
-  if (!authLoading && !user) return <Navigate to="/auth" replace />;
+
 
   if (loading) {
     return (
