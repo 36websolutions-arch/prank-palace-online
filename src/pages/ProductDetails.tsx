@@ -49,8 +49,8 @@ export default function ProductDetails() {
   };
 
   const handleAddToCart = async () => {
-    if (!user) {
-      navigate("/auth");
+    if (product?.name.toLowerCase().includes("you smell like shit")) {
+      navigate("/you-smell-like-shit");
       return;
     }
     if (product) {
@@ -59,10 +59,6 @@ export default function ProductDetails() {
   };
 
   const handleBuyNow = () => {
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
     navigate(`/digital-checkout/${product?.id}`);
   };
 

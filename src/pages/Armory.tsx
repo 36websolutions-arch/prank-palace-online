@@ -82,9 +82,15 @@ export default function Armory() {
     setLoading(false);
   };
 
+  const getProductLink = (product: Product) => {
+    if (product.name.toLowerCase().includes("you smell like shit")) return "/you-smell-like-shit";
+    if (product.type === "subscription") return `/subscription-checkout/${product.id}`;
+    return `/product/${product.id}`;
+  };
+
   const ProductCard = ({ product, badgeText, badgeIcon: BadgeIcon }: { product: Product; badgeText: string; badgeIcon: React.ElementType }) => (
     <Link
-      to={product.type === "subscription" ? `/subscription-checkout/${product.id}` : `/product/${product.id}`}
+      to={getProductLink(product)}
       className="group bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 overflow-hidden hover:shadow-lg hover:border-amber-500/50 transition-all duration-300"
     >
       <div className="aspect-square bg-stone-100 dark:bg-stone-800 relative overflow-hidden">
