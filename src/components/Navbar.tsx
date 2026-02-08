@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll, ChevronDown, Shield, Package, Zap, Crown, Heart, Instagram } from "lucide-react";
+import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll, ChevronDown, Shield, Package, Zap, Crown, Heart, Instagram, TrendingUp, Candy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -37,6 +37,18 @@ export function Navbar() {
       icon: Shield,
       label: "The Full Armory",
       description: "Browse all offerings",
+    },
+    {
+      to: "/you-smell-like-shit",
+      icon: Package,
+      label: "You Smell Like Shit",
+      description: "Premium cologne gift set",
+    },
+    {
+      to: "/your-breath-stinks",
+      icon: Candy,
+      label: "Your Breath Stinks",
+      description: "Sour mint revival prank",
     },
     {
       to: "/physical-products",
@@ -83,6 +95,14 @@ export function Navbar() {
             >
               <Scroll className="h-4 w-4" />
               Chronicles
+            </Link>
+
+            <Link
+              to="/forum-economicus"
+              className="flex items-center gap-1.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
+            >
+              <TrendingUp className="h-4 w-4" />
+              Forum Economicus
             </Link>
 
             {/* The Armory Dropdown */}
@@ -237,6 +257,15 @@ export function Navbar() {
               >
                 <Scroll className="h-4 w-4" />
                 Chronicles
+              </Link>
+
+              <Link
+                to="/forum-economicus"
+                className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <TrendingUp className="h-4 w-4" />
+                Forum Economicus
               </Link>
 
               {/* Mobile Armory Section */}

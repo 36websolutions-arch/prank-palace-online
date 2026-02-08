@@ -105,11 +105,28 @@ export default function Home() {
     setLoading(false);
   };
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const [subscribing, setSubscribing] = useState(false);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Integrate with email service
-    alert("Thanks for subscribing! The Senate will be in touch.");
-    setEmail("");
+    if (!email.trim() || subscribing) return;
+    setSubscribing(true);
+    try {
+      const { error } = await supabase.from("newsletter_subscribers").insert({ email: email.trim() });
+      if (error && error.code === "23505") {
+        alert("You're already subscribed! The Senate appreciates your loyalty.");
+      } else if (error) {
+        throw error;
+      } else {
+        alert("Thanks for subscribing! The Senate will be in touch.");
+      }
+      setEmail("");
+    } catch (err) {
+      console.error("Newsletter signup error:", err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setSubscribing(false);
+    }
   };
 
   return (

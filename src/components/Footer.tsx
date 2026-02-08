@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Scroll, Mail, MapPin, Heart, Shield } from "lucide-react";
+import { Scroll, Mail, MapPin, Heart, Shield, TrendingUp } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 export function Footer() {
@@ -37,6 +37,12 @@ export function Footer() {
                 <Link to="/chronicles" className="text-stone-400 hover:text-amber-500 transition-colors text-sm flex items-center gap-2">
                   <Scroll className="h-3 w-3" />
                   The Chronicles
+                </Link>
+              </li>
+              <li>
+                <Link to="/forum-economicus" className="text-stone-400 hover:text-amber-500 transition-colors text-sm flex items-center gap-2">
+                  <TrendingUp className="h-3 w-3" />
+                  Forum Economicus
                 </Link>
               </li>
               <li>

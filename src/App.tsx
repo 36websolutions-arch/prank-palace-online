@@ -35,6 +35,9 @@ import Support from "./pages/Support";
 import Chronicles from "./pages/Chronicles";
 import Armory from "./pages/Armory";
 import YouSmellLikeShit from "./pages/YouSmellLikeShit";
+import YourBreathStinks from "./pages/YourBreathStinks";
+import ForumEconomicus from "./pages/ForumEconomicus";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 
 const queryClient = new QueryClient();
@@ -48,6 +51,7 @@ const App = () => (
           <Sonner />
           <AmbientToasts />
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<Home2 />} />
               <Route path="/home" element={<Navigate to="/" replace />} />
@@ -78,6 +82,8 @@ const App = () => (
               <Route path="/chronicles" element={<Chronicles />} />
               <Route path="/armory" element={<Armory />} />
               <Route path="/you-smell-like-shit" element={<YouSmellLikeShit />} />
+              <Route path="/your-breath-stinks" element={<YourBreathStinks />} />
+              <Route path="/forum-economicus" element={<ForumEconomicus />} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

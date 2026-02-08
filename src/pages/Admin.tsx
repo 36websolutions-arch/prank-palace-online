@@ -12,7 +12,8 @@ import { AddSubscriptionProductTab } from "@/components/admin/AddSubscriptionPro
 import { ManageProductsTab } from "@/components/admin/ManageProductsTab";
 import { ManageBlogsTab } from "@/components/admin/ManageBlogsTab";
 import { UserInfoTab } from "@/components/admin/UserInfoTab";
-import { Package, Zap, PlusCircle, Settings, RefreshCw, Users, FileText, Scroll } from "lucide-react";
+import { ManageForumTab } from "@/components/admin/ManageForumTab";
+import { Package, Zap, PlusCircle, Settings, RefreshCw, Users, FileText, Scroll, TrendingUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Admin() {
@@ -57,7 +58,7 @@ export default function Admin() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 mb-8 bg-stone-100 dark:bg-stone-800">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 mb-8 bg-stone-100 dark:bg-stone-800">
             <TabsTrigger value="digital-orders" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900 data-[state=active]:text-amber-600">
               <Zap className="h-4 w-4" />
               <span className="hidden sm:inline">Digital</span>
@@ -90,6 +91,10 @@ export default function Admin() {
               <Scroll className="h-4 w-4" />
               <span className="hidden sm:inline">Chronicles</span>
             </TabsTrigger>
+            <TabsTrigger value="forum" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900 data-[state=active]:text-amber-600">
+              <TrendingUp className="h-4 w-4" />
+              <span className="hidden sm:inline">Forum</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="digital-orders">
@@ -115,6 +120,9 @@ export default function Admin() {
           </TabsContent>
           <TabsContent value="chronicles">
             <ManageBlogsTab />
+          </TabsContent>
+          <TabsContent value="forum">
+            <ManageForumTab />
           </TabsContent>
         </Tabs>
       </main>

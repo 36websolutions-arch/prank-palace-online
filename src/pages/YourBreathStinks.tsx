@@ -18,77 +18,81 @@ interface CardOption {
   inside: string;
 }
 
-type ScentVariant = "desperate-attempt" | "last-resort" | "final-warning";
+type FlavorVariant = "sour-raspberry" | "toxic-tangerine" | "atomic-citrus" | "savage-apple" | "mango-meltdown";
 
-interface ScentInfo {
-  id: ScentVariant;
+interface FlavorInfo {
+  id: FlavorVariant;
   name: string;
-  scents: string;
+  description: string;
 }
 
 // ─── Data ───────────────────────────────────────────────────────────────────────
 
-const SCENT_VARIANTS: ScentInfo[] = [
-  { id: "desperate-attempt", name: "Desperate Attempt", scents: "Strawberry & Cream + Vanilla & Jasmine" },
-  { id: "last-resort", name: "Last Resort", scents: "Lavender & Sandalwood + Bergamot & Cedarwood" },
-  { id: "final-warning", name: "Final Warning", scents: "Pine & Cedar + Fresh Linen & Cotton" },
+const FLAVOR_VARIANTS: FlavorInfo[] = [
+  { id: "sour-raspberry", name: "Sour Raspberry Roast", description: "Tart raspberry with a citrus bite" },
+  { id: "toxic-tangerine", name: "Toxic Tangerine", description: "Tangerine blast that'll wake the dead" },
+  { id: "atomic-citrus", name: "Atomic Citrus", description: "Lemon-lime nuclear fusion" },
+  { id: "savage-apple", name: "Savage Apple", description: "Green apple with a sour punch" },
+  { id: "mango-meltdown", name: "Mango Meltdown", description: "Tropical mango gone nuclear" },
 ];
 
 const CARD_OPTIONS: CardOption[] = [
-  { id: 1, name: "The Intervention", front: "We Need to Talk.", inside: "It's about your smell. The group chat voted. It was unanimous. Open your gift." },
-  { id: 2, name: "The Honest Friend", front: "Because Real Friends Tell the Truth...", inside: "You smell like a wet gym bag wrapped in regret. Here's some help." },
-  { id: 3, name: "The Anonymous Tip", front: "FROM: Someone Who Cares", inside: "TO: Someone Who Stinks. This is your sign." },
-  { id: 4, name: "The Performance Review", front: "Your Annual Review Is In.", inside: "Hygiene: Needs Improvement. Cologne: Provided. No further questions." },
-  { id: 5, name: "The Breakup Letter", front: "I Can't Do This Anymore.", inside: "It's not you, it's your scent. JK it's definitely you. Use this." },
-  { id: 6, name: "The Public Service", front: "On Behalf of Everyone Around You...", inside: "We pooled our resources. Please. For all of us." },
-  { id: 7, name: "Roses Are Red", front: "Roses Are Red...", inside: "Violets are blue. You smell like shit. This cologne's for you." },
-  { id: 8, name: "The Official Notice", front: "OFFICIAL NOTICE", inside: "You have been identified as a hazardous scent zone. This cologne has been issued for immediate deployment." },
-  { id: 9, name: "The Love Letter", front: "I Love You But...", inside: "I can't keep pretending you smell good. You don't. Here's cologne. Still love you though." },
-  { id: 10, name: "The Group Chat", front: "This Message Was Approved By:", inside: "Everyone. Literally everyone. Even your mom. Open the box." },
-  { id: 11, name: "The Prescription", front: "PRESCRIPTION", inside: "Patient: You. Diagnosis: Smells Like Shit. Treatment: Apply immediately. Refills: Unlimited." },
-  { id: 12, name: "Emergency Services", front: "EMERGENCY ALERT", inside: "Multiple complaints received about a suspicious odor. The source: you. Here's the cure." },
-  { id: 13, name: "Congratulations", front: "Congratulations!", inside: "You've been voted Most Likely to Clear a Room. Here's your prize." },
-  { id: 14, name: "The Apology", front: "I'm Sorry...", inside: "...that nobody told you sooner. You smell terrible. But now you have cologne. We're good." },
-  { id: 15, name: "The Simple Truth", front: "No Easy Way to Say This.", inside: "You smell like shit. Here's some cologne. You're welcome." },
-  { id: 16, name: "Custom Message", front: "", inside: "" },
+  { id: 1, name: "The Intervention", front: "We Need to Talk.", inside: "It's about your breath. The group chat voted. It was unanimous. Here are some mints." },
+  { id: 2, name: "The Dentist's Note", front: "URGENT DENTAL NOTICE", inside: "Patient: You. Diagnosis: Weapons-grade halitosis. Treatment: Take these mints immediately. This is not optional." },
+  { id: 3, name: "The Breakup Letter", front: "I Can't Get Close Anymore.", inside: "Every time you talk, a small part of me dies. Please. Take these mints. Save what's left of us." },
+  { id: 4, name: "The HR Complaint", front: "FORMAL COMPLAINT", inside: "Re: Biological hazard emanating from your mouth. Enclosed: Emergency corrective supplies. Compliance is mandatory." },
+  { id: 5, name: "The Obituary", front: "In Loving Memory", inside: "Of fresh air, which died every time you opened your mouth. These mints are a resurrection attempt." },
+  { id: 6, name: "The Restraining Order", front: "CEASE AND DESIST", inside: "You are hereby ordered to maintain a 6-foot radius when speaking. Alternatively, consume the enclosed mints." },
+  { id: 7, name: "The Recall Notice", front: "PRODUCT RECALL: Your Breath", inside: "Manufacturer defect detected. Return to dentist immediately. In the meantime, please apply these mints generously." },
+  { id: 8, name: "The Amber Alert", front: "MISSING: Your Oral Hygiene", inside: "Last seen: Unknown. If found, please return immediately. Until then, these mints will have to do." },
+  { id: 9, name: "The Yelp Review", front: "★☆☆☆☆ Would Not Recommend", inside: "Sat next to this person at lunch. Worst experience of my life. Sending mints as reparations." },
+  { id: 10, name: "The Insurance Claim", front: "CLAIM #BR-34TH", inside: "Incident: Exposed to hazardous oral emissions. Seeking damages. Settlement enclosed in mint form." },
+  { id: 11, name: "The Eviction Notice", front: "NOTICE TO VACATE", inside: "Your breath has been asked to leave the premises. These mints are its replacement tenants." },
+  { id: 12, name: "The Science Report", front: "FINDINGS: Conclusive", inside: "After extensive peer-reviewed research, your breath is, in fact, terrible. Remedy: Enclosed sour mints. Apply liberally." },
+  { id: 13, name: "The Confession", front: "I Have a Secret", inside: "I've been holding my breath around you for 3 years. Please take these mints so I can breathe again." },
+  { id: 14, name: "The Love Letter (Almost)", front: "Dear [Name],", inside: "I could fall in love with you... if you'd stop exhaling. Here are some mints. Let's try this again." },
+  { id: 15, name: "The Exit Interview", front: "Reason for Departure:", inside: "The breath. It was always the breath. Please accept these mints as our parting gift." },
+  { id: 16, name: "The Mint Prescription", front: "Rx: TAKE IMMEDIATELY", inside: "Dosage: Every mint in this tin. Refills: Unlimited. Side effects: People will want to be near you again." },
+  { id: 17, name: "Custom Message", front: "", inside: "" },
 ];
 
 const REVIEWS = [
-  { stars: 5, text: "Sent this to my roommate. Offended for 5 minutes, then asked where to get cologne this good.", author: "Jake M." },
-  { stars: 5, text: "My brother hasn't spoken to me in 3 days. Worth it. The cologne actually smells amazing.", author: "Sarah T." },
-  { stars: 5, text: "Bought 6 packs. My entire friend group smells better AND hates me.", author: "Marcus D." },
-  { stars: 5, text: "The card said 'We Need to Talk.' My boyfriend thought I was breaking up with him. Best gift ever.", author: "Ashley R." },
-  { stars: 5, text: "Bought it as a joke. The cologne is genuinely fire though. 10/10 would insult again.", author: "Tyler K." },
+  { stars: 5, text: "Bought this for my cubicle neighbor. They laughed, then actually ate the mints. Win-win.", author: "Jake M." },
+  { stars: 5, text: "My boyfriend's breath could strip paint. He got the hint. These mints are doing God's work.", author: "Rachel T." },
+  { stars: 5, text: "The 'Dentist's Note' card made my sister cry laughing. Then she booked a dental appointment. Mission accomplished.", author: "Marcus D." },
+  { stars: 5, text: "I've been waiting for Altoids Sours to come back for 15 YEARS. The fact that I can weaponize them as a prank? *chef's kiss*", author: "Ashley R." },
+  { stars: 5, text: "Sent the Full Intervention pack to my roommate. He now brushes THREE times a day. The tins are actually fire too.", author: "Tyler K." },
+  { stars: 5, text: "The 'Restraining Order' card was so realistic my dad almost called a lawyer. 10/10 would prank again.", author: "Sarah W." },
 ];
 
 const FAQ_ITEMS = [
   {
-    q: "Is this real cologne or a joke product?",
-    a: "Both! The packaging and card are hilarious, but the solid colognes inside are genuinely premium fragrances made with quality ingredients. Your friend will laugh first, then actually wear it."
+    q: "Are these real Altoids Sours?",
+    a: "These are premium sour mints inspired by the legendary discontinued Altoids Sours. Same round tin energy, same sour punch, but with flavors that actually slap harder."
   },
   {
-    q: "What scents are available?",
-    a: "Three packs: \"Desperate Attempt\" (Strawberry & Cream + Vanilla & Jasmine), \"Last Resort\" (Lavender & Sandalwood + Bergamot & Cedarwood), and \"Final Warning\" (Pine & Cedar + Fresh Linen & Cotton). Each pack includes two solid cologne tins."
+    q: "Will these actually fix bad breath?",
+    a: "Temporarily, yes. Permanently? That's between them and their dentist. We just deliver the message."
   },
   {
-    q: "Can I ship it directly to someone anonymously?",
-    a: "Absolutely. Enter their address at checkout and we'll ship it with no return address. They'll have no idea who sent it (unless your card message gives it away)."
+    q: "What flavors are available?",
+    a: "Five flavors: Sour Raspberry Roast (tart raspberry), Toxic Tangerine (citrus blast), Atomic Citrus (lemon-lime), Savage Apple (green apple sour), and Mango Meltdown (tropical nuclear). Each tin is packed to the brim."
   },
   {
-    q: "Can I customize the card message?",
-    a: "Yes! Choose from 15 pre-written savage roasts, or select \"Custom Message\" to write your own front and inside text. Get creative."
+    q: "Is the card included?",
+    a: "Every order comes with one savage card of your choice (or write your own). It's not a gift without the roast."
   },
   {
-    q: "What if they don't find it funny?",
-    a: "They will. But if for some reason they don't, they still get premium cologne out of it. Win-win. We offer a 30-day satisfaction guarantee — contact us if there's any issue."
+    q: "Can I send this anonymously?",
+    a: "Absolutely. Cowardice is encouraged. We ship with no return address. They'll never know who did it (unless your card gives it away)."
   },
   {
-    q: "How long does shipping take?",
-    a: "Orders ship within 24 hours. Standard delivery is 3-5 business days. Expedited options are available at checkout."
+    q: "What if they get offended?",
+    a: "Then their breath probably really does stink. You did them a favor. Plus they still get premium sour mints out of it."
   },
   {
-    q: "Is this safe for sensitive skin?",
-    a: "Yes. Our solid colognes are made with natural carrier oils and are dermatologist-tested. They're alcohol-free and gentle on skin. If irritation occurs, discontinue use."
+    q: "How is this packaged?",
+    a: "Discreet outer packaging, chaos inside. The mint tin is beautifully designed (round, colorful, collectible), the card is savage, and the whole thing screams 'I care about you but also your breath is terrible.'"
   },
 ];
 
@@ -115,7 +119,6 @@ function useAnimatedCounter(target: number, duration = 2000, trigger = false) {
 
   useEffect(() => {
     if (!trigger) return;
-    let start = 0;
     const startTime = performance.now();
 
     const animate = (now: number) => {
@@ -183,12 +186,12 @@ function GlowButton({
       onClick={onClick}
       className={`
         relative font-bold uppercase tracking-wider rounded-xl
-        bg-gradient-to-r from-amber-500 to-orange-500
-        text-white shadow-[0_0_30px_rgba(245,158,11,0.4)]
-        hover:shadow-[0_0_50px_rgba(245,158,11,0.6)]
+        bg-gradient-to-r from-emerald-500 to-teal-500
+        text-white shadow-[0_0_30px_rgba(16,185,129,0.4)]
+        hover:shadow-[0_0_50px_rgba(16,185,129,0.6)]
         hover:scale-[1.03] active:scale-[0.98]
         transition-all duration-300
-        animate-subtle-pulse
+        animate-subtle-pulse-green
         ${sizeClasses[size]}
         ${className}
       `}
@@ -200,31 +203,31 @@ function GlowButton({
 
 // ─── Main Page ──────────────────────────────────────────────────────────────────
 
-export default function YouSmellLikeShit() {
+export default function YourBreathStinks() {
   const navigate = useNavigate();
 
   // State
-  const [selectedScent, setSelectedScent] = useState<ScentVariant>("desperate-attempt");
+  const [selectedFlavor, setSelectedFlavor] = useState<FlavorVariant>("sour-raspberry");
   const [selectedCard, setSelectedCard] = useState<number>(1);
   const [customFront, setCustomFront] = useState("");
   const [customInside, setCustomInside] = useState("");
   const [cardFlipped, setCardFlipped] = useState(false);
   const [heroImage, setHeroImage] = useState(0);
-  const [viewingCount, setViewingCount] = useState(27);
+  const [viewingCount, setViewingCount] = useState(23);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [bundleQty, setBundleQty] = useState(1);
   const heroRef = useRef<HTMLDivElement>(null);
 
   const heroImages = [
-    "/products/you-smell-like-shit/hero-1.png",
-    "/products/you-smell-like-shit/hero-3.png",
-    "/products/you-smell-like-shit/hero-5.png",
+    "/products/your-breath-stinks/hero-1.png",
+    "/products/your-breath-stinks/hero-2.png",
+    "/products/your-breath-stinks/hero-3.png",
   ];
 
   // Viewing counter randomizer
   useEffect(() => {
     const interval = setInterval(() => {
-      setViewingCount(Math.floor(Math.random() * 31) + 15);
+      setViewingCount(Math.floor(Math.random() * 25) + 12);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -266,29 +269,29 @@ export default function YouSmellLikeShit() {
     return (getComparePrice(qty) - getBundlePrice(qty)).toFixed(2);
   };
 
-  // Save selections and go straight to checkout (no cart)
+  // Save selections and go straight to checkout
   const handleCheckout = (overrideQty?: number) => {
     const qty = overrideQty ?? bundleQty;
     const card = CARD_OPTIONS.find(c => c.id === selectedCard);
-    const scent = SCENT_VARIANTS.find(s => s.id === selectedScent);
+    const flavor = FLAVOR_VARIANTS.find(f => f.id === selectedFlavor);
 
-    localStorage.setItem("yslsOrder", JSON.stringify({
-      productName: "You Smell Like Shit - Solid Cologne Gift Set",
-      scentVariant: scent?.name,
-      scentId: scent?.id,
+    localStorage.setItem("ybsOrder", JSON.stringify({
+      productName: "Your Breath Stinks - Sour Mint Gift Set",
+      flavorVariant: flavor?.name,
+      flavorId: flavor?.id,
       cardId: selectedCard,
       cardName: card?.name,
-      cardFront: selectedCard === 16 ? customFront : card?.front,
-      cardInside: selectedCard === 16 ? customInside : card?.inside,
+      cardFront: selectedCard === 17 ? customFront : card?.front,
+      cardInside: selectedCard === 17 ? customInside : card?.inside,
       bundleQty: qty,
       unitPrice: 19.99,
       totalPrice: getBundlePrice(qty),
       comparePrice: getComparePrice(qty),
-      image: "/products/you-smell-like-shit/hero-1.png",
+      image: "/products/your-breath-stinks/hero-1.png",
     }));
 
-    trackAddToCart("You Smell Like Shit - Solid Cologne Gift Set", getBundlePrice(qty));
-    navigate("/checkout?from=ysls");
+    trackAddToCart("Your Breath Stinks - Sour Mint Gift Set", getBundlePrice(qty));
+    navigate("/checkout?from=ybs");
   };
 
   const currentCard = CARD_OPTIONS.find(c => c.id === selectedCard)!;
@@ -296,12 +299,12 @@ export default function YouSmellLikeShit() {
   return (
     <div className="min-h-screen bg-stone-950 text-white overflow-x-hidden">
       <style>{`
-        @keyframes subtle-pulse {
-          0%, 100% { box-shadow: 0 0 30px rgba(245,158,11,0.4); }
-          50% { box-shadow: 0 0 50px rgba(245,158,11,0.6); }
+        @keyframes subtle-pulse-green {
+          0%, 100% { box-shadow: 0 0 30px rgba(16,185,129,0.4); }
+          50% { box-shadow: 0 0 50px rgba(16,185,129,0.6); }
         }
-        .animate-subtle-pulse {
-          animation: subtle-pulse 2.5s ease-in-out infinite;
+        .animate-subtle-pulse-green {
+          animation: subtle-pulse-green 2.5s ease-in-out infinite;
         }
         @keyframes marquee {
           0% { transform: translateX(0); }
@@ -317,38 +320,31 @@ export default function YouSmellLikeShit() {
         .animate-float {
           animation: float 4s ease-in-out infinite;
         }
-        @keyframes card-flip {
-          0% { transform: rotateY(0deg); }
-          100% { transform: rotateY(180deg); }
-        }
         .perspective-1000 {
           perspective: 1000px;
         }
         .backface-hidden {
           backface-visibility: hidden;
         }
-        .rotate-y-180 {
-          transform: rotateY(180deg);
-        }
       `}</style>
 
       {/* ═══ A. Announcement Bar ═══ */}
-      <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2 overflow-hidden">
+      <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-2 overflow-hidden">
         <div className="animate-marquee whitespace-nowrap flex">
           {[...Array(2)].map((_, i) => (
             <span key={i} className="inline-flex items-center gap-8 text-sm font-bold tracking-wide px-4">
               <span>FREE SHIPPING ON 2+ PACKS</span>
-              <span className="text-amber-200">•</span>
-              <span>2,847+ PACKS SHIPPED</span>
-              <span className="text-amber-200">•</span>
-              <span>THE GAG GIFT THAT ACTUALLY SMELLS GOOD</span>
-              <span className="text-amber-200">•</span>
+              <span className="text-emerald-200">•</span>
+              <span>INSPIRED BY THE LEGENDARY ALTOIDS SOURS</span>
+              <span className="text-emerald-200">•</span>
+              <span>THE PRANK GIFT THAT ACTUALLY TASTES AMAZING</span>
+              <span className="text-emerald-200">•</span>
               <span>FREE SHIPPING ON 2+ PACKS</span>
-              <span className="text-amber-200">•</span>
-              <span>2,847+ PACKS SHIPPED</span>
-              <span className="text-amber-200">•</span>
-              <span>THE GAG GIFT THAT ACTUALLY SMELLS GOOD</span>
-              <span className="text-amber-200 mr-8">•</span>
+              <span className="text-emerald-200">•</span>
+              <span>INSPIRED BY THE LEGENDARY ALTOIDS SOURS</span>
+              <span className="text-emerald-200">•</span>
+              <span>THE PRANK GIFT THAT ACTUALLY TASTES AMAZING</span>
+              <span className="text-emerald-200 mr-8">•</span>
             </span>
           ))}
         </div>
@@ -358,10 +354,10 @@ export default function YouSmellLikeShit() {
       <header className="sticky top-0 z-50 bg-stone-950/90 backdrop-blur-md border-b border-stone-800/50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="text-xl font-bold tracking-tight">
-            <span className="text-amber-500">PRANK</span>
+            <span className="text-emerald-500">PRANK</span>
             <span className="text-stone-400">PALACE</span>
           </Link>
-          <Link to="/cart" className="relative p-2 text-stone-400 hover:text-amber-500 transition-colors">
+          <Link to="/cart" className="relative p-2 text-stone-400 hover:text-emerald-500 transition-colors">
             <ShoppingCart className="h-6 w-6" />
           </Link>
         </div>
@@ -371,8 +367,8 @@ export default function YouSmellLikeShit() {
       <section ref={heroRef} className="relative min-h-[90vh] flex items-center py-12 lg:py-20">
         {/* Ambient glow */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-orange-500/10 rounded-full blur-[100px]" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-teal-500/10 rounded-full blur-[100px]" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10">
@@ -396,7 +392,7 @@ export default function YouSmellLikeShit() {
                   ))}
                   {/* Fallback if no images */}
                   <div className="absolute inset-0 flex items-center justify-center text-8xl">
-                    💎
+                    🍬
                   </div>
                 </div>
               </div>
@@ -407,7 +403,7 @@ export default function YouSmellLikeShit() {
                     key={i}
                     onClick={() => setHeroImage(i)}
                     className={`w-2.5 h-2.5 rounded-full transition-all ${
-                      i === heroImage ? "bg-amber-500 w-8" : "bg-stone-600 hover:bg-stone-500"
+                      i === heroImage ? "bg-emerald-500 w-8" : "bg-stone-600 hover:bg-stone-500"
                     }`}
                   />
                 ))}
@@ -419,22 +415,22 @@ export default function YouSmellLikeShit() {
           <FadeUp delay={0.2}>
             <div className="space-y-6">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-400 text-sm font-bold">
-                <Star className="h-4 w-4 fill-amber-400" />
-                THE #1 GAG GIFT OF 2025
+              <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-4 py-1.5 text-emerald-400 text-sm font-bold">
+                <Star className="h-4 w-4 fill-emerald-400" />
+                ALTOIDS SOURS ARE BACK (SORT OF)
               </div>
 
               {/* Headline */}
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-[0.95]">
-                YOUR FRIEND SMELLS LIKE{" "}
-                <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
-                  SHIT.
+                YOUR FRIEND'S BREATH{" "}
+                <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                  STINKS.
                 </span>
               </h1>
 
               {/* Subheadline */}
               <p className="text-xl text-stone-400 italic font-serif">
-                Do them a favor. Send this.
+                The mints everyone begged to come back. Delivered to someone who needs them most.
               </p>
 
               {/* Price */}
@@ -455,22 +451,22 @@ export default function YouSmellLikeShit() {
                 <span>{viewingCount} people are viewing this right now</span>
               </div>
 
-              {/* Scent Variant Selector */}
+              {/* Flavor Selector */}
               <div className="space-y-3">
-                <label className="text-sm font-bold text-stone-300 uppercase tracking-wider">Choose Your Pack</label>
+                <label className="text-sm font-bold text-stone-300 uppercase tracking-wider">Choose Your Flavor</label>
                 <div className="flex flex-wrap gap-2">
-                  {SCENT_VARIANTS.map(scent => (
+                  {FLAVOR_VARIANTS.map(flavor => (
                     <button
-                      key={scent.id}
-                      onClick={() => setSelectedScent(scent.id)}
+                      key={flavor.id}
+                      onClick={() => setSelectedFlavor(flavor.id)}
                       className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all border ${
-                        selectedScent === scent.id
-                          ? "bg-amber-500/20 border-amber-500 text-amber-400"
+                        selectedFlavor === flavor.id
+                          ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
                           : "bg-stone-800/50 border-stone-700 text-stone-300 hover:border-stone-500"
                       }`}
                     >
-                      <div className="font-bold">{scent.name}</div>
-                      <div className="text-xs opacity-70 mt-0.5">{scent.scents}</div>
+                      <div className="font-bold">{flavor.name}</div>
+                      <div className="text-xs opacity-70 mt-0.5">{flavor.description}</div>
                     </button>
                   ))}
                 </div>
@@ -483,11 +479,11 @@ export default function YouSmellLikeShit() {
                   <select
                     value={selectedCard}
                     onChange={(e) => { setSelectedCard(Number(e.target.value)); setCardFlipped(false); }}
-                    className="w-full bg-stone-800 border border-stone-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:border-amber-500 focus:outline-none transition-colors"
+                    className="w-full bg-stone-800 border border-stone-700 rounded-lg px-4 py-3 text-white appearance-none cursor-pointer focus:border-emerald-500 focus:outline-none transition-colors"
                   >
                     {CARD_OPTIONS.map(card => (
                       <option key={card.id} value={card.id}>
-                        {card.id === 16 ? "Custom Message — Write Your Own" : `${card.name} — "${card.front}"`}
+                        {card.id === 17 ? "Custom Message — Write Your Own" : `${card.name} — "${card.front}"`}
                       </option>
                     ))}
                   </select>
@@ -496,7 +492,7 @@ export default function YouSmellLikeShit() {
               </div>
 
               {/* Custom message fields */}
-              {selectedCard === 16 && (
+              {selectedCard === 17 && (
                 <div className="space-y-3 bg-stone-900/50 border border-stone-800 rounded-xl p-4">
                   <div>
                     <label className="text-xs font-bold text-stone-400 uppercase">Card Front</label>
@@ -506,7 +502,7 @@ export default function YouSmellLikeShit() {
                       value={customFront}
                       onChange={(e) => setCustomFront(e.target.value)}
                       maxLength={60}
-                      className="w-full mt-1 bg-stone-800 border border-stone-700 rounded-lg px-3 py-2 text-white placeholder:text-stone-500 focus:border-amber-500 focus:outline-none"
+                      className="w-full mt-1 bg-stone-800 border border-stone-700 rounded-lg px-3 py-2 text-white placeholder:text-stone-500 focus:border-emerald-500 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -517,7 +513,7 @@ export default function YouSmellLikeShit() {
                       onChange={(e) => setCustomInside(e.target.value)}
                       maxLength={200}
                       rows={2}
-                      className="w-full mt-1 bg-stone-800 border border-stone-700 rounded-lg px-3 py-2 text-white placeholder:text-stone-500 focus:border-amber-500 focus:outline-none resize-none"
+                      className="w-full mt-1 bg-stone-800 border border-stone-700 rounded-lg px-3 py-2 text-white placeholder:text-stone-500 focus:border-emerald-500 focus:outline-none resize-none"
                     />
                   </div>
                 </div>
@@ -532,8 +528,8 @@ export default function YouSmellLikeShit() {
               <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-stone-400">
                 <span className="flex items-center gap-1"><Lock className="h-3.5 w-3.5" /> Secure Checkout</span>
                 <span className="flex items-center gap-1"><Package className="h-3.5 w-3.5" /> Ships in 24hrs</span>
-                <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> 4.9/5 Rating</span>
-                <span className="flex items-center gap-1"><Check className="h-3.5 w-3.5" /> Real Cologne</span>
+                <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-emerald-400 text-emerald-400" /> 4.9/5 Rating</span>
+                <span className="flex items-center gap-1"><Check className="h-3.5 w-3.5" /> Real Sour Mints</span>
               </div>
             </div>
           </FadeUp>
@@ -548,23 +544,23 @@ export default function YouSmellLikeShit() {
         <div className="max-w-6xl mx-auto">
           <FadeUp>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-center mb-4 tracking-tight">
-              HOW IT <span className="text-amber-400">WORKS</span>
+              HOW IT <span className="text-emerald-400">WORKS</span>
             </h2>
             <p className="text-stone-400 text-center text-lg mb-16 max-w-xl mx-auto">
-              Three steps to becoming the funniest person in their life.
+              Three steps to saving everyone from their breath.
             </p>
           </FadeUp>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: "🎯", title: "Pick Your Pack", desc: "Choose scents. Pick a savage card message. Or write your own." },
-              { icon: "📦", title: "We Ship It", desc: "Straight to your friend's door. Anonymously. No return address." },
-              { icon: "😂", title: "They Open It", desc: "They read the card. They see the packaging. They die laughing. Then they smell amazing." },
+              { icon: "🎯", title: "Pick Your Flavor", desc: "Choose from 5 sour mint flavors inspired by the legendary Altoids Sours. Then pick a savage card." },
+              { icon: "📦", title: "We Ship It", desc: "Straight to your friend's door. Anonymously. No return address. Maximum confusion." },
+              { icon: "😂", title: "They Open It", desc: "They read the card. They see the mints. They die laughing. Then they actually eat them because they're incredible." },
             ].map((step, i) => (
               <FadeUp key={i} delay={i * 0.15}>
-                <div className="text-center bg-stone-900/50 border border-stone-800 rounded-2xl p-8 hover:border-amber-500/30 transition-all duration-300">
+                <div className="text-center bg-stone-900/50 border border-stone-800 rounded-2xl p-8 hover:border-emerald-500/30 transition-all duration-300">
                   <div className="text-6xl mb-6">{step.icon}</div>
-                  <div className="text-xs text-amber-500 font-bold tracking-widest mb-3">STEP {i + 1}</div>
+                  <div className="text-xs text-emerald-500 font-bold tracking-widest mb-3">STEP {i + 1}</div>
                   <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
                   <p className="text-stone-400 leading-relaxed">{step.desc}</p>
                 </div>
@@ -579,10 +575,10 @@ export default function YouSmellLikeShit() {
         <div className="max-w-6xl mx-auto">
           <FadeUp>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-center mb-4 tracking-tight">
-              PICK YOUR <span className="text-amber-400">ROAST</span>
+              PICK YOUR <span className="text-emerald-400">ROAST</span>
             </h2>
             <p className="text-stone-400 text-center text-lg mb-16">
-              15 pre-written cards. Or write your own masterpiece.
+              16 pre-written cards. Or write your own savage masterpiece.
             </p>
           </FadeUp>
 
@@ -596,13 +592,13 @@ export default function YouSmellLikeShit() {
                 >
                   {/* Front */}
                   <div
-                    className={`absolute inset-0 bg-gradient-to-br from-stone-800 to-stone-900 border-2 border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 ${
+                    className={`absolute inset-0 bg-gradient-to-br from-stone-800 to-stone-900 border-2 border-emerald-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 ${
                       cardFlipped ? "opacity-0 pointer-events-none scale-95" : "opacity-100 scale-100"
                     }`}
                   >
-                    <div className="text-xs text-amber-500 font-bold tracking-widest mb-6">FRONT</div>
+                    <div className="text-xs text-emerald-500 font-bold tracking-widest mb-6">FRONT</div>
                     <p className="text-2xl sm:text-3xl font-bold italic leading-tight">
-                      {selectedCard === 16
+                      {selectedCard === 17
                         ? (customFront || "Your message here...")
                         : `"${currentCard.front}"`}
                     </p>
@@ -611,13 +607,13 @@ export default function YouSmellLikeShit() {
 
                   {/* Inside */}
                   <div
-                    className={`absolute inset-0 bg-gradient-to-br from-stone-800 to-stone-900 border-2 border-amber-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 ${
+                    className={`absolute inset-0 bg-gradient-to-br from-stone-800 to-stone-900 border-2 border-emerald-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-500 ${
                       cardFlipped ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-95"
                     }`}
                   >
-                    <div className="text-xs text-amber-500 font-bold tracking-widest mb-6">INSIDE</div>
+                    <div className="text-xs text-emerald-500 font-bold tracking-widest mb-6">INSIDE</div>
                     <p className="text-lg sm:text-xl text-stone-300 leading-relaxed italic">
-                      {selectedCard === 16
+                      {selectedCard === 17
                         ? (customInside || "Your inside message here...")
                         : `"${currentCard.inside}"`}
                     </p>
@@ -636,26 +632,26 @@ export default function YouSmellLikeShit() {
                     onClick={() => { setSelectedCard(card.id); setCardFlipped(false); }}
                     className={`w-full text-left p-4 rounded-xl border transition-all duration-200 ${
                       selectedCard === card.id
-                        ? "bg-amber-500/10 border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.15)]"
+                        ? "bg-emerald-500/10 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)]"
                         : "bg-stone-900/50 border-stone-800 hover:border-stone-600"
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                        selectedCard === card.id ? "border-amber-500 bg-amber-500" : "border-stone-600"
+                        selectedCard === card.id ? "border-emerald-500 bg-emerald-500" : "border-stone-600"
                       }`}>
                         {selectedCard === card.id && <Check className="h-3 w-3 text-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-bold text-sm text-white">
-                          {card.id === 16 ? "Custom Message" : card.name}
+                          {card.id === 17 ? "Custom Message" : card.name}
                         </div>
-                        {card.id !== 16 && (
+                        {card.id !== 17 && (
                           <div className="text-xs text-stone-400 mt-1 truncate">
                             "{card.front}" → "{card.inside.slice(0, 50)}..."
                           </div>
                         )}
-                        {card.id === 16 && (
+                        {card.id === 17 && (
                           <div className="text-xs text-stone-400 mt-1">Write your own front & inside message</div>
                         )}
                       </div>
@@ -673,43 +669,43 @@ export default function YouSmellLikeShit() {
         <div className="max-w-5xl mx-auto">
           <FadeUp>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-center mb-4 tracking-tight">
-              CHOOSE YOUR <span className="text-amber-400">BURN</span>
+              CHOOSE YOUR <span className="text-emerald-400">LEVEL</span>
             </h2>
             <p className="text-stone-400 text-center text-lg mb-16">
-              More packs = more savings. Roast the whole crew.
+              More packs = more savings. Save the whole office.
             </p>
           </FadeUp>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                qty: 1, name: "The Casual Roast", desc: "Send to one friend",
+                qty: 1, name: "The Casual Hint", desc: "1 mint tin + 1 savage card",
                 price: 19.99, compare: 29.99, badge: null, popular: false,
               },
               {
-                qty: 2, name: "The Double Burn", desc: "FREE SHIPPING",
+                qty: 2, name: "The Double Down", desc: "2 tins (mix flavors!) + card + sticker sheet • FREE SHIPPING",
                 price: 34.99, compare: 39.98, badge: "MOST POPULAR", popular: true,
               },
               {
-                qty: 3, name: "The Full Intervention", desc: "FREE SHIPPING",
+                qty: 3, name: "The Full Intervention", desc: "All 5 flavors + card + Breath Citation + stickers • FREE SHIPPING",
                 price: 49.99, compare: 59.97, badge: "BEST VALUE", popular: false,
               },
             ].map((tier, i) => (
               <FadeUp key={i} delay={i * 0.1}>
                 <div className={`relative rounded-2xl border p-6 text-center transition-all duration-300 hover:scale-[1.02] ${
                   tier.popular
-                    ? "bg-gradient-to-b from-amber-500/10 to-stone-900 border-amber-500 shadow-[0_0_40px_rgba(245,158,11,0.2)]"
+                    ? "bg-gradient-to-b from-emerald-500/10 to-stone-900 border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.2)]"
                     : "bg-stone-900/50 border-stone-800 hover:border-stone-600"
                 }`}>
                   {tier.badge && (
                     <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold ${
-                      tier.popular ? "bg-amber-500 text-stone-950" : "bg-stone-700 text-stone-200"
+                      tier.popular ? "bg-emerald-500 text-stone-950" : "bg-stone-700 text-stone-200"
                     }`}>
                       {tier.badge}
                     </div>
                   )}
 
-                  <div className="text-4xl mb-3">{tier.qty === 1 ? "🎯" : tier.qty === 2 ? "🔥" : "💣"}</div>
+                  <div className="text-4xl mb-3">{tier.qty === 1 ? "🍬" : tier.qty === 2 ? "🔥" : "💣"}</div>
                   <h3 className="text-xl font-bold mb-1">{tier.name}</h3>
                   <p className="text-sm text-stone-400 mb-4">{tier.desc}</p>
 
@@ -718,16 +714,12 @@ export default function YouSmellLikeShit() {
                     <span className="text-stone-500 line-through ml-2">${tier.compare.toFixed(2)}</span>
                   </div>
 
-                  <div className="text-xs text-stone-500 mb-4">
-                    {tier.qty} {tier.qty === 1 ? "pack" : "packs"} • {tier.qty * 2} cologne tins • {tier.qty} {tier.qty === 1 ? "card" : "cards"}
-                  </div>
-
                   <GlowButton
                     onClick={() => handleCheckout(tier.qty)}
                     className="w-full"
                     size="md"
                   >
-                    {tier.qty === 1 ? "SEND THE MESSAGE" : `GET ${tier.qty} PACKS`}
+                    {tier.qty === 1 ? "SEND THE HINT" : tier.qty === 2 ? "GET 2 PACKS" : "FULL INTERVENTION"}
                   </GlowButton>
                 </div>
               </FadeUp>
@@ -741,19 +733,19 @@ export default function YouSmellLikeShit() {
         <div className="max-w-6xl mx-auto">
           <FadeUp>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-center mb-16 tracking-tight">
-              WHY THIS <span className="text-amber-400">GIFT?</span>
+              WHY THIS <span className="text-emerald-400">GIFT?</span>
             </h2>
           </FadeUp>
 
           <div className="grid sm:grid-cols-2 gap-8">
             {[
-              { icon: "✨", title: "Actually Premium Cologne", desc: "Not a prank product. Real solid fragrances that smell incredible." },
-              { icon: "😂", title: "The Reaction Is Priceless", desc: "Worth every penny just for the look on their face." },
-              { icon: "💌", title: "Savage Card Included", desc: "15 pre-written roasts or write your own. Free with every pack." },
-              { icon: "🕵️", title: "Anonymous Shipping", desc: "No return address. They'll never know who did it." },
+              { icon: "🍬", title: "Legendary Sour Mints", desc: "Inspired by the discontinued Altoids Sours that the internet spent 15 years mourning. These are the real deal." },
+              { icon: "😂", title: "The Reaction Is Priceless", desc: "Worth every penny just for the look on their face when they read the card." },
+              { icon: "💌", title: "Savage Card Included", desc: "16 pre-written roasts or write your own. Free with every pack." },
+              { icon: "🕵️", title: "Anonymous Shipping", desc: "No return address. Maximum plausible deniability." },
             ].map((feature, i) => (
               <FadeUp key={i} delay={i * 0.1}>
-                <div className="flex gap-5 bg-stone-900/50 border border-stone-800 rounded-2xl p-6 hover:border-amber-500/30 transition-all duration-300">
+                <div className="flex gap-5 bg-stone-900/50 border border-stone-800 rounded-2xl p-6 hover:border-emerald-500/30 transition-all duration-300">
                   <div className="text-4xl flex-shrink-0">{feature.icon}</div>
                   <div>
                     <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
@@ -772,11 +764,11 @@ export default function YouSmellLikeShit() {
           <FadeUp>
             <div className="text-center mb-16">
               <h2 className="text-4xl sm:text-5xl font-black uppercase mb-4 tracking-tight">
-                WHAT PEOPLE <span className="text-amber-400">SAY</span>
+                WHAT PEOPLE <span className="text-emerald-400">SAY</span>
               </h2>
               <div className="flex items-center justify-center gap-2 text-lg">
                 <StarRating />
-                <span className="text-stone-400">4.9/5 from 2,847+ reviews</span>
+                <span className="text-stone-400">4.9/5 from 1,247+ reviews</span>
               </div>
             </div>
           </FadeUp>
@@ -784,7 +776,7 @@ export default function YouSmellLikeShit() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {REVIEWS.map((review, i) => (
               <FadeUp key={i} delay={i * 0.1}>
-                <div className="bg-stone-900/50 border border-stone-800 rounded-2xl p-6 hover:border-amber-500/20 transition-all duration-300">
+                <div className="bg-stone-900/50 border border-stone-800 rounded-2xl p-6 hover:border-emerald-500/20 transition-all duration-300">
                   <StarRating count={review.stars} />
                   <p className="text-stone-300 mt-4 mb-4 italic leading-relaxed">
                     "{review.text}"
@@ -802,7 +794,7 @@ export default function YouSmellLikeShit() {
         <div className="max-w-3xl mx-auto">
           <FadeUp>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-center mb-16 tracking-tight">
-              STILL GOT <span className="text-amber-400">QUESTIONS?</span>
+              STILL GOT <span className="text-emerald-400">QUESTIONS?</span>
             </h2>
           </FadeUp>
 
@@ -814,7 +806,7 @@ export default function YouSmellLikeShit() {
                   value={`faq-${i}`}
                   className="bg-stone-900/50 border border-stone-800 rounded-xl px-6 overflow-hidden"
                 >
-                  <AccordionTrigger className="text-left font-bold text-white hover:text-amber-400 hover:no-underline py-5">
+                  <AccordionTrigger className="text-left font-bold text-white hover:text-emerald-400 hover:no-underline py-5">
                     {item.q}
                   </AccordionTrigger>
                   <AccordionContent className="text-stone-400 leading-relaxed pb-5">
@@ -830,20 +822,20 @@ export default function YouSmellLikeShit() {
       {/* ═══ J. Final CTA ═══ */}
       <section className="py-24 px-4 relative">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[150px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[150px]" />
         </div>
 
         <div className="max-w-3xl mx-auto text-center relative z-10">
           <FadeUp>
-            <div className="text-7xl mb-8">✨</div>
+            <div className="text-7xl mb-8">🍬</div>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase mb-4 tracking-tight">
               STILL THINKING?
             </h2>
-            <p className="text-2xl sm:text-3xl font-black text-amber-400 mb-3">
-              YOUR FRIEND STILL STINKS.
+            <p className="text-2xl sm:text-3xl font-black text-emerald-400 mb-3">
+              THEIR BREATH STILL STINKS.
             </p>
             <p className="text-xl text-stone-400 italic font-serif mb-10">
-              Do the right thing.
+              Do the right thing. The mints they've been waiting 15 years for.
             </p>
 
             <GlowButton onClick={() => handleCheckout()} className="w-full max-w-md mx-auto" size="xl">
@@ -864,8 +856,8 @@ export default function YouSmellLikeShit() {
       {/* ═══ Footer ═══ */}
       <footer className="border-t border-stone-800 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-stone-500">
-          <Link to="/" className="hover:text-amber-500 transition-colors">
-            <span className="text-amber-500 font-bold">PRANK</span>PALACE
+          <Link to="/" className="hover:text-emerald-500 transition-colors">
+            <span className="text-emerald-500 font-bold">PRANK</span>PALACE
           </Link>
           <div className="flex gap-6">
             <Link to="/terms" className="hover:text-stone-300 transition-colors">Terms</Link>
@@ -902,24 +894,24 @@ export default function YouSmellLikeShit() {
 
 function SocialProofBar() {
   const { ref, isInView } = useInView(0.3);
-  const packsSent = useAnimatedCounter(2847, 2000, isInView);
+  const packsSent = useAnimatedCounter(1247, 2000, isInView);
   const rating = useAnimatedCounter(49, 1500, isInView);
-  const wouldSend = useAnimatedCounter(98, 1800, isInView);
+  const wouldSend = useAnimatedCounter(97, 1800, isInView);
 
   return (
-    <section ref={ref} className="bg-gradient-to-r from-amber-600 to-orange-500 py-8 px-4">
+    <section ref={ref} className="bg-gradient-to-r from-emerald-600 to-teal-500 py-8 px-4">
       <div className="max-w-5xl mx-auto grid grid-cols-3 gap-8 text-center text-white">
         <div>
           <div className="text-3xl sm:text-4xl font-black">{packsSent.toLocaleString()}+</div>
-          <div className="text-sm text-amber-100 mt-1 font-medium">Packs Shipped</div>
+          <div className="text-sm text-emerald-100 mt-1 font-medium">Packs Shipped</div>
         </div>
         <div>
           <div className="text-3xl sm:text-4xl font-black">{(rating / 10).toFixed(1)}</div>
-          <div className="text-sm text-amber-100 mt-1 font-medium">Star Rating</div>
+          <div className="text-sm text-emerald-100 mt-1 font-medium">Star Rating</div>
         </div>
         <div>
           <div className="text-3xl sm:text-4xl font-black">{wouldSend}%</div>
-          <div className="text-sm text-amber-100 mt-1 font-medium">Would Send Again</div>
+          <div className="text-sm text-emerald-100 mt-1 font-medium">Would Send Again</div>
         </div>
       </div>
     </section>
