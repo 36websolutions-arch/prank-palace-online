@@ -354,8 +354,8 @@ export default function YourBreathStinks() {
       <header className="sticky top-0 z-50 bg-stone-950/90 backdrop-blur-md border-b border-stone-800/50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="text-xl font-bold tracking-tight">
-            <span className="text-emerald-500">PRANK</span>
-            <span className="text-stone-400">PALACE</span>
+            <span className="text-emerald-500">CORPORATE</span>
+            <span className="text-stone-400">PRANKS</span>
           </Link>
           <Link to="/cart" className="relative p-2 text-stone-400 hover:text-emerald-500 transition-colors">
             <ShoppingCart className="h-6 w-6" />
@@ -857,7 +857,7 @@ export default function YourBreathStinks() {
       <footer className="border-t border-stone-800 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-stone-500">
           <Link to="/" className="hover:text-emerald-500 transition-colors">
-            <span className="text-emerald-500 font-bold">PRANK</span>PALACE
+            <span className="text-emerald-500 font-bold">CORPORATE</span> PRANKS
           </Link>
           <div className="flex gap-6">
             <Link to="/terms" className="hover:text-stone-300 transition-colors">Terms</Link>

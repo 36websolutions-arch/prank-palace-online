@@ -183,7 +183,7 @@ Deno.serve(async (req) => {
 
         try {
           await resend.emails.send({
-            from: "The Corporate Chronicle <hello@corporateprank.com>",
+            from: "The Corporate Chronicle <hello@corporatepranks.com>",
             to: [sub.email],
             subject: template.subject,
             html: finalHtml,

@@ -339,7 +339,7 @@ export default function Story() {
                   <p className="text-stone-400 text-xs uppercase tracking-wider mb-2">Sponsored</p>
                   <p className="text-stone-500 dark:text-stone-400 text-sm">
                     Advertise here <br />
-                    <a href="mailto:hello@corporateprank.com" className="text-amber-600 hover:underline">
+                    <a href="mailto:hello@corporatepranks.com" className="text-amber-600 hover:underline">
                       Get rates
                     </a>
                   </p>

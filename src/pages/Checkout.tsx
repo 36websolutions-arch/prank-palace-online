@@ -96,10 +96,12 @@ const stripeAppearance = {
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
-interface YslsOrder {
+interface FunnelOrder {
   productName: string;
-  scentVariant: string;
-  scentId: string;
+  scentVariant?: string;
+  scentId?: string;
+  flavorVariant?: string;
+  flavorId?: string;
   cardId: number;
   cardName: string;
   cardFront: string;
@@ -124,7 +126,7 @@ function StripePaymentForm({
   formValid,
   paymentIntentId,
 }: {
-  funnelOrder: YslsOrder;
+  funnelOrder: FunnelOrder;
   shippingAddress: string;
   recipientName: string;
   shipAnonymous: boolean;
@@ -175,7 +177,7 @@ function StripePaymentForm({
           name: funnelOrder.productName,
           qty: funnelOrder.bundleQty,
           price: funnelOrder.totalPrice,
-          scent_variant: funnelOrder.scentVariant,
+          scent_variant: funnelOrder.scentVariant || funnelOrder.flavorVariant,
           card_name: funnelOrder.cardName,
           card_front: funnelOrder.cardFront,
           card_inside: funnelOrder.cardInside,
@@ -211,6 +213,7 @@ function StripePaymentForm({
 
         // Clean up localStorage
         localStorage.removeItem("yslsOrder");
+        localStorage.removeItem("ybsOrder");
 
         toast({
           title: "Payment Successful!",
@@ -295,10 +298,10 @@ function FunnelCheckout() {
   const [paymentIntentId, setPaymentIntentId] = useState<string>("");
   const [loadingPayment, setLoadingPayment] = useState(false);
 
-  // Load funnel order from localStorage
-  const funnelOrder: YslsOrder | null = (() => {
+  // Load funnel order from localStorage (YSLS or YBS)
+  const funnelOrder: FunnelOrder | null = (() => {
     try {
-      const raw = localStorage.getItem("yslsOrder");
+      const raw = localStorage.getItem("yslsOrder") || localStorage.getItem("ybsOrder");
       return raw ? JSON.parse(raw) : null;
     } catch { return null; }
   })();
@@ -328,7 +331,7 @@ function FunnelCheckout() {
         const { data, error } = await supabase.functions.invoke("stripe-checkout", {
           body: {
             productName: funnelOrder.productName,
-            scentVariant: funnelOrder.scentVariant,
+            scentVariant: funnelOrder.scentVariant || funnelOrder.flavorVariant,
             bundleQty: funnelOrder.bundleQty,
             totalPrice: funnelOrder.totalPrice,
             cardName: funnelOrder.cardName,
@@ -689,7 +692,7 @@ function FunnelCheckout() {
                 <div className="flex-1">
                   <p className="font-medium text-stone-900 dark:text-stone-100">{funnelOrder.productName}</p>
                   <p className="text-sm text-stone-500 dark:text-stone-400">
-                    {funnelOrder.bundleQty} {funnelOrder.bundleQty === 1 ? "pack" : "packs"} &middot; {funnelOrder.scentVariant}
+                    {funnelOrder.bundleQty} {funnelOrder.bundleQty === 1 ? "pack" : "packs"} &middot; {funnelOrder.scentVariant || funnelOrder.flavorVariant}
                   </p>
                 </div>
                 <p className="font-bold text-stone-900 dark:text-stone-100">${funnelOrder.totalPrice.toFixed(2)}</p>
@@ -702,7 +705,7 @@ function FunnelCheckout() {
                   Gift Details
                 </div>
                 <p className="text-sm text-stone-600 dark:text-stone-400">
-                  <span className="font-medium text-stone-700 dark:text-stone-300">Scent:</span> {funnelOrder.scentVariant}
+                  <span className="font-medium text-stone-700 dark:text-stone-300">{funnelOrder.flavorVariant ? "Flavor" : "Scent"}:</span> {funnelOrder.scentVariant || funnelOrder.flavorVariant}
                 </p>
                 <div className="text-sm text-stone-600 dark:text-stone-400">
                   <span className="font-medium text-stone-700 dark:text-stone-300">Card:</span> {funnelOrder.cardName}
@@ -1051,7 +1054,8 @@ function CartCheckout() {
 
 export default function Checkout() {
   const [searchParams] = useSearchParams();
-  const isFunnel = searchParams.get("from") === "ysls";
+  const fromParam = searchParams.get("from");
+  const isFunnel = fromParam === "ysls" || fromParam === "ybs";
 
   if (isFunnel) {
     return <FunnelCheckout />;
