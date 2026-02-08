@@ -1,4 +1,4 @@
-# Claude Code Notes
+# Corporate Pranks (corporatepranks.com)
 
 ## Deploy Fix
 

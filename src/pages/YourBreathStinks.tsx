@@ -864,7 +864,7 @@ export default function YourBreathStinks() {
             <Link to="/privacy" className="hover:text-stone-300 transition-colors">Privacy</Link>
             <Link to="/support" className="hover:text-stone-300 transition-colors">Support</Link>
           </div>
-          <p>&copy; 2025 Prank Palace Online</p>
+          <p>&copy; 2025 Corporate Pranks</p>
         </div>
       </footer>
 
