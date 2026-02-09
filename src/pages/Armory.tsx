@@ -84,6 +84,7 @@ export default function Armory() {
 
   const getProductLink = (product: Product) => {
     if (product.name.toLowerCase().includes("you smell like shit")) return "/you-smell-like-shit";
+    if (product.name.toLowerCase().includes("your breath stinks")) return "/your-breath-stinks";
     if (product.type === "subscription") return `/subscription-checkout/${product.id}`;
     return `/product/${product.id}`;
   };

@@ -131,8 +131,11 @@ export default function Auth() {
         if (mode === "signup") {
           trackSignUpSuccess();
           // Send welcome email (fire and forget)
-          supabase.functions.invoke('send-welcome-email', {
-            body: { email, nickname }
+          // Temporary: call old Lovable project for email until Resend key migrated
+          fetch('https://xfptozziptcpvhtkezba.supabase.co/functions/v1/send-welcome-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, nickname }),
           }).catch(err => console.error("Failed to send welcome email:", err));
 
           toast({ title: "Welcome, Citizen!", description: "Your journey with the Chronicle begins now." });

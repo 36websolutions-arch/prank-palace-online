@@ -159,8 +159,12 @@ async function checkCooldown(apiSource: string): Promise<boolean> {
   return diffMinutes >= cooldownMinutes;
 }
 
+// Track last Claude error for diagnostics
+let lastClaudeError = "";
+
 async function transformWithClaude(articles: RawArticle[]): Promise<any[]> {
-  if (!ANTHROPIC_API_KEY || articles.length === 0) return [];
+  if (!ANTHROPIC_API_KEY) { lastClaudeError = "ANTHROPIC_API_KEY not set"; return []; }
+  if (articles.length === 0) return [];
 
   const articleList = articles.map((a, i) => `${i + 1}. "${a.title}" (Source: ${a.source})`).join("\n");
 
@@ -172,7 +176,7 @@ async function transformWithClaude(articles: RawArticle[]): Promise<any[]> {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-5-20250929",
       max_tokens: 4000,
       system: ROMAN_TRANSFORM_PROMPT,
       messages: [{ role: "user", content: `Transform these ${articles.length} articles:\n\n${articleList}` }],
@@ -180,7 +184,9 @@ async function transformWithClaude(articles: RawArticle[]): Promise<any[]> {
   });
 
   if (!response.ok) {
-    console.error("Claude API error:", await response.text());
+    const errText = await response.text();
+    lastClaudeError = `Claude API ${response.status}: ${errText.substring(0, 300)}`;
+    console.error("Claude API error:", errText);
     return [];
   }
 
@@ -191,6 +197,7 @@ async function transformWithClaude(articles: RawArticle[]): Promise<any[]> {
   try {
     return JSON.parse(cleaned);
   } catch {
+    lastClaudeError = `JSON parse failed: ${cleaned.substring(0, 200)}`;
     console.error("Failed to parse Claude response:", cleaned.substring(0, 200));
     return [];
   }
@@ -270,30 +277,45 @@ Deno.serve(async (req) => {
 
     // Batch transform with Claude (groups of 5)
     let totalInserted = 0;
+    const insertErrors: string[] = [];
     for (let i = 0; i < newArticles.length; i += 5) {
       const batch = newArticles.slice(i, i + 5);
       const transformed = await transformWithClaude(batch);
+
+      if (transformed.length === 0) {
+        insertErrors.push(`Batch ${i/5}: Claude returned empty array — ${lastClaudeError}`);
+        continue;
+      }
 
       for (let j = 0; j < Math.min(batch.length, transformed.length); j++) {
         const article = batch[j];
         const roman = transformed[j];
 
+        // Validate roman_category against allowed values
+        const validCategories = ['denarii_report', 'oracle_dispatches', 'senate_decrees', 'merchant_affairs', 'forum_gossip'];
+        const category = validCategories.includes(roman.roman_category) ? roman.roman_category : 'forum_gossip';
+        const validSentiments = ['favorable', 'ominous', 'neutral'];
+        const sentiment = validSentiments.includes(roman.sentiment) ? roman.sentiment : 'neutral';
+
         const { error } = await supabase.from("forum_economicus_articles").insert({
           original_title: article.title,
           original_url: article.url,
           original_source: article.source,
-          original_published_at: article.publishedAt,
+          original_published_at: article.publishedAt || null,
           api_source: article.apiSource,
           url_hash: article.hash,
           roman_title: roman.roman_title || article.title,
           roman_summary: roman.roman_summary || "",
-          roman_category: roman.roman_category || "forum_gossip",
-          roman_characters: roman.roman_characters || [],
-          sentiment: roman.sentiment || "neutral",
+          roman_category: category,
+          roman_characters: Array.isArray(roman.roman_characters) ? roman.roman_characters : [],
+          sentiment: sentiment,
         });
 
         if (!error) totalInserted++;
-        else console.error("Insert error:", error);
+        else {
+          console.error("Insert error:", error);
+          insertErrors.push(`${article.title}: ${error.message}`);
+        }
       }
     }
 
@@ -304,13 +326,14 @@ Deno.serve(async (req) => {
         api_source: src,
         articles_fetched: allArticles.filter(a => a.apiSource === src).length,
         articles_new: newArticles.filter(a => a.apiSource === src).length,
+        error: insertErrors.length > 0 ? `${insertErrors.length} insert errors` : null,
       });
     }
 
     console.log(`Inserted ${totalInserted} transformed articles`);
 
     return new Response(
-      JSON.stringify({ success: true, articles_new: totalInserted }),
+      JSON.stringify({ success: true, articles_new: totalInserted, errors: insertErrors.length > 0 ? insertErrors : undefined }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {

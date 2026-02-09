@@ -7,6 +7,25 @@ const corsHeaders = {
 
 const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY")!;
 
+// Server-side price validation — prevents clients from sending arbitrary amounts
+const VALID_PRICES: Record<number, number> = {
+  1: 19.99,
+  2: 34.99,
+  3: 49.99,
+};
+const SUBSCRIPTION_PRICE = 25.00;
+
+function validatePrice(bundleQty: number, totalPrice: number, productName: string): boolean {
+  // Subscription products (magazines)
+  if (productName?.toLowerCase().includes("magazine")) {
+    return Math.abs(totalPrice - SUBSCRIPTION_PRICE) < 0.01;
+  }
+  // Bundle products (YSLS, YBS)
+  const expectedPrice = VALID_PRICES[bundleQty];
+  if (!expectedPrice) return false;
+  return Math.abs(totalPrice - expectedPrice) < 0.01;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -33,6 +52,11 @@ serve(async (req) => {
 
     if (!totalPrice || !userId || !email) {
       throw new Error("Missing required fields");
+    }
+
+    if (!validatePrice(bundleQty, totalPrice, productName)) {
+      console.error(`Price validation failed: ${productName}, qty=${bundleQty}, price=${totalPrice}`);
+      throw new Error("Invalid price for product");
     }
 
     const shippingCost = bundleQty >= 2 ? 0 : 4.99;

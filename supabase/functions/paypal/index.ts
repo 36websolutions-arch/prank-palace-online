@@ -9,9 +9,17 @@ const PAYPAL_CLIENT_ID = Deno.env.get("PAYPAL_CLIENT_ID")!;
 const PAYPAL_CLIENT_SECRET = Deno.env.get("PAYPAL_CLIENT_SECRET")!;
 const PAYPAL_MODE = Deno.env.get("PAYPAL_MODE") || "sandbox";
 
-const PAYPAL_API_URL = PAYPAL_MODE === "live" 
-  ? "https://api-m.paypal.com" 
+const PAYPAL_API_URL = PAYPAL_MODE === "live"
+  ? "https://api-m.paypal.com"
   : "https://api-m.sandbox.paypal.com";
+
+// Server-side price validation
+const VALID_PRICES: Record<number, number> = {
+  1: 19.99,
+  2: 34.99,
+  3: 49.99,
+};
+const SUBSCRIPTION_PRICE = 25.00;
 
 async function getAccessToken(): Promise<string> {
   console.log("Getting PayPal access token...");
@@ -110,6 +118,13 @@ serve(async (req) => {
     if (action === "create") {
       if (!amount) {
         throw new Error("Amount is required for creating an order");
+      }
+      // Validate amount against known prices
+      const numAmount = parseFloat(amount);
+      const validAmounts = [...Object.values(VALID_PRICES), SUBSCRIPTION_PRICE];
+      if (!validAmounts.some(v => Math.abs(numAmount - v) < 0.01)) {
+        console.error(`PayPal price validation failed: ${amount}`);
+        throw new Error("Invalid payment amount");
       }
       const order = await createOrder(amount);
       return new Response(JSON.stringify({ orderId: order.id }), {

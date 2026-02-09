@@ -82,6 +82,114 @@ export type Database = {
           },
         ]
       }
+      forum_economicus_articles: {
+        Row: {
+          id: string
+          original_title: string
+          original_url: string
+          original_source: string | null
+          original_published_at: string | null
+          api_source: string
+          url_hash: string
+          roman_title: string
+          roman_summary: string
+          roman_category: string
+          roman_characters: string[]
+          sentiment: string | null
+          ticker_symbols: string[]
+          is_published: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          original_title: string
+          original_url: string
+          original_source?: string | null
+          original_published_at?: string | null
+          api_source: string
+          url_hash: string
+          roman_title: string
+          roman_summary: string
+          roman_category: string
+          roman_characters?: string[]
+          sentiment?: string | null
+          ticker_symbols?: string[]
+          is_published?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          original_title?: string
+          original_url?: string
+          original_source?: string | null
+          original_published_at?: string | null
+          api_source?: string
+          url_hash?: string
+          roman_title?: string
+          roman_summary?: string
+          roman_category?: string
+          roman_characters?: string[]
+          sentiment?: string | null
+          ticker_symbols?: string[]
+          is_published?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      forum_economicus_fetch_log: {
+        Row: {
+          id: string
+          api_source: string
+          fetched_at: string
+          articles_fetched: number
+          articles_new: number
+          error: string | null
+        }
+        Insert: {
+          id?: string
+          api_source: string
+          fetched_at?: string
+          articles_fetched?: number
+          articles_new?: number
+          error?: string | null
+        }
+        Update: {
+          id?: string
+          api_source?: string
+          fetched_at?: string
+          articles_fetched?: number
+          articles_new?: number
+          error?: string | null
+        }
+        Relationships: []
+      }
+      newsletter_subscribers: {
+        Row: {
+          id: string
+          email: string
+          nickname: string | null
+          subscribed_at: string
+          unsubscribed_at: string | null
+          is_active: boolean
+        }
+        Insert: {
+          id?: string
+          email: string
+          nickname?: string | null
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          is_active?: boolean
+        }
+        Update: {
+          id?: string
+          email?: string
+          nickname?: string | null
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          is_active?: boolean
+        }
+        Relationships: []
+      }
       digital_orders: {
         Row: {
           amount_paid: number
@@ -361,6 +469,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pending_comments: {
+        Row: {
+          id: string
+          platform: string
+          post_id: string
+          post_url: string | null
+          post_text: string | null
+          post_author: string | null
+          post_likes: number
+          comment_text: string
+          search_query: string | null
+          status: string
+          reviewed_at: string | null
+          posted_at: string | null
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          platform: string
+          post_id: string
+          post_url?: string | null
+          post_text?: string | null
+          post_author?: string | null
+          post_likes?: number
+          comment_text: string
+          search_query?: string | null
+          status?: string
+          reviewed_at?: string | null
+          posted_at?: string | null
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          platform?: string
+          post_id?: string
+          post_url?: string | null
+          post_text?: string | null
+          post_author?: string | null
+          post_likes?: number
+          comment_text?: string
+          search_query?: string | null
+          status?: string
+          reviewed_at?: string | null
+          posted_at?: string | null
+          error_message?: string | null
+          created_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

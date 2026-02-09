@@ -16,6 +16,7 @@ import TheDepartmentOfImperialEfficiency from "./pages/TheDepartmentOfImperialEf
 import TheWarOfTheOracles from "./pages/TheWarOfTheOracles";
 import TheScrollsOfTheIsland from "./pages/TheScrollsOfTheIsland";
 import TheFestivitasOfOil from "./pages/TheFestivitasOfOil";
+import TheFestivalOfTheSuperbOwl from "./pages/TheFestivalOfTheSuperbOwl";
 import Auth from "./pages/Auth";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
@@ -64,6 +65,7 @@ const App = () => (
               <Route path="/chronicle/the-war-of-the-oracles" element={<TheWarOfTheOracles />} />
               <Route path="/chronicle/the-scrolls-of-the-island" element={<TheScrollsOfTheIsland />} />
               <Route path="/chronicle/the-festivitas-of-oil" element={<TheFestivitasOfOil />} />
+              <Route path="/chronicle/the-festival-of-the-superb-owl" element={<TheFestivalOfTheSuperbOwl />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />

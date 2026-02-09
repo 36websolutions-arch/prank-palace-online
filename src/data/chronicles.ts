@@ -10,6 +10,15 @@ export interface Blog {
 
 export const staticChronicles: Blog[] = [
     {
+        id: "the-festival-of-the-superb-owl",
+        title: "The Festival of the Superb Owl",
+        image: "/festival_of_the_superb_owl.png",
+        published_at: "2026-02-09",
+        content: "The office viewing party was mandatory. The guacamole was contested. The CEO's personal Super Bowl ad featured himself on a horse. HR sent a memo about 'inclusive celebration practices.' And somewhere between the first quarter and halftime, the six-foot sub went missing.",
+        href: "/chronicle/the-festival-of-the-superb-owl",
+        isStatic: true,
+    },
+    {
         id: "the-festivitas-of-oil",
         title: "The Festivitas of Oil",
         image: "/festivitas_of_oil.png",

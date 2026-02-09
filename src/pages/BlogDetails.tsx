@@ -117,11 +117,20 @@ export default function BlogDetails() {
 
             {/* Content */}
             <article className="prose prose-lg max-w-none prose-stone dark:prose-invert">
-              {blog.content.split("\n").map((paragraph, index) => (
-                <p key={index} className="mb-4 text-stone-700 dark:text-stone-300 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
+              {blog.content.split("\n").map((paragraph, index) =>
+                paragraph.startsWith("![") ? (
+                  <img
+                    key={index}
+                    src={paragraph.match(/\((.*?)\)/)?.[1] || ""}
+                    alt={paragraph.match(/\[(.*?)\]/)?.[1] || ""}
+                    className="w-full rounded-lg my-6"
+                  />
+                ) : (
+                  <p key={index} className="mb-4 text-stone-700 dark:text-stone-300 leading-relaxed">
+                    {paragraph}
+                  </p>
+                )
+              )}
             </article>
 
             {/* Share CTA */}

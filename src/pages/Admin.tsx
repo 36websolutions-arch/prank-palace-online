@@ -13,7 +13,8 @@ import { ManageProductsTab } from "@/components/admin/ManageProductsTab";
 import { ManageBlogsTab } from "@/components/admin/ManageBlogsTab";
 import { UserInfoTab } from "@/components/admin/UserInfoTab";
 import { ManageForumTab } from "@/components/admin/ManageForumTab";
-import { Package, Zap, PlusCircle, Settings, RefreshCw, Users, FileText, Scroll, TrendingUp } from "lucide-react";
+import { CommentReviewTab } from "@/components/admin/CommentReviewTab";
+import { Package, Zap, PlusCircle, Settings, RefreshCw, Users, FileText, Scroll, TrendingUp, MessageSquare } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Admin() {
@@ -58,7 +59,7 @@ export default function Admin() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 mb-8 bg-stone-100 dark:bg-stone-800">
+          <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 mb-8 bg-stone-100 dark:bg-stone-800">
             <TabsTrigger value="digital-orders" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900 data-[state=active]:text-amber-600">
               <Zap className="h-4 w-4" />
               <span className="hidden sm:inline">Digital</span>
@@ -95,6 +96,10 @@ export default function Admin() {
               <TrendingUp className="h-4 w-4" />
               <span className="hidden sm:inline">Forum</span>
             </TabsTrigger>
+            <TabsTrigger value="comments" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900 data-[state=active]:text-amber-600">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Comments</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="digital-orders">
@@ -123,6 +128,9 @@ export default function Admin() {
           </TabsContent>
           <TabsContent value="forum">
             <ManageForumTab />
+          </TabsContent>
+          <TabsContent value="comments">
+            <CommentReviewTab />
           </TabsContent>
         </Tabs>
       </main>
