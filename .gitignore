@@ -25,3 +25,9 @@ dist-ssr
 .vercel
 .env
 .env*.local
+
+# Environment files
+.env.vercel
+
+# Supabase temp
+supabase/.temp/
