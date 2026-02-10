@@ -20,6 +20,10 @@ function validatePrice(bundleQty: number, totalPrice: number, productName: strin
   if (productName?.toLowerCase().includes("magazine")) {
     return Math.abs(totalPrice - SUBSCRIPTION_PRICE) < 0.01;
   }
+  // The DickHead — custom 3D sculpture, always $250 qty 1
+  if (productName?.toLowerCase().includes("dickhead")) {
+    return Math.abs(totalPrice - 250.00) < 0.01;
+  }
   // Bundle products (YSLS, YBS)
   const expectedPrice = VALID_PRICES[bundleQty];
   if (!expectedPrice) return false;
@@ -59,7 +63,8 @@ serve(async (req) => {
       throw new Error("Invalid price for product");
     }
 
-    const shippingCost = bundleQty >= 2 ? 0 : 4.99;
+    const isDickhead = productName?.toLowerCase().includes("dickhead");
+    const shippingCost = isDickhead ? 0 : (bundleQty >= 2 ? 0 : 4.99);
     const amountInCents = Math.round((totalPrice + shippingCost) * 100);
 
     // Create a Stripe PaymentIntent

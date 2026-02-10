@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll, ChevronDown, Shield, Package, Zap, Crown, Heart, Instagram, TrendingUp, Candy } from "lucide-react";
+import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll, ChevronDown, Shield, Package, Zap, Crown, Heart, Instagram, TrendingUp, Candy, Skull } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -49,6 +49,12 @@ export function Navbar() {
       icon: Candy,
       label: "Your Breath Stinks",
       description: "Sour mint revival prank",
+    },
+    {
+      to: "/the-dickhead",
+      icon: Skull,
+      label: "The DickHead",
+      description: "Custom 3D face sculpture",
     },
     {
       to: "/physical-products",

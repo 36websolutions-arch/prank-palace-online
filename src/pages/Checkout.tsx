@@ -143,7 +143,8 @@ function StripePaymentForm({
   const [submitting, setSubmitting] = useState(false);
   const [paymentReady, setPaymentReady] = useState(false);
 
-  const shippingCost = funnelOrder.bundleQty >= 2 ? 0 : 4.99;
+  const isDickheadProduct = funnelOrder.productName?.toLowerCase().includes("dickhead");
+  const shippingCost = isDickheadProduct ? 0 : (funnelOrder.bundleQty >= 2 ? 0 : 4.99);
   const finalTotal = funnelOrder.totalPrice + shippingCost;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -214,6 +215,7 @@ function StripePaymentForm({
         // Clean up localStorage
         localStorage.removeItem("yslsOrder");
         localStorage.removeItem("ybsOrder");
+        localStorage.removeItem("dickheadOrder");
 
         toast({
           title: "Payment Successful!",
@@ -298,10 +300,10 @@ function FunnelCheckout() {
   const [paymentIntentId, setPaymentIntentId] = useState<string>("");
   const [loadingPayment, setLoadingPayment] = useState(false);
 
-  // Load funnel order from localStorage (YSLS or YBS)
+  // Load funnel order from localStorage (YSLS, YBS, or DickHead)
   const funnelOrder: FunnelOrder | null = (() => {
     try {
-      const raw = localStorage.getItem("yslsOrder") || localStorage.getItem("ybsOrder");
+      const raw = localStorage.getItem("yslsOrder") || localStorage.getItem("ybsOrder") || localStorage.getItem("dickheadOrder");
       return raw ? JSON.parse(raw) : null;
     } catch { return null; }
   })();
@@ -385,12 +387,16 @@ function FunnelCheckout() {
     );
   }
 
-  const shippingCost = funnelOrder.bundleQty >= 2 ? 0 : 4.99;
+  // Free shipping for $250+ products (DickHead), otherwise standard logic
+  const isDickhead = funnelOrder.productName?.toLowerCase().includes("dickhead");
+  const shippingCost = isDickhead ? 0 : (funnelOrder.bundleQty >= 2 ? 0 : 4.99);
   const finalTotal = funnelOrder.totalPrice + shippingCost;
   const buildAddress = (s: { street: string; apt: string; city: string; state: string; zip: string }) =>
     [s.street, s.apt, s.city, `${s.state} ${s.zip}`].filter(Boolean).join(", ");
   const shippingAddress = shipToFriend ? buildAddress(recipientForm) : buildAddress(form);
   const recipientName = shipToFriend ? recipientForm.recipientName : nickname || "Customer";
+
+  const backLink = isDickhead ? "/the-dickhead" : "/you-smell-like-shit";
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
@@ -399,7 +405,7 @@ function FunnelCheckout() {
       <main className="flex-1 container mx-auto px-4 py-8">
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
           <Link
-            to="/you-smell-like-shit"
+            to={backLink}
             className="inline-flex items-center gap-2 text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors mb-8"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -737,7 +743,7 @@ function FunnelCheckout() {
                 )}
                 <div className="flex justify-between text-sm">
                   <span className="text-stone-600 dark:text-stone-400">Shipping</span>
-                  <span className="text-amber-600">{funnelOrder.bundleQty >= 2 ? "Free" : "$4.99"}</span>
+                  <span className="text-amber-600">{shippingCost === 0 ? "Free" : `$${shippingCost.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between text-xl font-bold pt-2 border-t border-stone-200 dark:border-stone-700">
                   <span className="text-stone-900 dark:text-stone-100">Total</span>
@@ -1055,7 +1061,7 @@ function CartCheckout() {
 export default function Checkout() {
   const [searchParams] = useSearchParams();
   const fromParam = searchParams.get("from");
-  const isFunnel = fromParam === "ysls" || fromParam === "ybs";
+  const isFunnel = fromParam === "ysls" || fromParam === "ybs" || fromParam === "dickhead";
 
   if (isFunnel) {
     return <FunnelCheckout />;
