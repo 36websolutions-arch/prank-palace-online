@@ -5,6 +5,46 @@ const STRIPE_WEBHOOK_SECRET = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
+// ─── Tracking helpers (fire-and-forget) ─────────────────────────────────────
+const FP_API_URL = Deno.env.get("FINGERPRINT_API_URL") || "https://fingerprint-api-production-91d3.up.railway.app";
+const FP_SITE_ID = Deno.env.get("FINGERPRINT_SITE_ID") || "fkEQgNgS0XSPNixchDVgQ";
+const TRAJECTORY_API_URL = Deno.env.get("TRAJECTORY_API_URL") || "https://trajectory-protocol-production.up.railway.app";
+const TRAJECTORY_API_KEY = Deno.env.get("TRAJECTORY_API_KEY");
+
+async function sendFingerprintEvent(eventName: string, eventData: Record<string, unknown>) {
+  try {
+    await fetch(`${FP_API_URL}/v1/events`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ siteId: FP_SITE_ID, eventName, eventData }),
+    });
+    console.log(`[Fingerprint] Event sent: ${eventName}`);
+  } catch (err) {
+    console.error("[Fingerprint] Network error:", err);
+  }
+}
+
+async function sendTrajectoryEvent(entityId: string, eventType: string, payload: Record<string, unknown>) {
+  if (!TRAJECTORY_API_KEY) return;
+  try {
+    await fetch(`${TRAJECTORY_API_URL}/api/v1/events`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${TRAJECTORY_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        entity_id: entityId,
+        entity_type: "customer",
+        event_type: eventType,
+        domain: "corporatepranks.com",
+        timestamp: new Date().toISOString(),
+        payload,
+      }),
+    });
+    console.log(`[Trajectory] Event sent: ${eventType}`);
+  } catch (err) {
+    console.error("[Trajectory] Network error:", err);
+  }
+}
+
 async function verifySignature(payload: string, sigHeader: string, secret: string): Promise<boolean> {
   const parts = sigHeader.split(",").reduce((acc: Record<string, string>, part: string) => {
     const [key, value] = part.split("=");
@@ -112,6 +152,18 @@ serve(async (req) => {
       }
 
       console.log(`Webhook order created for ${meta.user_id}`);
+
+      // Fire-and-forget: Trajectory + Fingerprint
+      const amountCents = Math.round((parseFloat(meta.amount_paid) || 0) * 100);
+      sendFingerprintEvent("payment_succeeded", {
+        amount_cents: amountCents, currency: "USD", payment_id: paymentIntent.id,
+        customer_email: meta.email, product_name: meta.product_name, processor: "stripe",
+      }).catch(() => {});
+
+      sendTrajectoryEvent(meta.email || meta.user_id, "payment_succeeded", {
+        amount_cents: amountCents, currency: "USD", payment_id: paymentIntent.id,
+        product_name: meta.product_name, processor: "stripe",
+      }).catch(() => {});
     }
 
     return new Response(JSON.stringify({ received: true }), {
