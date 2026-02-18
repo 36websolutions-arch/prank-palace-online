@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, Navigate, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
@@ -62,6 +62,12 @@ export default function SubscriptionCheckout() {
 
   const [selectedSubscription, setSelectedSubscription] = useState<string>("");
   const [formValid, setFormValid] = useState(false);
+  const formValuesRef = useRef({ buyerName: "", buyerEmail: "", recipientName: "", recipientTitle: "", recipientCompany: "", recipientAddressLine1: "", recipientAddressLine2: "", recipientCity: "", recipientState: "", recipientZipcode: "", recipientCountry: "United States", recipientEmail: "", recipientPhone: "" });
+
+  // Keep form ref in sync for stable PayPal callbacks
+  useEffect(() => {
+    formValuesRef.current = { buyerName, buyerEmail, recipientName, recipientTitle, recipientCompany, recipientAddressLine1, recipientAddressLine2, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone };
+  }, [buyerName, buyerEmail, recipientName, recipientTitle, recipientCompany, recipientAddressLine1, recipientAddressLine2, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone]);
 
   // Validate form
   useEffect(() => {
@@ -78,6 +84,13 @@ export default function SubscriptionCheckout() {
       selectedSubscription !== "";
     setFormValid(isValid);
   }, [buyerName, buyerEmail, recipientName, recipientAddressLine1, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, selectedSubscription]);
+
+  // Redirect guests — stop spinner
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setLoading(false);
+    }
+  }, [authLoading, user]);
 
   // Fetch product
   useEffect(() => {
@@ -205,26 +218,27 @@ export default function SubscriptionCheckout() {
           if (captureError) throw captureError;
 
           // Save subscription order
+          const fv = formValuesRef.current;
           const { error: orderError } = await supabase.from("subscription_orders").insert({
-            user_id: user!.id,
+            user_id: user?.id || "guest",
             product_id: product.id,
             product_name: product.name,
             subscription_name: subscriptionDetails.name,
             subscription_price: subscriptionDetails.price,
-            buyer_name: buyerName,
-            buyer_email: buyerEmail,
-            recipient_name: recipientName,
-            recipient_title: recipientTitle || null,
-            recipient_company: recipientCompany || null,
-            recipient_address: `${recipientAddressLine1}${recipientAddressLine2 ? ', ' + recipientAddressLine2 : ''}, ${recipientCity}, ${recipientState} ${recipientZipcode}, ${recipientCountry}`,
-            recipient_address_line1: recipientAddressLine1,
-            recipient_address_line2: recipientAddressLine2 || null,
-            recipient_city: recipientCity,
-            recipient_state: recipientState,
-            recipient_zipcode: recipientZipcode,
-            recipient_country: recipientCountry,
-            recipient_email: recipientEmail,
-            recipient_phone: recipientPhone || null,
+            buyer_name: fv.buyerName,
+            buyer_email: fv.buyerEmail,
+            recipient_name: fv.recipientName,
+            recipient_title: fv.recipientTitle || null,
+            recipient_company: fv.recipientCompany || null,
+            recipient_address: `${fv.recipientAddressLine1}${fv.recipientAddressLine2 ? ', ' + fv.recipientAddressLine2 : ''}, ${fv.recipientCity}, ${fv.recipientState} ${fv.recipientZipcode}, ${fv.recipientCountry}`,
+            recipient_address_line1: fv.recipientAddressLine1,
+            recipient_address_line2: fv.recipientAddressLine2 || null,
+            recipient_city: fv.recipientCity,
+            recipient_state: fv.recipientState,
+            recipient_zipcode: fv.recipientZipcode,
+            recipient_country: fv.recipientCountry,
+            recipient_email: fv.recipientEmail,
+            recipient_phone: fv.recipientPhone || null,
             delivery_date: new Date().toISOString().split('T')[0],
             amount_paid: subscriptionDetails.price,
             payment_method: "paypal",
@@ -261,7 +275,7 @@ export default function SubscriptionCheckout() {
         toast({ title: "Payment Error", description: "There was an error processing your payment", variant: "destructive" });
       },
     }).render("#paypal-button-container");
-  }, [paypalLoaded, product, formValid, selectedSubscription, buyerName, buyerEmail, recipientName, recipientTitle, recipientCompany, recipientAddressLine1, recipientAddressLine2, recipientCity, recipientState, recipientZipcode, recipientCountry, recipientEmail, recipientPhone, user, navigate]);
+  }, [paypalLoaded, product, formValid, selectedSubscription]);
 
 
 
@@ -271,6 +285,26 @@ export default function SubscriptionCheckout() {
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
           <ChronicleLoader />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!authLoading && !user) {
+    return (
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-12 text-center">
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-6">
+            <Lock className="h-12 w-12 text-amber-600" />
+          </div>
+          <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-4">Sign In to Subscribe</h1>
+          <p className="text-stone-600 dark:text-stone-400 mb-8">Create a free account to purchase subscriptions.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/auth"><Button className="bg-amber-600 hover:bg-amber-700 text-white">Sign In</Button></Link>
+            <Link to="/subscription-products"><Button variant="outline" className="border-stone-300 dark:border-stone-700">Browse Subscriptions</Button></Link>
+          </div>
         </main>
         <Footer />
       </div>

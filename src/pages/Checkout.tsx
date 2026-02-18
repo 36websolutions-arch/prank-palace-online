@@ -111,6 +111,7 @@ interface FunnelOrder {
   totalPrice: number;
   comparePrice: number;
   image: string;
+  faceImageData?: string;
 }
 
 // ─── Stripe Payment Form (inner component, must be inside <Elements>) ───────────
@@ -184,6 +185,7 @@ function StripePaymentForm({
           card_inside: funnelOrder.cardInside,
           recipient_name: recipientName,
           ship_anonymous: shipAnonymous,
+          face_image: funnelOrder.faceImageData || null,
         }];
 
         const { error: dbError } = await supabase.from("physical_orders").insert({
@@ -276,6 +278,7 @@ function StripePaymentForm({
 function FunnelCheckout() {
   const { user, nickname, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [shipToFriend, setShipToFriend] = useState(true);
   const [form, setForm] = useState({
     email: user?.email || "",
@@ -396,7 +399,8 @@ function FunnelCheckout() {
   const shippingAddress = shipToFriend ? buildAddress(recipientForm) : buildAddress(form);
   const recipientName = shipToFriend ? recipientForm.recipientName : nickname || "Customer";
 
-  const backLink = isDickhead ? "/the-dickhead" : "/you-smell-like-shit";
+  const fromParam = searchParams.get("from");
+  const backLink = isDickhead ? "/the-dickhead" : (fromParam === "ybs" ? "/your-breath-stinks" : "/you-smell-like-shit");
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
@@ -770,6 +774,7 @@ function CartCheckout() {
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [paypalClientId, setPaypalClientId] = useState<string | null>(null);
   const paypalContainerRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef({ phone: "", address: "", deliveryDate: "" });
   const [form, setForm] = useState({
     phone: "",
     address: "",
@@ -778,8 +783,46 @@ function CartCheckout() {
   const [formValid, setFormValid] = useState(false);
 
   useEffect(() => {
+    formRef.current = form;
     setFormValid(form.phone.trim() !== "" && form.address.trim() !== "" && form.deliveryDate !== "");
   }, [form]);
+
+  // Auth guard — cart requires login
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-12">
+          <div className="flex items-center justify-center py-8">
+            <ChronicleSpinner />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-12">
+          <EmptyState
+            icon="🛒"
+            title="Sign in to use your cart"
+            description="Or buy directly from our product pages — no account needed!"
+            action={
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link to="/auth"><Button className="bg-amber-600 hover:bg-amber-700 text-white">Sign In</Button></Link>
+                <Link to="/armory"><Button variant="outline" className="border-stone-300 dark:border-stone-700">Browse Products</Button></Link>
+              </div>
+            }
+          />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   useEffect(() => {
     const fetchClientId = async () => {
@@ -854,13 +897,14 @@ function CartCheckout() {
             price: item.product.price,
           }));
 
+          const currentForm = formRef.current;
           const { error: dbError } = await supabase.from("physical_orders").insert({
-            user_id: user!.id,
+            user_id: user?.id || "guest",
             nickname: nickname || "Citizen",
-            email: user!.email || "",
-            phone: form.phone,
-            address: form.address,
-            delivery_date: form.deliveryDate,
+            email: user?.email || "",
+            phone: currentForm.phone,
+            address: currentForm.address,
+            delivery_date: currentForm.deliveryDate,
             items: orderItems,
             amount_paid: totalPrice,
             payment_method: "PayPal",
@@ -900,7 +944,7 @@ function CartCheckout() {
         toast({ title: "Cancelled", description: "Payment was cancelled" });
       },
     }).render(paypalContainerRef.current);
-  }, [paypalLoaded, formValid, totalPrice, items, user, nickname, form, navigate, clearCart]);
+  }, [paypalLoaded, formValid, totalPrice]);
 
   if (items.length === 0) {
     return (

@@ -44,6 +44,13 @@ export default function DigitalCheckout() {
   const [paypalLoaded, setPaypalLoaded] = useState(false);
   const [processing, setProcessing] = useState(false);
 
+  // Redirect guests to auth
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setLoading(false);
+    }
+  }, [authLoading, user]);
+
   // Fetch product and profile
   useEffect(() => {
     if (user && id) {
@@ -190,7 +197,7 @@ export default function DigitalCheckout() {
 
           // Save digital order
           const { error: orderError } = await supabase.from("digital_orders").insert({
-            user_id: user!.id,
+            user_id: user?.id || "guest",
             product_id: product.id,
             product_name: product.name,
             nickname: profile.nickname,
@@ -255,6 +262,26 @@ export default function DigitalCheckout() {
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-12">
           <ChronicleLoader />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!authLoading && !user) {
+    return (
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-12 text-center">
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-6">
+            <Lock className="h-12 w-12 text-amber-600" />
+          </div>
+          <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100 mb-4">Sign In to Purchase</h1>
+          <p className="text-stone-600 dark:text-stone-400 mb-8">Create a free account to buy digital products and access them instantly.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/auth"><Button className="bg-amber-600 hover:bg-amber-700 text-white">Sign In</Button></Link>
+            <Link to="/digital-products"><Button variant="outline" className="border-stone-300 dark:border-stone-700">Browse Products</Button></Link>
+          </div>
         </main>
         <Footer />
       </div>

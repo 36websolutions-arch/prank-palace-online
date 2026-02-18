@@ -20,7 +20,19 @@ export default function Cart() {
           <h1 className="font-display text-4xl text-stone-900 dark:text-stone-100">Your Cart</h1>
         </div>
 
-        {items.length === 0 ? (
+        {!loading && !user ? (
+          <EmptyState
+            icon="🛒"
+            title="No account needed to buy!"
+            description="You can purchase directly from our product pages. Sign in if you want to save items to your cart."
+            action={
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link to="/armory"><Button className="bg-amber-600 hover:bg-amber-700 text-white">Browse The Armory</Button></Link>
+                <Link to="/auth"><Button variant="outline" className="border-stone-300 dark:border-stone-700">Sign In</Button></Link>
+              </div>
+            }
+          />
+        ) : items.length === 0 ? (
           <EmptyState
             icon="🛒"
             title="Your cart is empty!"
