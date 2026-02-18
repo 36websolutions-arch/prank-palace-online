@@ -149,7 +149,7 @@ function StripePaymentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements || !formValid) return;
+    if (!stripe || !elements || !formValid || !paymentReady) return;
 
     setSubmitting(true);
 
@@ -640,20 +640,20 @@ function FunnelCheckout() {
                 Payment
               </h2>
 
-              {!formValid && (
+              {!clientSecret && !loadingPayment && (
                 <p className="text-sm text-stone-500 dark:text-stone-400 mb-4 text-center py-8">
                   Fill in shipping details above to unlock payment
                 </p>
               )}
 
-              {formValid && loadingPayment && (
+              {loadingPayment && (
                 <div className="flex items-center justify-center py-8">
                   <ChronicleSpinner />
                   <span className="ml-2 text-stone-600 dark:text-stone-400">Setting up secure payment...</span>
                 </div>
               )}
 
-              {formValid && clientSecret && (
+              {clientSecret && (
                 <Elements
                   stripe={stripePromise}
                   options={{
