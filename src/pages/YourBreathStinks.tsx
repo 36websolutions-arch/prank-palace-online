@@ -390,10 +390,6 @@ export default function YourBreathStinks() {
                       }}
                     />
                   ))}
-                  {/* Fallback if no images */}
-                  <div className="absolute inset-0 flex items-center justify-center text-8xl">
-                    🍬
-                  </div>
                 </div>
               </div>
               {/* Image dots */}
@@ -585,7 +581,7 @@ export default function YourBreathStinks() {
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             {/* Card Preview */}
             <FadeUp>
-              <div className="perspective-1000 max-w-md mx-auto">
+              <div className="perspective-1000 max-w-sm sm:max-w-md mx-auto">
                 <div
                   className="relative w-full aspect-[3/4] cursor-pointer"
                   onClick={() => setCardFlipped(!cardFlipped)}
@@ -625,7 +621,7 @@ export default function YourBreathStinks() {
 
             {/* Card List */}
             <FadeUp delay={0.2}>
-              <div className="space-y-2 max-h-[600px] overflow-y-auto pr-2 scrollbar-thin">
+              <div className="space-y-2 max-h-[600px] overflow-y-auto overflow-x-hidden pr-2 scrollbar-thin">
                 {CARD_OPTIONS.map(card => (
                   <button
                     key={card.id}
