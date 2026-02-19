@@ -421,7 +421,7 @@ export default function YouSmellLikeShit() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-400 text-sm font-bold">
                 <Star className="h-4 w-4 fill-amber-400" />
-                THE #1 GAG GIFT OF 2025
+                THE #1 GAG GIFT OF 2026
               </div>
 
               {/* Headline */}
@@ -872,7 +872,7 @@ export default function YouSmellLikeShit() {
             <Link to="/privacy" className="hover:text-stone-300 transition-colors">Privacy</Link>
             <Link to="/support" className="hover:text-stone-300 transition-colors">Support</Link>
           </div>
-          <p>&copy; 2025 Corporate Pranks</p>
+          <p>&copy; 2026 Corporate Pranks</p>
         </div>
       </footer>
 

@@ -1055,7 +1055,7 @@ export default function TheDickHead() {
             <Link to="/privacy" className="hover:text-stone-300 transition-colors">Privacy</Link>
             <Link to="/support" className="hover:text-stone-300 transition-colors">Support</Link>
           </div>
-          <p>&copy; 2025 Corporate Pranks</p>
+          <p>&copy; 2026 Corporate Pranks</p>
         </div>
       </footer>
 
