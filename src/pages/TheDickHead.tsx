@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { trackAddToCart } from "@/lib/analytics";
 import { ShoppingCart, Lock, Package, Star, ChevronDown, Check, Upload, ZoomIn, ZoomOut, Move } from "lucide-react";
 import {
@@ -471,6 +472,13 @@ function FacePreview({ onFaceData }: { onFaceData: (data: string | null) => void
 // ─── Main Page ──────────────────────────────────────────────────────────────────
 
 export default function TheDickHead() {
+  usePageMeta({
+    title: "The DickHead",
+    description: "A custom sculpture of someone's face on a golden dick. Upload their photo. We do the rest. The ultimate power move.",
+    image: "/products/the-dickhead/hero-1.webp",
+    url: "/the-dickhead",
+  });
+
   const navigate = useNavigate();
 
   // State
@@ -485,9 +493,9 @@ export default function TheDickHead() {
   const heroRef = useRef<HTMLDivElement>(null);
 
   const heroImages = [
-    "/products/the-dickhead/hero-1.png",
-    "/products/the-dickhead/hero-2.png",
-    "/products/the-dickhead/hero-3.png",
+    "/products/the-dickhead/hero-1.webp",
+    "/products/the-dickhead/hero-2.webp",
+    "/products/the-dickhead/hero-3.webp",
   ];
 
   // Viewing counter randomizer
@@ -532,7 +540,7 @@ export default function TheDickHead() {
       unitPrice: 250,
       totalPrice: 250,
       comparePrice: 399.99,
-      image: "/products/the-dickhead/hero-1.png",
+      image: "/products/the-dickhead/hero-1.webp",
       faceImageData: faceImageData,
     }));
 

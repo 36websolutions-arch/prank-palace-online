@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
@@ -189,6 +190,13 @@ function DrawUnderline({ className = "" }: { className?: string }) {
 }
 
 export default function Home2() {
+  usePageMeta({
+    title: "CorporatePranks",
+    description: "Satire since Rome. Dispatches from the Corporate Empire. Chronicles, cologne that insults you, and mints for the socially unaware.",
+    image: "/products/you-smell-like-shit/hero-1.webp",
+    url: "/",
+  });
+
   const [email, setEmail] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [recentChronicles, setRecentChronicles] = useState<Blog[]>([]);
@@ -437,6 +445,99 @@ export default function Home2() {
           </div>
         </section>
 
+        {/* The Armory - Featured Products */}
+        <section className="py-16 sm:py-20 bg-stone-900 relative overflow-hidden">
+          {/* Subtle background glow */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500 rounded-full filter blur-[200px]" />
+          </div>
+
+          <div className="container mx-auto px-4 relative">
+            <FadeUp>
+              <div className="text-center mb-10 sm:mb-14">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-600" />
+                  <ShoppingBag className="h-5 w-5 text-amber-500" />
+                  <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-600" />
+                </div>
+                <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-white mb-3">
+                  The <span className="text-amber-500">Armory</span>
+                </h2>
+                <p className="text-stone-400 text-sm sm:text-base max-w-lg mx-auto">
+                  Weapons of mass communication. Say what you really think.
+                </p>
+              </div>
+            </FadeUp>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {[
+                {
+                  name: "You Smell Like Shit",
+                  price: "$19.99",
+                  tagline: "Solid cologne for someone who needs it",
+                  image: "/products/you-smell-like-shit/hero-1.webp",
+                  link: "/you-smell-like-shit",
+                  cta: "Send the Message",
+                },
+                {
+                  name: "Your Breath Stinks",
+                  price: "$19.99",
+                  tagline: "Sour mints for the socially unaware",
+                  image: "/products/your-breath-stinks/hero-1.webp",
+                  link: "/your-breath-stinks",
+                  cta: "Send the Message",
+                },
+                {
+                  name: "The DickHead",
+                  price: "$250",
+                  tagline: "The ultimate corporate statement piece",
+                  image: "/products/the-dickhead/hero-1.webp",
+                  link: "/the-dickhead",
+                  cta: "Order Now",
+                },
+              ].map((product, i) => (
+                <FadeUp key={product.name} delay={i * 0.15}>
+                  <Link
+                    to={product.link}
+                    className="group block bg-stone-800/60 backdrop-blur rounded-xl overflow-hidden border border-stone-700/50 hover:border-amber-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)]"
+                  >
+                    <div className="aspect-square overflow-hidden bg-stone-800">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-display text-lg text-white group-hover:text-amber-400 transition-colors mb-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-stone-400 text-sm mb-3">{product.tagline}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-amber-500 font-bold text-lg">{product.price}</span>
+                        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-500 group-hover:gap-2.5 transition-all">
+                          {product.cta} <ArrowRight className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </FadeUp>
+              ))}
+            </div>
+
+            <FadeUp delay={0.5}>
+              <div className="text-center mt-10">
+                <Link to="/armory">
+                  <Button variant="outline" className="border-amber-600/50 text-amber-500 hover:bg-amber-600 hover:text-white px-8 h-12 text-base gap-2">
+                    <ShoppingBag className="h-4 w-4" />
+                    Browse The Full Armory
+                  </Button>
+                </Link>
+              </div>
+            </FadeUp>
+          </div>
+        </section>
+
         {/* Featured Chronicle + Sidebar Layout */}
         <section className="py-16 border-b border-stone-200 dark:border-stone-800">
           <div className="container mx-auto px-4">
@@ -530,26 +631,26 @@ export default function Home2() {
                       <h3 className="font-display text-lg text-stone-900 dark:text-stone-100">The Armory</h3>
                     </div>
                     <div className="space-y-3">
-                      <Link to="/armory" className="flex items-center gap-3 group">
+                      <Link to="/you-smell-like-shit" className="flex items-center gap-3 group">
                         <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-100 dark:bg-stone-800 flex-shrink-0">
-                          <div className="w-full h-full flex items-center justify-center text-2xl">🎭</div>
+                          <img src="/products/you-smell-like-shit/hero-1.webp" alt="You Smell Like Shit" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-stone-900 dark:text-stone-100 truncate group-hover:text-amber-600 transition-colors text-sm">
-                            Gladiator Survival Kit
+                            You Smell Like Shit
                           </p>
-                          <p className="text-amber-600 font-bold text-sm">$25</p>
+                          <p className="text-amber-600 font-bold text-sm">$19.99</p>
                         </div>
                       </Link>
-                      <Link to="/armory" className="flex items-center gap-3 group">
+                      <Link to="/your-breath-stinks" className="flex items-center gap-3 group">
                         <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-100 dark:bg-stone-800 flex-shrink-0">
-                          <div className="w-full h-full flex items-center justify-center text-2xl">📜</div>
+                          <img src="/products/your-breath-stinks/hero-1.webp" alt="Your Breath Stinks" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-stone-900 dark:text-stone-100 truncate group-hover:text-amber-600 transition-colors text-sm">
-                            Senate Insider Guide
+                            Your Breath Stinks
                           </p>
-                          <p className="text-amber-600 font-bold text-sm">$15</p>
+                          <p className="text-amber-600 font-bold text-sm">$19.99</p>
                         </div>
                       </Link>
                     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -59,6 +60,12 @@ const affiliateProducts = [
 ];
 
 export default function Armory() {
+  usePageMeta({
+    title: "The Armory",
+    description: "Arm yourself for corporate warfare. Cologne, mints, sculptures, and other weapons of mass embarrassment.",
+    url: "/armory",
+  });
+
   const [physicalProducts, setPhysicalProducts] = useState<Product[]>([]);
   const [digitalProducts, setDigitalProducts] = useState<Product[]>([]);
   const [subscriptionProducts, setSubscriptionProducts] = useState<Product[]>([]);
@@ -85,6 +92,7 @@ export default function Armory() {
   const getProductLink = (product: Product) => {
     if (product.name.toLowerCase().includes("you smell like shit")) return "/you-smell-like-shit";
     if (product.name.toLowerCase().includes("your breath stinks")) return "/your-breath-stinks";
+    if (product.name.toLowerCase().includes("dickhead")) return "/the-dickhead";
     if (product.type === "subscription") return `/subscription-checkout/${product.id}`;
     return `/product/${product.id}`;
   };

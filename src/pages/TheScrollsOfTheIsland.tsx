@@ -305,7 +305,7 @@ export default function TheScrollsOfTheIsland() {
                             {i === 0 && (
                               <div className="my-10 rounded-xl overflow-hidden shadow-lg border border-stone-200 dark:border-stone-700">
                                 <img
-                                  src="/scrolls_of_the_island_2.png"
+                                  src="/scrolls_of_the_island_2.webp"
                                   alt="The archives of the Empire — scrolls stretch into darkness as Senators avert their eyes"
                                   className="w-full h-auto"
                                 />

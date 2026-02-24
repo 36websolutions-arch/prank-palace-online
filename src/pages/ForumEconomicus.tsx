@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -70,6 +71,12 @@ function timeAgo(dateStr: string): string {
 }
 
 export default function ForumEconomicus() {
+  usePageMeta({
+    title: "Forum Economicus",
+    description: "Financial news rewritten as dispatches from the Roman Senate. Market movements, oracle predictions, and merchant affairs.",
+    url: "/forum-economicus",
+  });
+
   const [articles, setArticles] = useState<ForumArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");

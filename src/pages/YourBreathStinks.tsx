@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { trackAddToCart } from "@/lib/analytics";
 import { ShoppingCart, Lock, Package, Star, ChevronDown, Check } from "lucide-react";
 import {
@@ -204,6 +205,13 @@ function GlowButton({
 // ─── Main Page ──────────────────────────────────────────────────────────────────
 
 export default function YourBreathStinks() {
+  usePageMeta({
+    title: "Your Breath Stinks",
+    description: "Aggressively sour mints for the coworker who needs to know. Five savage flavors. Comes with a card they won't forget.",
+    image: "/products/your-breath-stinks/hero-1.webp",
+    url: "/your-breath-stinks",
+  });
+
   const navigate = useNavigate();
 
   // State
@@ -219,9 +227,9 @@ export default function YourBreathStinks() {
   const heroRef = useRef<HTMLDivElement>(null);
 
   const heroImages = [
-    "/products/your-breath-stinks/hero-1.png",
-    "/products/your-breath-stinks/hero-2.png",
-    "/products/your-breath-stinks/hero-3.png",
+    "/products/your-breath-stinks/hero-1.webp",
+    "/products/your-breath-stinks/hero-2.webp",
+    "/products/your-breath-stinks/hero-2.webp",
   ];
 
   // Viewing counter randomizer
@@ -287,7 +295,7 @@ export default function YourBreathStinks() {
       unitPrice: 19.99,
       totalPrice: getBundlePrice(qty),
       comparePrice: getComparePrice(qty),
-      image: "/products/your-breath-stinks/hero-1.png",
+      image: "/products/your-breath-stinks/hero-1.webp",
     }));
 
     trackAddToCart("Your Breath Stinks - Sour Mint Gift Set", getBundlePrice(qty));

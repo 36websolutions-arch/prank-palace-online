@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { trackAddToCart } from "@/lib/analytics";
 import { ShoppingCart, Lock, Package, Star, ChevronDown, Check } from "lucide-react";
 import {
@@ -201,6 +202,13 @@ function GlowButton({
 // ─── Main Page ──────────────────────────────────────────────────────────────────
 
 export default function YouSmellLikeShit() {
+  usePageMeta({
+    title: "You Smell Like Shit",
+    description: "A solid cologne for someone who needs it. Three scents. One brutally honest message. The gift they'll never forget.",
+    image: "/products/you-smell-like-shit/hero-1.webp",
+    url: "/you-smell-like-shit",
+  });
+
   const navigate = useNavigate();
 
   // State
@@ -216,9 +224,9 @@ export default function YouSmellLikeShit() {
   const heroRef = useRef<HTMLDivElement>(null);
 
   const heroImages = [
-    "/products/you-smell-like-shit/hero-1.png",
-    "/products/you-smell-like-shit/hero-3.png",
-    "/products/you-smell-like-shit/hero-5.png",
+    "/products/you-smell-like-shit/hero-1.webp",
+    "/products/you-smell-like-shit/hero-3.webp",
+    "/products/you-smell-like-shit/hero-5.webp",
   ];
 
   // Viewing counter randomizer
@@ -284,7 +292,7 @@ export default function YouSmellLikeShit() {
       unitPrice: 19.99,
       totalPrice: getBundlePrice(qty),
       comparePrice: getComparePrice(qty),
-      image: "/products/you-smell-like-shit/hero-1.png",
+      image: "/products/you-smell-like-shit/hero-1.webp",
     }));
 
     trackAddToCart("You Smell Like Shit - Solid Cologne Gift Set", getBundlePrice(qty));

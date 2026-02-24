@@ -12,7 +12,7 @@ export const staticChronicles: Blog[] = [
     {
         id: "the-festival-of-the-superb-owl",
         title: "The Festival of the Superb Owl",
-        image: "/festival_of_the_superb_owl.png",
+        image: "/festival_of_the_superb_owl.webp",
         published_at: "2026-02-09",
         content: "The office viewing party was mandatory. The guacamole was contested. The CEO's personal Super Bowl ad featured himself on a horse. HR sent a memo about 'inclusive celebration practices.' And somewhere between the first quarter and halftime, the six-foot sub went missing.",
         href: "/chronicle/the-festival-of-the-superb-owl",
@@ -21,7 +21,7 @@ export const staticChronicles: Blog[] = [
     {
         id: "the-festivitas-of-oil",
         title: "The Festivitas of Oil",
-        image: "/festivitas_of_oil.png",
+        image: "/festivitas_of_oil.webp",
         published_at: "2026-02-08",
         content: "One thousand amphorae of oil. A pool filled at the Montague Baths. The host takes the fall. The guests go home. And the Empire keeps turning, slick and unbothered.",
         href: "/chronicle/the-festivitas-of-oil",
@@ -30,7 +30,7 @@ export const staticChronicles: Blog[] = [
     {
         id: "the-scrolls-of-the-island",
         title: "The Scrolls of the Island",
-        image: "/scrolls_of_the_island.png",
+        image: "/scrolls_of_the_island.webp",
         published_at: "2026-02-06",
         content: "The Praetorian Guard released 3.5 million scrolls. The redactions used washable ink. The powerful got protection. The victims got none. Nothing happens. Nothing was ever going to happen.",
         href: "/chronicle/the-scrolls-of-the-island",
@@ -39,7 +39,7 @@ export const staticChronicles: Blog[] = [
     {
         id: "the-war-of-the-oracles",
         title: "The War of the Oracles",
-        image: "/war_of_the_oracles.png",
+        image: "/war_of_the_oracles.webp",
         published_at: "2026-02-05",
         content: "Consul Altmanius is 'exceptionally testy.' The Anthropic faction bought time during the Festival of the Superb Owl. The bread is expensive. The circuses are sponsored by venture capital.",
         href: "/chronicle/the-war-of-the-oracles",
@@ -48,7 +48,7 @@ export const staticChronicles: Blog[] = [
     {
         id: "the-department-of-imperial-efficiency",
         title: "The Department of Imperial Efficiency",
-        image: "/department_of_imperial_efficiency.png",
+        image: "/department_of_imperial_efficiency.webp",
         published_at: "2026-02-02",
         content: "The Emperor has appointed Merchant Elonius to the new Department of Imperial Efficiency. His first act? Firing the Aqueduct Guild.",
         href: "/chronicle/the-department-of-imperial-efficiency",

@@ -461,7 +461,7 @@ export default function TheFestivalOfTheSuperbOwl() {
         {/* Hero Image */}
         <div className="w-full h-64 md:h-96 relative overflow-hidden">
           <img
-            src="/festival_of_the_superb_owl.png"
+            src="/festival_of_the_superb_owl.webp"
             alt="The Festival of the Superb Owl — Romans gather in an amphitheater around a great jeweled owl"
             className="w-full h-full object-cover"
           />
@@ -498,7 +498,7 @@ export default function TheFestivalOfTheSuperbOwl() {
                               <span key={i}>
                                 {section}
                                 <img
-                                  src="/festival_of_the_superb_owl_2.png"
+                                  src="/festival_of_the_superb_owl_2.webp"
                                   alt="The contested guacamole, the missing sub, and the HR officials distributing scrolls of inclusive celebration practices"
                                   className="w-full rounded-lg my-8 shadow-lg"
                                 />

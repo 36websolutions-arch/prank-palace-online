@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -15,6 +16,12 @@ import { getPublishedChronicles, Blog } from "@/data/chronicles";
 // Use shared getPublishedChronicles() from data file
 
 export default function Chronicles() {
+  usePageMeta({
+    title: "The Chronicles",
+    description: "Satirical dispatches from the Corporate Empire. Modern absurdity through the lens of ancient Rome.",
+    url: "/chronicles",
+  });
+
   const [dbStories, setDbStories] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
