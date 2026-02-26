@@ -41,6 +41,37 @@ Output MUST be valid JSON:
 }
 Return ONLY the JSON object, no preamble or markdown.`;
 
+async function generateAutoTopic(): Promise<string> {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": ANTHROPIC_API_KEY!,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-5-20250929",
+      max_tokens: 200,
+      messages: [{
+        role: "user",
+        content: "Give me one trending corporate, tech, or business topic from today's news that would make great satire. Just respond with the topic in 1-2 sentences, no preamble. Focus on things like: layoffs, RTO mandates, AI hype, CEO scandals, big tech moves, startup drama, or corporate culture absurdity.",
+      }],
+    }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Failed to auto-generate topic: Claude API ${response.status} — ${errText}`);
+  }
+
+  const data = await response.json();
+  const topic = data.content[0]?.text?.trim();
+  if (!topic) {
+    throw new Error("Auto-generated topic was empty");
+  }
+  return topic;
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -52,10 +83,21 @@ Deno.serve(async (req) => {
       throw new Error("ANTHROPIC_API_KEY not configured in Supabase secrets");
     }
 
-    const { topic, additionalContext } = await req.json();
+    // Safe body parsing — empty body or invalid JSON falls through to auto-topic
+    let topic: string | undefined;
+    let additionalContext: string | undefined;
+    try {
+      const body = await req.json();
+      topic = body.topic;
+      additionalContext = body.additionalContext;
+    } catch {
+      // Empty body or invalid JSON — will auto-generate topic
+    }
 
-    if (!topic) {
-      throw new Error("Topic is required");
+    // Auto-generate topic when missing or explicitly "auto"
+    if (!topic || topic === "auto") {
+      topic = await generateAutoTopic();
+      console.log(`Auto-generated topic: ${topic}`);
     }
 
     const userPrompt = `
@@ -75,7 +117,7 @@ Write a new chronicle about this topic. Make it sharp and memorable.
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-5-20250929",
         max_tokens: 2000,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: userPrompt }],

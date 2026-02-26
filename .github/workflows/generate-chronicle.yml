@@ -16,6 +16,7 @@ jobs:
           response=$(curl -s -w "\n%{http_code}" -X POST \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
+            -d '{"topic":"auto"}' \
             https://kywwyzoxegmehfdzqokx.supabase.co/functions/v1/generate-chronicle)
 
           http_code=$(echo "$response" | tail -n1)

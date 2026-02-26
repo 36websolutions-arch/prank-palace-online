@@ -77,7 +77,9 @@ interface RawArticle {
 async function fetchFinnhub(): Promise<RawArticle[]> {
   if (!FINNHUB_API_KEY) return [];
   try {
-    const res = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FINNHUB_API_KEY}`);
+    const res = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FINNHUB_API_KEY}`, {
+      signal: AbortSignal.timeout(10000),
+    });
     if (!res.ok) throw new Error(`Finnhub ${res.status}`);
     const data = await res.json();
     return (data || []).slice(0, 10).map((item: any) => ({
@@ -96,7 +98,9 @@ async function fetchFinnhub(): Promise<RawArticle[]> {
 async function fetchAlphaVantage(): Promise<RawArticle[]> {
   if (!ALPHA_VANTAGE_API_KEY) return [];
   try {
-    const res = await fetch(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&apikey=${ALPHA_VANTAGE_API_KEY}&limit=10`);
+    const res = await fetch(`https://www.alphavantage.co/query?function=NEWS_SENTIMENT&apikey=${ALPHA_VANTAGE_API_KEY}&limit=10`, {
+      signal: AbortSignal.timeout(10000),
+    });
     if (!res.ok) throw new Error(`Alpha Vantage ${res.status}`);
     const data = await res.json();
     return (data.feed || []).slice(0, 10).map((item: any) => ({
@@ -117,7 +121,9 @@ async function fetchAlphaVantage(): Promise<RawArticle[]> {
 async function fetchGNews(): Promise<RawArticle[]> {
   if (!GNEWS_API_KEY) return [];
   try {
-    const res = await fetch(`https://gnews.io/api/v4/top-headlines?category=business&lang=en&max=10&apikey=${GNEWS_API_KEY}`);
+    const res = await fetch(`https://gnews.io/api/v4/top-headlines?category=business&lang=en&max=10&apikey=${GNEWS_API_KEY}`, {
+      signal: AbortSignal.timeout(10000),
+    });
     if (!res.ok) throw new Error(`GNews ${res.status}`);
     const data = await res.json();
     return (data.articles || []).slice(0, 10).map((item: any) => ({
@@ -175,6 +181,7 @@ async function transformWithClaude(articles: RawArticle[]): Promise<any[]> {
       "anthropic-version": "2023-06-01",
       "content-type": "application/json",
     },
+    signal: AbortSignal.timeout(45000),
     body: JSON.stringify({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 4000,
@@ -211,11 +218,14 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Check which APIs are ready (not in cooldown)
+    // Check which APIs are ready (not in cooldown) — with 5s timeout per check
+    const cooldownTimeout = (fn: () => Promise<boolean>) =>
+      Promise.race([fn(), new Promise<boolean>((r) => setTimeout(() => r(true), 5000))]);
+
     const [finnhubReady, alphaReady, gnewsReady] = await Promise.all([
-      checkCooldown("finnhub"),
-      checkCooldown("alpha_vantage"),
-      checkCooldown("gnews"),
+      cooldownTimeout(() => checkCooldown("finnhub")),
+      cooldownTimeout(() => checkCooldown("alpha_vantage")),
+      cooldownTimeout(() => checkCooldown("gnews")),
     ]);
 
     console.log(`API cooldowns — Finnhub: ${finnhubReady ? "ready" : "cooling"}, Alpha Vantage: ${alphaReady ? "ready" : "cooling"}, GNews: ${gnewsReady ? "ready" : "cooling"}`);
