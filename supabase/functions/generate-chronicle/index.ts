@@ -86,10 +86,12 @@ Deno.serve(async (req) => {
     // Safe body parsing — empty body or invalid JSON falls through to auto-topic
     let topic: string | undefined;
     let additionalContext: string | undefined;
+    let saveAsDraft = false;
     try {
       const body = await req.json();
       topic = body.topic;
       additionalContext = body.additionalContext;
+      saveAsDraft = body.save_as_draft === true;
     } catch {
       // Empty body or invalid JSON — will auto-generate topic
     }
@@ -150,10 +152,41 @@ Write a new chronicle about this topic. Make it sharp and memorable.
 
     console.log(`Chronicle generated: ${chronicle.title}`);
 
+    // Save as unpublished draft if requested (used by cron automation)
+    let savedDraft = null;
+    if (saveAsDraft) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL");
+      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+      if (supabaseUrl && supabaseServiceKey) {
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        const { data, error: insertError } = await supabase
+          .from("blogs")
+          .insert({
+            title: chronicle.title,
+            content: chronicle.content,
+            image: chronicle.image_prompt || null,
+            is_published: false,
+          })
+          .select("id")
+          .single();
+
+        if (insertError) {
+          console.error("Failed to save draft:", insertError.message);
+        } else {
+          savedDraft = data;
+          console.log(`Draft saved with id: ${data.id}`);
+        }
+      } else {
+        console.warn("Cannot save draft: missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+      }
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
         chronicle,
+        draft: savedDraft,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
