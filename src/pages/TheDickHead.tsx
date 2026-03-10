@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { trackAddToCart } from "@/lib/analytics";
 import { ShoppingCart, Lock, Package, Star, ChevronDown, Check, Upload, ZoomIn, ZoomOut, Move } from "lucide-react";
+import logo from "@/assets/logo.png";
 import {
   Accordion,
   AccordionContent,
@@ -625,9 +626,12 @@ export default function TheDickHead() {
       {/* ═══ Minimal Header ═══ */}
       <header className="sticky top-0 z-50 bg-stone-950/90 backdrop-blur-md border-b border-stone-800/50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="text-xl font-bold tracking-tight">
-            <span className="text-amber-500">CORPORATE</span>
-            <span className="text-stone-400"> PRANKS</span>
+          <Link to="/" className="flex items-center gap-2">
+            <img src={logo} alt="Corporate Pranks" className="h-8 w-8 object-contain" />
+            <span className="text-xl font-bold tracking-tight">
+              <span className="text-amber-500">CORPORATE</span>
+              <span className="text-stone-400"> PRANKS</span>
+            </span>
           </Link>
           <Link to="/cart" className="relative p-2 text-stone-400 hover:text-amber-500 transition-colors">
             <ShoppingCart className="h-6 w-6" />

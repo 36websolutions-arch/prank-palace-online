@@ -11,6 +11,10 @@ import {
   Mail,
   Instagram,
   ShoppingBag,
+  Lock,
+  Package,
+  Star,
+  Check,
 } from "lucide-react";
 
 // Hook for scroll-triggered animations
@@ -187,19 +191,30 @@ export default function Home2() {
   });
 
   const [email, setEmail] = useState("");
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [heroImage, setHeroImage] = useState(0);
+  const [viewingCount, setViewingCount] = useState(27);
+  const heroRef = useRef<HTMLDivElement>(null);
 
-  // Parallax effect on mouse move
+  const heroImages = [
+    "/products/you-smell-like-shit/hero-1.webp",
+    "/products/you-smell-like-shit/hero-3.webp",
+    "/products/you-smell-like-shit/hero-5.webp",
+  ];
+
+  // Auto-rotate hero images
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
-      });
-    };
+    const interval = setInterval(() => {
+      setHeroImage(prev => (prev + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+  // Viewing counter randomizer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setViewingCount(Math.floor(Math.random() * 31) + 15);
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const [subscribing, setSubscribing] = useState(false);
@@ -282,93 +297,146 @@ export default function Home2() {
           25% { transform: translateY(-8px); }
           75% { transform: translateY(4px); }
         }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 20s linear infinite;
+        }
+        @keyframes subtle-pulse {
+          0%, 100% { box-shadow: 0 0 30px rgba(245,158,11,0.4); }
+          50% { box-shadow: 0 0 50px rgba(245,158,11,0.6); }
+        }
+        .animate-subtle-pulse {
+          animation: subtle-pulse 2.5s ease-in-out infinite;
+        }
       `}</style>
 
       <main className="flex-1">
+        {/* Announcement Bar */}
+        <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-2 overflow-hidden">
+          <div className="animate-marquee whitespace-nowrap flex">
+            {[...Array(2)].map((_, i) => (
+              <span key={i} className="inline-flex items-center gap-8 text-sm font-bold tracking-wide px-4">
+                <span>FREE SHIPPING ON 2+ PACKS</span>
+                <span className="text-amber-200">•</span>
+                <span>2,847+ PACKS SHIPPED</span>
+                <span className="text-amber-200">•</span>
+                <span>THE GAG GIFT THAT ACTUALLY SMELLS GOOD</span>
+                <span className="text-amber-200">•</span>
+                <span>FREE SHIPPING ON 2+ PACKS</span>
+                <span className="text-amber-200">•</span>
+                <span>2,847+ PACKS SHIPPED</span>
+                <span className="text-amber-200">•</span>
+                <span>THE GAG GIFT THAT ACTUALLY SMELLS GOOD</span>
+                <span className="text-amber-200 mr-8">•</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
         {/* Hero Section - Featured Product */}
-        <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-stone-900">
-          {/* Animated background elements */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              transform: `translate(${mousePosition.x * 0.3}px, ${mousePosition.y * 0.3}px)`,
-              transition: "transform 0.3s ease-out",
-            }}
-          >
-            <div className="absolute top-20 left-[10%] text-8xl opacity-[0.03] animate-float-slow">🏛️</div>
-            <div className="absolute bottom-20 right-[10%] text-6xl opacity-[0.03] animate-float-slow" style={{ animationDelay: "-2s" }}>⚔️</div>
+        <section ref={heroRef} className="relative min-h-[90vh] flex items-center py-12 lg:py-20 bg-stone-900">
+          {/* Ambient glow */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px]" />
+            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-orange-500/10 rounded-full blur-[100px]" />
           </div>
 
-          {/* Subtle glow */}
-          <div className="absolute inset-0 opacity-15">
-            <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500 rounded-full filter blur-[200px]" />
-          </div>
-
-          <div className="container mx-auto px-4 py-16 lg:py-24 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-6xl mx-auto">
-              {/* Left: Copy */}
-              <div className="text-center lg:text-left order-2 lg:order-1">
-                <FadeUp delay={0}>
-                  <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
-                    <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-600" />
-                    <span className="text-amber-500 font-medium tracking-[0.3em] text-xs uppercase">
-                      The Armory's Finest
-                    </span>
-                    <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-600" />
-                  </div>
-                </FadeUp>
-
-                <FadeUp delay={0.15}>
-                  <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 tracking-tight text-white leading-[0.95]">
-                    You Smell
-                    <br />
-                    Like <span className="text-amber-500">Shit</span>
-                  </h1>
-                </FadeUp>
-
-                <FadeUp delay={0.3}>
-                  <p className="text-stone-400 text-lg sm:text-xl mb-3 font-serif italic max-w-md mx-auto lg:mx-0">
-                    The gift that says what you're too polite to.
-                  </p>
-                  <p className="text-stone-500 text-sm mb-8 max-w-md mx-auto lg:mx-0">
-                    Premium solid cologne disguised as brutal honesty. Hand it to a friend, a coworker, or that one guy in the elevator.
-                  </p>
-                </FadeUp>
-
-                <FadeUp delay={0.45}>
-                  <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                    <Link to="/you-smell-like-shit">
-                      <Button className="bg-amber-600 hover:bg-amber-700 text-white px-10 h-14 text-lg font-semibold gap-2 group">
-                        Send the Message — $19.99
-                        <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </Link>
-                    <Link to="/armory" className="text-stone-400 hover:text-amber-500 text-sm font-medium flex items-center gap-1.5 transition-colors">
-                      Browse The Armory <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
-                </FadeUp>
-              </div>
-
-              {/* Right: Product Image */}
-              <FadeUp delay={0.2} className="order-1 lg:order-2">
-                <Link to="/you-smell-like-shit" className="block group">
-                  <div className="relative max-w-md mx-auto">
-                    <div className="aspect-square rounded-2xl overflow-hidden border border-stone-700/50 shadow-2xl shadow-amber-500/10 group-hover:shadow-amber-500/20 transition-shadow duration-500">
+          <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            {/* Left — Product Image Carousel */}
+            <FadeUp>
+              <Link to="/you-smell-like-shit" className="block group">
+                <div className="relative">
+                  <div className="relative aspect-square max-w-lg mx-auto bg-stone-800 rounded-2xl overflow-hidden border border-stone-700/50 shadow-2xl shadow-amber-500/10 group-hover:shadow-amber-500/20 transition-shadow duration-500">
+                    {heroImages.map((src, i) => (
                       <img
-                        src="/products/you-smell-like-shit/hero-1.webp"
-                        alt="You Smell Like Shit - Premium Solid Cologne"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        key={src}
+                        src={src}
+                        alt={`You Smell Like Shit - View ${i + 1}`}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                          i === heroImage ? "opacity-100" : "opacity-0"
+                        }`}
                       />
-                    </div>
-                    {/* Price badge */}
-                    <div className="absolute -bottom-3 -right-3 bg-amber-600 text-white px-4 py-2 rounded-xl font-bold text-lg shadow-lg">
-                      $19.99
-                    </div>
+                    ))}
                   </div>
+                  {/* Image dots */}
+                  <div className="flex justify-center gap-2 mt-4">
+                    {heroImages.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={(e) => { e.preventDefault(); setHeroImage(i); }}
+                        className={`w-2.5 h-2.5 rounded-full transition-all ${
+                          i === heroImage ? "bg-amber-500 w-8" : "bg-stone-600 hover:bg-stone-500"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </Link>
+            </FadeUp>
+
+            {/* Right — Product Info */}
+            <FadeUp delay={0.2}>
+              <div className="space-y-5">
+                {/* Badge */}
+                <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-1.5 text-amber-400 text-sm font-bold">
+                  <Star className="h-4 w-4 fill-amber-400" />
+                  THE #1 GAG GIFT OF 2026
+                </div>
+
+                {/* Headline */}
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[0.95] text-white">
+                  YOUR FRIEND SMELLS LIKE{" "}
+                  <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+                    SHIT.
+                  </span>
+                </h1>
+
+                {/* Subheadline */}
+                <p className="text-lg sm:text-xl text-stone-400 italic font-serif">
+                  Premium solid cologne disguised as brutal honesty.
+                </p>
+
+                {/* Price */}
+                <div className="flex items-center gap-4 flex-wrap">
+                  <span className="text-4xl font-black text-white">$19.99</span>
+                  <span className="text-xl text-stone-500 line-through">$29.99</span>
+                  <span className="bg-red-500/20 text-red-400 text-sm font-bold px-3 py-1 rounded-full">
+                    SAVE $10.00
+                  </span>
+                </div>
+
+                {/* Viewing counter */}
+                <div className="flex items-center gap-2 text-sm text-stone-400">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+                  </span>
+                  <span>{viewingCount} people are viewing this right now</span>
+                </div>
+
+                {/* CTA */}
+                <Link to="/you-smell-like-shit" className="block">
+                  <button className="w-full relative font-bold uppercase tracking-wider rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:shadow-[0_0_50px_rgba(245,158,11,0.6)] hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 animate-subtle-pulse px-8 py-5 text-lg sm:text-xl">
+                    SEND THE MESSAGE — $19.99
+                  </button>
                 </Link>
-              </FadeUp>
-            </div>
+
+                <Link to="/armory" className="flex items-center justify-center lg:justify-start gap-1.5 text-stone-400 hover:text-amber-400 text-sm font-medium transition-colors">
+                  Browse The Full Armory <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+
+                {/* Trust Row */}
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-xs text-stone-400 pt-2">
+                  <span className="flex items-center gap-1"><Lock className="h-3.5 w-3.5" /> Secure Checkout</span>
+                  <span className="flex items-center gap-1"><Package className="h-3.5 w-3.5" /> Ships in 24hrs</span>
+                  <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> 4.9/5 Rating</span>
+                  <span className="flex items-center gap-1"><Check className="h-3.5 w-3.5" /> Real Cologne</span>
+                </div>
+              </div>
+            </FadeUp>
           </div>
         </section>
 
