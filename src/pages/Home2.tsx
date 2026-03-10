@@ -6,22 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
-import { getPublishedChronicles, Blog } from "@/data/chronicles";
 import {
-  Scroll,
-  Crown,
-  Flame,
-  BookOpen,
   ArrowRight,
   Mail,
   Instagram,
-  Columns,
-  Heart,
   ShoppingBag,
-  Headphones,
-  Coffee,
-  ExternalLink,
 } from "lucide-react";
 
 // Hook for scroll-triggered animations
@@ -199,36 +188,6 @@ export default function Home2() {
 
   const [email, setEmail] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [recentChronicles, setRecentChronicles] = useState<Blog[]>([]);
-
-  useEffect(() => {
-    fetchLatestChronicles();
-  }, []);
-
-  const fetchLatestChronicles = async () => {
-    // Fetch from Supabase
-    const { data } = await supabase
-      .from("blogs")
-      .select("*")
-      .eq("is_published", true)
-      .order("published_at", { ascending: false })
-      .limit(5);
-
-    const dbStories = (data || []) as Blog[];
-
-    // Combine and sort
-    const allStories = [...getPublishedChronicles(), ...dbStories]
-      .sort((a, b) => {
-        const dateA = new Date(a.published_at || 0).getTime();
-        const dateB = new Date(b.published_at || 0).getTime();
-        return dateB - dateA;
-      });
-
-    setRecentChronicles(allStories);
-  };
-
-  const topChronicle = recentChronicles[0];
-  const moreChronicles = recentChronicles.slice(1, 3);
 
   // Parallax effect on mouse move
   useEffect(() => {
@@ -326,94 +285,90 @@ export default function Home2() {
       `}</style>
 
       <main className="flex-1">
-        {/* Hero Section - Animated */}
-        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden border-b border-stone-200 dark:border-stone-800">
+        {/* Hero Section - Featured Product */}
+        <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-stone-900">
           {/* Animated background elements */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              transform: `translate(${mousePosition.x * 0.5}px, ${mousePosition.y * 0.5}px)`,
+              transform: `translate(${mousePosition.x * 0.3}px, ${mousePosition.y * 0.3}px)`,
               transition: "transform 0.3s ease-out",
             }}
           >
-            <div className="absolute top-20 left-[10%] text-8xl opacity-5 animate-float-slow">🏛️</div>
-            <div className="absolute top-40 right-[15%] text-6xl opacity-5 animate-float-slow" style={{ animationDelay: "-2s" }}>⚔️</div>
-            <div className="absolute bottom-32 left-[20%] text-7xl opacity-5 animate-float-slow" style={{ animationDelay: "-4s" }}>🦅</div>
-            <div className="absolute bottom-20 right-[10%] text-5xl opacity-5 animate-float-slow" style={{ animationDelay: "-1s" }}>🏺</div>
+            <div className="absolute top-20 left-[10%] text-8xl opacity-[0.03] animate-float-slow">🏛️</div>
+            <div className="absolute bottom-20 right-[10%] text-6xl opacity-[0.03] animate-float-slow" style={{ animationDelay: "-2s" }}>⚔️</div>
           </div>
 
-          {/* Texture overlay */}
-          <div className="absolute inset-0 opacity-[0.02]" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }} />
+          {/* Subtle glow */}
+          <div className="absolute inset-0 opacity-15">
+            <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500 rounded-full filter blur-[200px]" />
+          </div>
 
           <div className="container mx-auto px-4 py-16 lg:py-24 relative z-10">
-            <div className="max-w-5xl mx-auto text-center">
-              {/* Animated masthead */}
-              <FadeUp delay={0}>
-                <div className="flex items-center justify-center gap-3 mb-8">
-                  <div className="h-px w-16 bg-gradient-to-r from-transparent to-amber-600" />
-                  <span className="text-amber-600 font-medium tracking-[0.4em] text-xs uppercase">
-                    Est. MMXXIII
-                  </span>
-                  <div className="h-px w-16 bg-gradient-to-l from-transparent to-amber-600" />
-                </div>
-              </FadeUp>
-
-              {/* Main headline with character animation */}
-              <h1 className="font-display text-4xl sm:text-6xl md:text-8xl lg:text-9xl mb-6 tracking-tight">
-                <AnimatedText
-                  text="THE CORPORATE"
-                  className="text-stone-900 dark:text-stone-100 block whitespace-nowrap"
-                  delay={0.2}
-                />
-                <span className="relative inline-block mt-2">
-                  <WaveText
-                    text="CHRONICLE"
-                    className="text-amber-600"
-                    waveInterval={4000}
-                  />
-                  <DrawUnderline className="absolute -bottom-2 left-0" />
-                </span>
-              </h1>
-
-              {/* Tagline with word animation */}
-              <FadeUp delay={1.2}>
-                <p className="text-lg sm:text-xl md:text-2xl text-stone-600 dark:text-stone-400 max-w-2xl mx-auto mb-4 font-serif italic px-2 sm:px-0">
-                  <AnimatedWords
-                    text="History doesn't repeat itself, but corporate America sure does."
-                    delay={1.4}
-                  />
-                </p>
-              </FadeUp>
-
-              {/* Feature badges with stagger */}
-              <FadeUp delay={1.8}>
-                <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-8 text-xs sm:text-sm text-stone-500 dark:text-stone-500 mb-10 px-2 sm:px-0">
-                  {[
-                    { icon: Columns, text: "Satire Since Rome" },
-                    { icon: Scroll, text: "Ancient Parallels" },
-                    { icon: Crown, text: "The Real Joke is the Job" },
-                  ].map((item, i) => (
-                    <span
-                      key={item.text}
-                      className="flex items-center gap-1.5 sm:gap-2 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]"
-                      style={{ animationDelay: `${2 + i * 0.15}s` }}
-                    >
-                      <item.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      {item.text}
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-6xl mx-auto">
+              {/* Left: Copy */}
+              <div className="text-center lg:text-left order-2 lg:order-1">
+                <FadeUp delay={0}>
+                  <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
+                    <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-600" />
+                    <span className="text-amber-500 font-medium tracking-[0.3em] text-xs uppercase">
+                      The Armory's Finest
                     </span>
-                  ))}
-                </div>
+                    <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-600" />
+                  </div>
+                </FadeUp>
+
+                <FadeUp delay={0.15}>
+                  <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 tracking-tight text-white leading-[0.95]">
+                    You Smell
+                    <br />
+                    Like <span className="text-amber-500">Shit</span>
+                  </h1>
+                </FadeUp>
+
+                <FadeUp delay={0.3}>
+                  <p className="text-stone-400 text-lg sm:text-xl mb-3 font-serif italic max-w-md mx-auto lg:mx-0">
+                    The gift that says what you're too polite to.
+                  </p>
+                  <p className="text-stone-500 text-sm mb-8 max-w-md mx-auto lg:mx-0">
+                    Premium solid cologne disguised as brutal honesty. Hand it to a friend, a coworker, or that one guy in the elevator.
+                  </p>
+                </FadeUp>
+
+                <FadeUp delay={0.45}>
+                  <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                    <Link to="/you-smell-like-shit">
+                      <Button className="bg-amber-600 hover:bg-amber-700 text-white px-10 h-14 text-lg font-semibold gap-2 group">
+                        Send the Message — $19.99
+                        <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                    <Link to="/armory" className="text-stone-400 hover:text-amber-500 text-sm font-medium flex items-center gap-1.5 transition-colors">
+                      Browse The Armory <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </FadeUp>
+              </div>
+
+              {/* Right: Product Image */}
+              <FadeUp delay={0.2} className="order-1 lg:order-2">
+                <Link to="/you-smell-like-shit" className="block group">
+                  <div className="relative max-w-md mx-auto">
+                    <div className="aspect-square rounded-2xl overflow-hidden border border-stone-700/50 shadow-2xl shadow-amber-500/10 group-hover:shadow-amber-500/20 transition-shadow duration-500">
+                      <img
+                        src="/products/you-smell-like-shit/hero-1.webp"
+                        alt="You Smell Like Shit - Premium Solid Cologne"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    {/* Price badge */}
+                    <div className="absolute -bottom-3 -right-3 bg-amber-600 text-white px-4 py-2 rounded-xl font-bold text-lg shadow-lg">
+                      $19.99
+                    </div>
+                  </div>
+                </Link>
               </FadeUp>
-
             </div>
-          </div>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-stone-400">
-            <span className="text-xs tracking-widest uppercase">Scroll</span>
-            <div className="w-px h-8 bg-gradient-to-b from-stone-400 to-transparent animate-pulse" />
           </div>
         </section>
 
@@ -538,236 +493,64 @@ export default function Home2() {
           </div>
         </section>
 
-        {/* Featured Chronicle + Sidebar Layout */}
-        <section className="py-16 border-b border-stone-200 dark:border-stone-800">
-          <div className="container mx-auto px-4">
-            <FadeUp>
-              <div className="flex items-center gap-3 mb-8">
-                <Flame className="h-6 w-6 text-amber-600" />
-                <h2 className="font-display text-3xl text-stone-900 dark:text-stone-100">The Chronicles</h2>
-              </div>
-            </FadeUp>
+        {/* Newsletter Section — Monthly Chronicle */}
+        <section id="newsletter" className="py-20 bg-gradient-to-b from-amber-50 to-stone-100 dark:from-amber-950/20 dark:to-stone-900 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          }} />
 
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Main Featured Story */}
-              <FadeUp className="lg:col-span-2">
-                {topChronicle ? (
-                  <Link
-                    to={topChronicle.href || `/blog/${topChronicle.id}`}
-                    className="group block bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-stone-200 dark:border-stone-800 transform hover:-translate-y-1"
-                  >
-                    <div className="aspect-[16/9] overflow-hidden relative">
-                      <img
-                        src={topChronicle.image || "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&h=500&fit=crop"}
-                        alt={topChronicle.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    </div>
-                    <div className="p-6 lg:p-8">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full uppercase tracking-wider">
-                          Featured Chronicle
-                        </span>
-                        <span className="text-stone-500 text-sm">
-                          {topChronicle.published_at && format(new Date(topChronicle.published_at), "MMMM d, yyyy")}
-                        </span>
-                      </div>
-                      <h3 className="font-display text-2xl lg:text-3xl mb-4 text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">
-                        {topChronicle.title}
-                      </h3>
-                      <p className="text-stone-600 dark:text-stone-400 mb-4 line-clamp-3 font-serif">
-                        {topChronicle.content.substring(0, 150)}...
-                      </p>
-                      <span className="inline-flex items-center gap-2 text-amber-600 font-medium group-hover:gap-3 transition-all">
-                        Continue Reading <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </div>
-                  </Link>
-                ) : (
-                  <div className="h-full flex items-center justify-center bg-stone-100 dark:bg-stone-900 rounded-lg border border-dashed border-stone-300">
-                    <p className="text-stone-500">Loading archives...</p>
-                  </div>
-                )}
+          <div className="container mx-auto px-4 relative">
+            <div className="max-w-2xl mx-auto text-center">
+              <FadeUp>
+                <div className="relative inline-block mb-6">
+                  <Mail className="h-12 w-12 text-amber-600" />
+                  <div className="absolute inset-0 bg-amber-500 rounded-full blur-2xl opacity-20 animate-pulse" />
+                </div>
               </FadeUp>
 
-              {/* Sidebar */}
-              <div className="space-y-6">
-                {/* Fund the Resistance */}
-                <FadeUp delay={0.1}>
-                  <div className="bg-gradient-to-br from-stone-900 to-stone-800 dark:from-stone-800 dark:to-stone-900 rounded-lg p-6 text-white relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-5" style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M20 20c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zM0 0h20v20H0z'/%3E%3C/g%3E%3C/svg%3E")`
-                    }} />
-                    <div className="relative">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Heart className="h-5 w-5 text-red-400" />
-                        <h3 className="font-display text-lg">Fund the Resistance</h3>
-                      </div>
-                      <p className="text-amber-400 text-sm font-medium mb-2">
-                        This is what keeps us pranking.
-                      </p>
-                      <p className="text-stone-300 text-sm mb-4">
-                        The Senate has unlimited resources. We have... you. Every denarius helps us survive another quarter.
-                      </p>
-                      <Link to="/support">
-                        <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2">
-                          <Heart className="h-4 w-4" />
-                          Support the Chronicle
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </FadeUp>
+              <FadeUp delay={0.1}>
+                <h2 className="font-display text-3xl sm:text-4xl md:text-5xl mb-4 text-stone-900 dark:text-stone-100">
+                  The Monthly <span className="text-amber-600">Dispatch</span>
+                </h2>
+              </FadeUp>
 
-                {/* The Armory */}
-                <FadeUp delay={0.2}>
-                  <div className="bg-white dark:bg-stone-900 rounded-lg p-6 border border-stone-200 dark:border-stone-800 relative">
-                    <div className="absolute -top-3 -right-3 w-10 h-10 bg-red-700 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-red-800 rotate-12">
-                      S.A.
-                    </div>
-                    <div className="flex items-center gap-2 mb-4">
-                      <ShoppingBag className="h-5 w-5 text-amber-600" />
-                      <h3 className="font-display text-lg text-stone-900 dark:text-stone-100">The Armory</h3>
-                    </div>
-                    <div className="space-y-3">
-                      <Link to="/you-smell-like-shit" className="flex items-center gap-3 group">
-                        <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-100 dark:bg-stone-800 flex-shrink-0">
-                          <img src="/products/you-smell-like-shit/hero-1.webp" alt="You Smell Like Shit" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-stone-900 dark:text-stone-100 truncate group-hover:text-amber-600 transition-colors text-sm">
-                            You Smell Like Shit
-                          </p>
-                          <p className="text-amber-600 font-bold text-sm">$19.99</p>
-                        </div>
-                      </Link>
-                      <Link to="/your-breath-stinks" className="flex items-center gap-3 group">
-                        <div className="w-14 h-14 rounded-lg overflow-hidden bg-stone-100 dark:bg-stone-800 flex-shrink-0">
-                          <img src="/products/your-breath-stinks/hero-1.webp" alt="Your Breath Stinks" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-stone-900 dark:text-stone-100 truncate group-hover:text-amber-600 transition-colors text-sm">
-                            Your Breath Stinks
-                          </p>
-                          <p className="text-amber-600 font-bold text-sm">$19.99</p>
-                        </div>
-                      </Link>
-                    </div>
-                    <Link to="/armory">
-                      <Button variant="outline" className="w-full mt-4 border-stone-300 dark:border-stone-700 text-amber-600">
-                        Browse the Armory
-                      </Button>
-                    </Link>
-                  </div>
-                </FadeUp>
+              <FadeUp delay={0.2}>
+                <p className="text-stone-600 dark:text-stone-400 mb-8 text-base sm:text-lg max-w-xl mx-auto">
+                  Chronicles, new products, and dispatches from the Corporate Empire — delivered monthly.
+                </p>
+              </FadeUp>
 
-                {/* Imperial Marketplace */}
-                <FadeUp delay={0.3}>
-                  <div className="bg-gradient-to-br from-amber-50 to-stone-100 dark:from-amber-950/30 dark:to-stone-900 rounded-lg p-6 border border-stone-200 dark:border-stone-800 relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-[0.03]" style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-                    }} />
-                    <div className="relative">
-                      <p className="text-xs text-stone-500 uppercase tracking-wider mb-2 font-medium">The Imperial Marketplace</p>
-                      <p className="text-stone-600 dark:text-stone-400 text-xs italic mb-4">Goods the Empire would prefer you not have.</p>
-                      <div className="space-y-2">
-                        <a href="#" className="flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-white/50 dark:hover:bg-stone-800/50 transition-colors">
-                          <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                            <Headphones className="h-4 w-4 text-amber-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">Block Out the Synergy</p>
-                            <p className="text-xs text-stone-500">Noise-canceling salvation</p>
-                          </div>
-                          <ExternalLink className="h-3 w-3 text-stone-400" />
-                        </a>
-                        <a href="#" className="flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-white/50 dark:hover:bg-stone-800/50 transition-colors">
-                          <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                            <Coffee className="h-4 w-4 text-amber-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">Gladiator Fuel</p>
-                            <p className="text-xs text-stone-500">Survive another arena day</p>
-                          </div>
-                          <ExternalLink className="h-3 w-3 text-stone-400" />
-                        </a>
-                        <a href="#" className="flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-white/50 dark:hover:bg-stone-800/50 transition-colors">
-                          <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                            <BookOpen className="h-4 w-4 text-amber-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors">Forbidden Readings</p>
-                            <p className="text-xs text-stone-500">What the Senate banned</p>
-                          </div>
-                          <ExternalLink className="h-3 w-3 text-stone-400" />
-                        </a>
-                      </div>
-                      <p className="text-xs text-stone-400 mt-4 text-center">Amazon affiliate links</p>
-                    </div>
-                  </div>
-                </FadeUp>
-
-                {/* Imperial Forum */}
-                <FadeUp delay={0.4}>
-                  <div className="bg-stone-100 dark:bg-stone-800/50 rounded-lg p-6 border border-dashed border-stone-300 dark:border-stone-700 text-center">
-                    <p className="text-stone-500 text-xs uppercase tracking-wider mb-3 font-medium">The Imperial Forum</p>
-                    <p className="text-stone-600 dark:text-stone-400 text-sm italic mb-3">
-                      Ambitious merchants may petition for space here.
-                    </p>
-                    <a href="mailto:Info@corporatepranks.com" className="text-amber-600 hover:underline text-sm font-medium">
-                      Request an Audience
-                    </a>
-                  </div>
-                </FadeUp>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* More Chronicles Grid */}
-        <section className="py-16 border-b border-stone-200 dark:border-stone-800">
-          <div className="container mx-auto px-4">
-            <FadeUp>
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <BookOpen className="h-6 w-6 text-amber-600" />
-                  <h2 className="font-display text-2xl text-stone-900 dark:text-stone-100">More Chronicles</h2>
-                </div>
-                <Link to="/chronicles" className="text-amber-600 hover:text-amber-700 text-sm font-medium flex items-center gap-1">
-                  View All <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </FadeUp>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {moreChronicles.map((chronicle, i) => (
-                <FadeUp key={chronicle.id} delay={i * 0.1}>
-                  <Link
-                    to={chronicle.href || `/blog/${chronicle.id}`}
-                    className="group flex bg-white dark:bg-stone-900 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 border border-stone-200 dark:border-stone-800"
+              <FadeUp delay={0.3}>
+                <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                  <Input
+                    type="email"
+                    placeholder="citizen@empire.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="flex-1 bg-white dark:bg-stone-800 border-stone-300 dark:border-stone-700 h-12 text-base"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={subscribing}
+                    className="bg-amber-600 hover:bg-amber-700 text-white px-8 h-12 text-base group"
                   >
-                    <div className="w-32 md:w-40 flex-shrink-0 overflow-hidden relative">
-                      <img
-                        src={chronicle.image || "https://images.unsplash.com/photo-1555462542-a8a1e94b1617?w=800&h=500&fit=crop"}
-                        alt={chronicle.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                    <div className="p-4 flex-1">
-                      <p className="text-stone-500 text-xs mb-1">
-                        {chronicle.published_at && format(new Date(chronicle.published_at), "MMMM d, yyyy")}
-                      </p>
-                      <h3 className="font-display text-lg text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">
-                        {chronicle.title}
-                      </h3>
-                      <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 font-serif">
-                        {chronicle.content.substring(0, 100)}...
-                      </p>
-                    </div>
+                    {subscribing ? "Subscribing..." : "Subscribe"}
+                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </form>
+              </FadeUp>
+
+              <FadeUp delay={0.4}>
+                <div className="flex items-center justify-center gap-4 mt-6">
+                  <p className="text-stone-500 text-sm">
+                    No spam. Just satire. Unsubscribe anytime.
+                  </p>
+                  <Link to="/chronicles" className="text-amber-600 hover:text-amber-700 text-sm font-medium flex items-center gap-1">
+                    Read the Chronicles <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
-                </FadeUp>
-              ))}
+                </div>
+              </FadeUp>
             </div>
           </div>
         </section>
@@ -864,62 +647,6 @@ export default function Home2() {
                   </FadeUp>
                 ))}
               </div>
-            </div>
-          </div>
-        </section >
-
-        {/* Newsletter Section */}
-        < section id="newsletter" className="py-24 bg-gradient-to-b from-amber-50 to-stone-100 dark:from-amber-950/20 dark:to-stone-900 relative overflow-hidden" >
-          <div className="absolute inset-0 opacity-[0.03]" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }} />
-
-          <div className="container mx-auto px-4 relative">
-            <div className="max-w-2xl mx-auto text-center">
-              <FadeUp>
-                <div className="relative inline-block mb-8">
-                  <Mail className="h-16 w-16 text-amber-600" />
-                  <div className="absolute inset-0 bg-amber-500 rounded-full blur-2xl opacity-20 animate-pulse" />
-                </div>
-              </FadeUp>
-
-              <FadeUp delay={0.1}>
-                <h2 className="font-display text-3xl sm:text-5xl md:text-6xl mb-6 text-stone-900 dark:text-stone-100">
-                  Join the <span className="text-amber-600">Senate</span>
-                </h2>
-              </FadeUp>
-
-              <FadeUp delay={0.2}>
-                <p className="text-stone-600 dark:text-stone-400 mb-10 text-lg md:text-xl max-w-xl mx-auto">
-                  Get the full story delivered to your inbox. New chronicles, exclusive content, and first access to the mischief.
-                </p>
-              </FadeUp>
-
-              <FadeUp delay={0.3}>
-                <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                  <Input
-                    type="email"
-                    placeholder="citizen@empire.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="flex-1 bg-white dark:bg-stone-800 border-stone-300 dark:border-stone-700 h-12 text-base"
-                  />
-                  <Button
-                    type="submit"
-                    className="bg-amber-600 hover:bg-amber-700 text-white px-8 h-12 text-base group"
-                  >
-                    Subscribe
-                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </form>
-              </FadeUp>
-
-              <FadeUp delay={0.4}>
-                <p className="text-stone-500 text-sm mt-6">
-                  No spam. Just satire. Unsubscribe anytime.
-                </p>
-              </FadeUp>
             </div>
           </div>
         </section >

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, Scroll, ChevronDown, Shield, Package, Zap, Crown, Heart, Instagram, TrendingUp, Candy, Skull } from "lucide-react";
+import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, ChevronDown, Shield, Package, Heart, Instagram, TrendingUp, Candy, Skull, Twitter, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -56,24 +56,6 @@ export function Navbar() {
       label: "The DickHead",
       description: "Custom 3D face sculpture",
     },
-    {
-      to: "/physical-products",
-      icon: Package,
-      label: "Tools of Mischief",
-      description: "Physical goods",
-    },
-    {
-      to: "/digital-products",
-      icon: Zap,
-      label: "Senate Archives",
-      description: "Digital products",
-    },
-    {
-      to: "/subscription-products",
-      icon: Crown,
-      label: "Imperial Tribute",
-      description: "Subscriptions",
-    },
   ];
 
   return (
@@ -95,14 +77,6 @@ export function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
-            <Link
-              to="/chronicles"
-              className="flex items-center gap-1.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
-            >
-              <Scroll className="h-4 w-4" />
-              Chronicles
-            </Link>
-
             <Link
               to="/forum-economicus"
               className="flex items-center gap-1.5 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
@@ -157,15 +131,32 @@ export function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-4">
-            <Link to="/chronicles">
+            <a
+              href="https://x.com/CorporatePranks"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-stone-600 dark:text-stone-400 hover:text-amber-600"
+                className="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white"
               >
-                <Scroll className="h-5 w-5" />
+                <Twitter className="h-5 w-5" />
               </Button>
-            </Link>
+            </a>
+            <a
+              href="https://www.facebook.com/corporatepranks"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-stone-600 dark:text-stone-400 hover:text-blue-600"
+              >
+                <Facebook className="h-5 w-5" />
+              </Button>
+            </a>
             <a
               href="https://www.instagram.com/corporatepranks"
               target="_blank"
@@ -217,27 +208,20 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Mobile: Chronicles + Instagram + Menu Toggle - Centered */}
+          {/* Mobile: Social + Menu Toggle - Centered */}
           <div className="flex flex-1 items-center justify-center gap-2 md:hidden">
-            <Link to="/chronicles">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-stone-600 dark:text-stone-400 hover:text-amber-600"
-              >
-                <Scroll className="h-5 w-5" />
+            <a href="https://x.com/CorporatePranks" target="_blank" rel="noopener noreferrer">
+              <Button variant="ghost" size="icon" className="text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white">
+                <Twitter className="h-5 w-5" />
               </Button>
-            </Link>
-            <a
-              href="https://www.instagram.com/corporatepranks"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-stone-600 dark:text-stone-400 hover:text-pink-600"
-              >
+            </a>
+            <a href="https://www.facebook.com/corporatepranks" target="_blank" rel="noopener noreferrer">
+              <Button variant="ghost" size="icon" className="text-stone-600 dark:text-stone-400 hover:text-blue-600">
+                <Facebook className="h-5 w-5" />
+              </Button>
+            </a>
+            <a href="https://www.instagram.com/corporatepranks" target="_blank" rel="noopener noreferrer">
+              <Button variant="ghost" size="icon" className="text-stone-600 dark:text-stone-400 hover:text-pink-600">
                 <Instagram className="h-5 w-5" />
               </Button>
             </a>
@@ -256,15 +240,6 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-stone-200 dark:border-stone-800">
             <div className="flex flex-col gap-4">
-              <Link
-                to="/chronicles"
-                className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Scroll className="h-4 w-4" />
-                Chronicles
-              </Link>
-
               <Link
                 to="/forum-economicus"
                 className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 transition-colors"
