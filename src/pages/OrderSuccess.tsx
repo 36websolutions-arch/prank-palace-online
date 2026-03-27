@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { CheckCircle, Home, ShoppingBag, Zap, ExternalLink } from "lucide-react";
+import { CheckCircle, Home, ShoppingBag, Zap, ExternalLink, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Product {
@@ -13,6 +14,7 @@ interface Product {
 }
 
 export default function OrderSuccess() {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type");
   const productId = searchParams.get("productId");
@@ -114,6 +116,25 @@ export default function OrderSuccess() {
             </div>
           )}
 
+          {/* Account creation prompt for guests */}
+          {!user && (
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-5 mb-8">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <UserPlus className="h-5 w-5 text-amber-600" />
+                <h3 className="font-semibold text-stone-900 dark:text-stone-100">Want to track your order?</h3>
+              </div>
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-4">
+                Create a free account to view order history and get updates.
+              </p>
+              <Link to="/auth">
+                <Button variant="outline" className="gap-2 border-amber-500 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30">
+                  <UserPlus className="h-4 w-4" />
+                  Create Account (Optional)
+                </Button>
+              </Link>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/">
               <Button className="gap-2 w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white">
@@ -121,7 +142,15 @@ export default function OrderSuccess() {
                 Back to Home
               </Button>
             </Link>
-            <Link to={isDigital ? "/digital-products" : "/physical-products"}>
+            {user && (
+              <Link to="/my-orders">
+                <Button variant="outline" className="gap-2 w-full sm:w-auto border-stone-300 dark:border-stone-700 hover:border-amber-600 hover:text-amber-600">
+                  <ShoppingBag className="h-4 w-4" />
+                  View My Orders
+                </Button>
+              </Link>
+            )}
+            <Link to={isDigital ? "/digital-products" : "/"}>
               <Button variant="outline" className="gap-2 w-full sm:w-auto border-stone-300 dark:border-stone-700 hover:border-amber-600 hover:text-amber-600">
                 <ShoppingBag className="h-4 w-4" />
                 Continue Shopping

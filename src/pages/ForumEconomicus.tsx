@@ -75,6 +75,9 @@ export default function ForumEconomicus() {
     title: "Forum Economicus",
     description: "Financial news rewritten as dispatches from the Roman Senate. Market movements, oracle predictions, and merchant affairs.",
     url: "/forum-economicus",
+    image: "/og-image.png",
+    ogType: "website",
+    canonical: "/forum-economicus",
   });
 
   const [articles, setArticles] = useState<ForumArticle[]>([]);

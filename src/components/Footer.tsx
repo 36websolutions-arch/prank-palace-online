@@ -12,16 +12,16 @@ export function Footer() {
             <Link to="/" className="flex items-center gap-2 mb-4 group">
               <img
                 src={logo}
-                alt="Corporate Chronicle Logo"
+                alt="CorporatePranks Logo"
                 className="h-10 w-10 rounded-full object-cover"
               />
               <div className="flex flex-col">
-                <span className="font-display text-xl text-stone-100">The Corporate</span>
-                <span className="font-display text-sm text-amber-500 -mt-1">Chronicle</span>
+                <span className="font-display text-xl text-stone-100">Corporate</span>
+                <span className="font-display text-sm text-amber-500 -mt-1">Pranks</span>
               </div>
             </Link>
             <p className="text-stone-400 max-w-md text-sm leading-relaxed">
-              Satire since Rome. Drawing parallels between the ancient empire and modern corporate culture, one chronicle at a time.
+              Satire since Rome. Prank gifts, corporate humor, and dispatches from the Corporate Empire.
             </p>
             <div className="flex items-center gap-2 mt-4 text-amber-500 text-sm">
               <Scroll className="h-4 w-4" />
@@ -101,7 +101,7 @@ export function Footer() {
               Privacy Policy
             </Link>
           </div>
-          <p className="text-stone-500">&copy; {new Date().getFullYear()} The Corporate Chronicle. All rights reserved.</p>
+          <p className="text-stone-500">&copy; {new Date().getFullYear()} CorporatePranks. All rights reserved.</p>
           <p className="text-stone-600 text-xs mt-2">Satire Since Rome</p>
         </div>
       </div>

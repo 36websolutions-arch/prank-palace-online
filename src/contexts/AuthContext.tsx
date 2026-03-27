@@ -10,6 +10,7 @@ interface AuthContextType {
   loading: boolean;
   nickname: string | null;
   isAdmin: boolean;
+  isCaptionEditor: boolean;
   citizenTier: CitizenTier;
   totalDonated: number;
   signUp: (email: string, password: string, nickname: string, phone?: string) => Promise<{ error: Error | null }>;
@@ -26,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [nickname, setNickname] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isCaptionEditor, setIsCaptionEditor] = useState(false);
   const [citizenTier, setCitizenTier] = useState<CitizenTier>("citizen");
   const [totalDonated, setTotalDonated] = useState(0);
 
@@ -44,6 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           setNickname(null);
           setIsAdmin(false);
+          setIsCaptionEditor(false);
           setCitizenTier("citizen");
           setTotalDonated(0);
         }
@@ -90,6 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (roles && roles.length > 0) {
         setIsAdmin(prev => prev || roles.some(r => r.role === "admin"));
+        setIsCaptionEditor(roles.some(r => r.role === "caption_editor"));
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -135,6 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setNickname(null);
     setIsAdmin(false);
+    setIsCaptionEditor(false);
     setCitizenTier("citizen");
     setTotalDonated(0);
 
@@ -154,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         nickname,
         isAdmin,
+        isCaptionEditor,
         citizenTier,
         totalDonated,
         signUp,

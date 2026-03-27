@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Navigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ const authSchema = z.object({
 type AuthMode = "login" | "signup" | "forgot";
 
 export default function Auth() {
+  usePageMeta({ title: "Sign In", description: "Sign in to CorporatePranks", noindex: true });
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

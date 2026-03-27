@@ -4,6 +4,7 @@ import { usePageMeta } from "@/hooks/usePageMeta";
 import { trackAddToCart } from "@/lib/analytics";
 import { ShoppingCart, Lock, Package, Star, ChevronDown, Check } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { StructuredData, productSchema, faqSchema, breadcrumbSchema } from "@/components/StructuredData";
 import {
   Accordion,
   AccordionContent,
@@ -211,6 +212,9 @@ export default function YourBreathStinks() {
     description: "Aggressively sour mints for the coworker who needs to know. Five savage flavors. Comes with a card they won't forget.",
     image: "/products/your-breath-stinks/hero-1.webp",
     url: "/your-breath-stinks",
+    ogType: "product",
+    keywords: "sour mints, prank gift, gag gift, funny mints, office humor, your breath stinks mints",
+    canonical: "/your-breath-stinks",
   });
 
   const navigate = useNavigate();
@@ -875,6 +879,24 @@ export default function YourBreathStinks() {
           <p>&copy; 2026 Corporate Pranks</p>
         </div>
       </footer>
+
+      {/* Structured Data */}
+      <StructuredData data={[
+        productSchema({
+          name: "Your Breath Stinks - Sour Mints",
+          description: "Aggressively sour mints for the coworker who needs to know. Five savage flavors. Comes with a card they won't forget.",
+          price: 19.99,
+          image: "/products/your-breath-stinks/hero-1.webp",
+          url: "/your-breath-stinks",
+          sku: "ybs-mints",
+        }),
+        faqSchema(FAQ_ITEMS),
+        breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "The Armory", url: "/armory" },
+          { name: "Your Breath Stinks", url: "/your-breath-stinks" },
+        ]),
+      ]} />
 
       {/* ═══ K. Mobile Sticky Bottom Bar ═══ */}
       <div

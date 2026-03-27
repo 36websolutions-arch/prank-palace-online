@@ -39,6 +39,7 @@ import YouSmellLikeShit from "./pages/YouSmellLikeShit";
 import YourBreathStinks from "./pages/YourBreathStinks";
 import ForumEconomicus from "./pages/ForumEconomicus";
 import TheDickHead from "./pages/TheDickHead";
+import MyOrders from "./pages/MyOrders";
 import { ScrollToTop } from "./components/ScrollToTop";
 
 
@@ -88,6 +89,7 @@ const App = () => (
               <Route path="/your-breath-stinks" element={<YourBreathStinks />} />
               <Route path="/forum-economicus" element={<ForumEconomicus />} />
               <Route path="/the-dickhead" element={<TheDickHead />} />
+              <Route path="/my-orders" element={<MyOrders />} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, ChevronDown, Shield, Package, Heart, Instagram, TrendingUp, Candy, Skull, Twitter, Facebook } from "lucide-react";
+import { ShoppingCart, User, LogOut, LayoutDashboard, Menu, X, ChevronDown, Shield, Package, Heart, Instagram, TrendingUp, Candy, Skull, Twitter, Facebook, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -170,6 +170,19 @@ export function Navbar() {
                 <Instagram className="h-5 w-5" />
               </Button>
             </a>
+            <a
+              href="https://www.youtube.com/@CorporatePranks"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-stone-600 dark:text-stone-400 hover:text-red-600"
+              >
+                <Youtube className="h-5 w-5" />
+              </Button>
+            </a>
             {user ? (
               <>
                 <Link to="/cart" className="relative">
@@ -223,6 +236,11 @@ export function Navbar() {
             <a href="https://www.instagram.com/corporatepranks" target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="icon" className="text-stone-600 dark:text-stone-400 hover:text-pink-600">
                 <Instagram className="h-5 w-5" />
+              </Button>
+            </a>
+            <a href="https://www.youtube.com/@CorporatePranks" target="_blank" rel="noopener noreferrer">
+              <Button variant="ghost" size="icon" className="text-stone-600 dark:text-stone-400 hover:text-red-600">
+                <Youtube className="h-5 w-5" />
               </Button>
             </a>
             <Button

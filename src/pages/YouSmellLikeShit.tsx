@@ -4,6 +4,7 @@ import { usePageMeta } from "@/hooks/usePageMeta";
 import { trackAddToCart } from "@/lib/analytics";
 import { ShoppingCart, Lock, Package, Star, ChevronDown, Check } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { StructuredData, productSchema, faqSchema, breadcrumbSchema } from "@/components/StructuredData";
 import {
   Accordion,
   AccordionContent,
@@ -208,6 +209,9 @@ export default function YouSmellLikeShit() {
     description: "A solid cologne for someone who needs it. Three scents. One brutally honest message. The gift they'll never forget.",
     image: "/products/you-smell-like-shit/hero-1.webp",
     url: "/you-smell-like-shit",
+    ogType: "product",
+    keywords: "solid cologne, prank gift, gag gift, funny cologne, office humor, you smell like shit cologne",
+    canonical: "/you-smell-like-shit",
   });
 
   const navigate = useNavigate();
@@ -883,6 +887,24 @@ export default function YouSmellLikeShit() {
           <p>&copy; 2026 Corporate Pranks</p>
         </div>
       </footer>
+
+      {/* Structured Data */}
+      <StructuredData data={[
+        productSchema({
+          name: "You Smell Like Shit - Solid Cologne",
+          description: "A solid cologne for someone who needs it. Three scents. One brutally honest message. The gift they'll never forget.",
+          price: 19.99,
+          image: "/products/you-smell-like-shit/hero-1.webp",
+          url: "/you-smell-like-shit",
+          sku: "ysls-cologne",
+        }),
+        faqSchema(FAQ_ITEMS),
+        breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "The Armory", url: "/armory" },
+          { name: "You Smell Like Shit", url: "/you-smell-like-shit" },
+        ]),
+      ]} />
 
       {/* ═══ K. Mobile Sticky Bottom Bar ═══ */}
       <div

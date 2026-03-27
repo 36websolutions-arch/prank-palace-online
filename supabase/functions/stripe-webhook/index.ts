@@ -100,13 +100,14 @@ serve(async (req) => {
       const paymentIntent = event.data.object;
       const meta = paymentIntent.metadata;
 
-      if (!meta?.user_id) {
-        console.log("No user_id in metadata, skipping");
+      if (!meta?.email) {
+        console.log("No email in metadata, skipping");
         return new Response("OK", { status: 200 });
       }
 
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+      // Check if order already exists (frontend may have created it)
       // Check if order already exists (frontend may have created it)
       const { data: existing } = await supabase
         .from("physical_orders")
@@ -116,42 +117,41 @@ serve(async (req) => {
 
       if (existing) {
         console.log("Order already exists, skipping webhook insert");
-        return new Response("OK", { status: 200 });
+      } else {
+        const orderItems = [{
+          name: meta.product_name,
+          qty: parseInt(meta.bundle_qty) || 1,
+          price: parseFloat(meta.amount_paid) || 0,
+          scent_variant: meta.scent_variant,
+          card_name: meta.card_name,
+          card_front: meta.card_front,
+          card_inside: meta.card_inside,
+          recipient_name: meta.recipient_name,
+          ship_anonymous: meta.ship_anonymous === "true",
+        }];
+
+        const { error: dbError } = await supabase.from("physical_orders").insert({
+          user_id: meta.user_id || "guest",
+          nickname: meta.nickname || "Guest",
+          email: meta.email,
+          phone: meta.phone || "",
+          address: meta.shipping_address || "",
+          delivery_date: meta.delivery_date || "",
+          items: orderItems,
+          amount_paid: parseFloat(meta.amount_paid) || 0,
+          payment_method: "Stripe",
+          payment_provider: "Stripe",
+          paypal_order_id: paymentIntent.id,
+          status: "Paid",
+        });
+
+        if (dbError) {
+          console.error("Failed to insert order:", dbError);
+          throw dbError;
+        }
+
+        console.log(`Webhook order created for ${meta.email} (user: ${meta.user_id || "guest"})`);
       }
-
-      const orderItems = [{
-        name: meta.product_name,
-        qty: parseInt(meta.bundle_qty) || 1,
-        price: parseFloat(meta.amount_paid) || 0,
-        scent_variant: meta.scent_variant,
-        card_name: meta.card_name,
-        card_front: meta.card_front,
-        card_inside: meta.card_inside,
-        recipient_name: meta.recipient_name,
-        ship_anonymous: meta.ship_anonymous === "true",
-      }];
-
-      const { error: dbError } = await supabase.from("physical_orders").insert({
-        user_id: meta.user_id,
-        nickname: meta.nickname || "Citizen",
-        email: meta.email,
-        phone: meta.phone,
-        address: meta.shipping_address,
-        delivery_date: meta.delivery_date,
-        items: orderItems,
-        amount_paid: parseFloat(meta.amount_paid) || 0,
-        payment_method: "Stripe",
-        payment_provider: "Stripe",
-        paypal_order_id: paymentIntent.id,
-        status: "Paid",
-      });
-
-      if (dbError) {
-        console.error("Failed to insert order:", dbError);
-        throw dbError;
-      }
-
-      console.log(`Webhook order created for ${meta.user_id}`);
 
       // Fire-and-forget: Trajectory + Fingerprint
       const amountCents = Math.round((parseFloat(meta.amount_paid) || 0) * 100);

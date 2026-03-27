@@ -1,5 +1,10 @@
 # Corporate Pranks (corporatepranks.com)
 
+## Admin Login
+
+- **Email:** `prankscorporate@gmail.com`
+- **Password:** `Admin123!`
+
 ## Supabase
 
 - **Project:** `kywwyzoxegmehfdzqokx`

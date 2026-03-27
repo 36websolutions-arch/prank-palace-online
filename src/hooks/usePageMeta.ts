@@ -5,6 +5,10 @@ interface PageMeta {
   description: string;
   image?: string;
   url?: string;
+  canonical?: string;
+  ogType?: "website" | "product" | "article";
+  keywords?: string;
+  noindex?: boolean;
 }
 
 const BASE_URL = "https://corporatepranks.com";
@@ -21,7 +25,17 @@ function setMetaTag(property: string, content: string, isName = false) {
   el.setAttribute("content", content);
 }
 
-export function usePageMeta({ title, description, image, url }: PageMeta) {
+function setLinkTag(rel: string, href: string) {
+  let el = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement | null;
+  if (!el) {
+    el = document.createElement("link");
+    el.setAttribute("rel", rel);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("href", href);
+}
+
+export function usePageMeta({ title, description, image, url, canonical, ogType, keywords, noindex }: PageMeta) {
   useEffect(() => {
     const fullTitle = title === "CorporatePranks" ? title : `${title} | CorporatePranks`;
     const fullImage = image?.startsWith("http") ? image : `${BASE_URL}${image || ""}`;
@@ -32,11 +46,28 @@ export function usePageMeta({ title, description, image, url }: PageMeta) {
     // Standard meta
     setMetaTag("description", description, true);
 
+    // Keywords
+    if (keywords) {
+      setMetaTag("keywords", keywords, true);
+    }
+
+    // Robots
+    if (noindex) {
+      setMetaTag("robots", "noindex, nofollow", true);
+    } else {
+      const robotsEl = document.querySelector('meta[name="robots"]');
+      if (robotsEl) robotsEl.remove();
+    }
+
+    // Canonical
+    setLinkTag("canonical", canonical ? `${BASE_URL}${canonical}` : fullUrl);
+
     // Open Graph
     setMetaTag("og:title", fullTitle);
     setMetaTag("og:description", description);
     setMetaTag("og:image", image ? fullImage : DEFAULT_IMAGE);
     setMetaTag("og:url", fullUrl);
+    setMetaTag("og:type", ogType || "website");
 
     // Twitter
     setMetaTag("twitter:title", fullTitle, true);
@@ -46,5 +77,5 @@ export function usePageMeta({ title, description, image, url }: PageMeta) {
     return () => {
       document.title = "CorporatePranks";
     };
-  }, [title, description, image, url]);
+  }, [title, description, image, url, canonical, ogType, keywords, noindex]);
 }

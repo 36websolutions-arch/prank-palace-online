@@ -2,8 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { trackAddToCart } from "@/lib/analytics";
-import { ShoppingCart, Lock, Package, Star, ChevronDown, Check, Upload, ZoomIn, ZoomOut, Move } from "lucide-react";
+import { ShoppingCart, Lock, Package, Star, ChevronDown, Check, Upload, ZoomIn, ZoomOut, Move, X, Camera } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { StructuredData, productSchema, faqSchema, breadcrumbSchema } from "@/components/StructuredData";
 import {
   Accordion,
   AccordionContent,
@@ -478,6 +479,9 @@ export default function TheDickHead() {
     description: "A custom sculpture of someone's face on a golden dick. Upload their photo. We do the rest. The ultimate power move.",
     image: "/products/the-dickhead/hero-1.webp",
     url: "/the-dickhead",
+    ogType: "product",
+    keywords: "custom sculpture, gag gift, prank gift, 3D printed sculpture, funny gift, office humor",
+    canonical: "/the-dickhead",
   });
 
   const navigate = useNavigate();
@@ -492,6 +496,8 @@ export default function TheDickHead() {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [faceImageData, setFaceImageData] = useState<string | null>(null);
   const heroRef = useRef<HTMLDivElement>(null);
+
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const heroImages = [
     "/products/the-dickhead/hero-1.webp",
@@ -653,29 +659,37 @@ export default function TheDickHead() {
           <FadeUp>
             <div className="relative">
               <div className="animate-float">
-                <div className="relative aspect-square max-w-lg mx-auto bg-stone-900 rounded-2xl overflow-hidden border border-stone-800">
+                <div
+                  className="relative aspect-[4/5] max-w-lg mx-auto bg-stone-900 rounded-2xl overflow-hidden border border-stone-800 cursor-pointer group"
+                  onClick={() => setLightboxOpen(true)}
+                >
                   {heroImages.map((src, i) => (
                     <img
                       key={src}
                       src={src}
                       alt={`The DickHead sculpture view ${i + 1}`}
-                      className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
                         i === heroImage ? "opacity-100" : "opacity-0"
                       }`}
                     />
                   ))}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                    <ZoomIn className="h-8 w-8 text-white opacity-0 group-hover:opacity-70 transition-opacity" />
+                  </div>
                 </div>
               </div>
-              {/* Image dots */}
-              <div className="flex justify-center gap-2 mt-4">
-                {heroImages.map((_, i) => (
+              {/* Thumbnail strip */}
+              <div className="flex justify-center gap-3 mt-4">
+                {heroImages.map((src, i) => (
                   <button
                     key={i}
                     onClick={() => setHeroImage(i)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all ${
-                      i === heroImage ? "bg-amber-500 w-8" : "bg-stone-600 hover:bg-stone-500"
+                    className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                      i === heroImage ? "border-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]" : "border-stone-700 hover:border-stone-500 opacity-60 hover:opacity-100"
                     }`}
-                  />
+                  >
+                    <img src={src} alt={`View ${i + 1}`} className="w-full h-full object-cover" />
+                  </button>
                 ))}
               </div>
             </div>
@@ -768,10 +782,19 @@ export default function TheDickHead() {
                 </div>
               )}
 
-              {/* CTA */}
-              <GlowButton onClick={handleCheckout} className="w-full" size="xl">
-                ORDER NOW — $250.00
-              </GlowButton>
+              {/* CTAs */}
+              <div className="space-y-3">
+                <GlowButton onClick={handleCheckout} className="w-full" size="xl">
+                  ORDER NOW — $250.00
+                </GlowButton>
+                <button
+                  onClick={() => document.getElementById("face-upload")?.scrollIntoView({ behavior: "smooth" })}
+                  className="w-full flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold uppercase tracking-wider rounded-xl border-2 border-amber-500/50 text-amber-400 hover:bg-amber-500/10 hover:border-amber-500 transition-all duration-300"
+                >
+                  <Camera className="h-5 w-5" />
+                  See Your Face On It
+                </button>
+              </div>
 
               {/* Trust Row */}
               <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-stone-400">
@@ -789,7 +812,7 @@ export default function TheDickHead() {
       <SocialProofBar />
 
       {/* ═══ D. Face Upload Section ═══ */}
-      <section className="py-20 px-4">
+      <section id="face-upload" className="py-20 px-4 scroll-mt-20">
         <div className="max-w-4xl mx-auto">
           <FadeUp>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-center mb-4 tracking-tight">
@@ -818,16 +841,20 @@ export default function TheDickHead() {
             </p>
           </FadeUp>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 relative">
+            {/* Connection lines between steps (desktop) */}
+            <div className="hidden md:block absolute top-24 left-[33%] right-[33%] h-0.5 bg-gradient-to-r from-amber-500/50 via-amber-500/30 to-amber-500/50" />
             {[
               { icon: "📸", title: "Upload Their Face", desc: "Drop in a clear photo. Front-facing works best. We'll handle the rest." },
               { icon: "🏗️", title: "We Sculpt & Print", desc: "Our artists 3D-model their face onto the golden sculpture. Printed in premium resin with metallic gold finish." },
-              { icon: "📦", title: "Ship Anonymously", desc: "Arrives in discreet packaging. No return address. They'll never know who crowned them." },
+              { icon: "📦", title: "You Gift It", desc: "Arrives in discreet packaging. No return address. They'll never know who crowned them." },
             ].map((step, i) => (
               <FadeUp key={i} delay={i * 0.15}>
-                <div className="text-center bg-stone-900/50 border border-stone-800 rounded-2xl p-8 hover:border-amber-500/30 transition-all duration-300">
-                  <div className="text-6xl mb-6">{step.icon}</div>
-                  <div className="text-xs text-amber-500 font-bold tracking-widest mb-3">STEP {i + 1}</div>
+                <div className="text-center bg-stone-900/50 border border-stone-800 rounded-2xl p-8 hover:border-amber-500/30 transition-all duration-300 relative">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center text-white text-xl font-black mx-auto mb-4 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                    {i + 1}
+                  </div>
+                  <div className="text-5xl mb-4">{step.icon}</div>
                   <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
                   <p className="text-stone-400 leading-relaxed">{step.desc}</p>
                 </div>
@@ -1070,6 +1097,58 @@ export default function TheDickHead() {
           <p>&copy; 2026 Corporate Pranks</p>
         </div>
       </footer>
+
+      {/* ═══ Lightbox ═══ */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white/70 hover:text-white p-2"
+            onClick={() => setLightboxOpen(false)}
+          >
+            <X className="h-8 w-8" />
+          </button>
+          <img
+            src={heroImages[heroImage]}
+            alt="The DickHead sculpture"
+            className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+            {heroImages.map((src, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.stopPropagation(); setHeroImage(i); }}
+                className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
+                  i === heroImage ? "border-amber-500" : "border-white/20 opacity-60 hover:opacity-100"
+                }`}
+              >
+                <img src={src} alt={`View ${i + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Structured Data */}
+      <StructuredData data={[
+        productSchema({
+          name: "The DickHead - Custom 3D Sculpture",
+          description: "A custom sculpture of someone's face on a golden dick. Upload their photo. We do the rest. The ultimate power move.",
+          price: 250,
+          image: "/products/the-dickhead/hero-1.webp",
+          url: "/the-dickhead",
+          sku: "dickhead-sculpture",
+        }),
+        faqSchema(FAQ_ITEMS),
+        breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "The Armory", url: "/armory" },
+          { name: "The DickHead", url: "/the-dickhead" },
+        ]),
+      ]} />
 
       {/* ═══ K. Mobile Sticky Bottom Bar ═══ */}
       <div

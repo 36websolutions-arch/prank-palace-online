@@ -185,9 +185,12 @@ function DrawUnderline({ className = "" }: { className?: string }) {
 export default function Home2() {
   usePageMeta({
     title: "CorporatePranks",
-    description: "Satire since Rome. Dispatches from the Corporate Empire. Chronicles, cologne that insults you, and mints for the socially unaware.",
+    description: "Corporate prank gifts that say what you're thinking. Cologne, mints, and sculptures.",
     image: "/products/you-smell-like-shit/hero-1.webp",
     url: "/",
+    ogType: "website",
+    keywords: "prank gifts, corporate humor, gag gifts, office pranks, funny gifts, solid cologne, sour mints, custom sculpture",
+    canonical: "/",
   });
 
   const [email, setEmail] = useState("");
@@ -561,7 +564,7 @@ export default function Home2() {
           </div>
         </section>
 
-        {/* Newsletter Section — Monthly Chronicle */}
+        {/* Newsletter Section — Monthly Dispatch */}
         <section id="newsletter" className="py-20 bg-gradient-to-b from-amber-50 to-stone-100 dark:from-amber-950/20 dark:to-stone-900 relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.03]" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -584,7 +587,7 @@ export default function Home2() {
 
               <FadeUp delay={0.2}>
                 <p className="text-stone-600 dark:text-stone-400 mb-8 text-base sm:text-lg max-w-xl mx-auto">
-                  Chronicles, new products, and dispatches from the Corporate Empire — delivered monthly.
+                  New products, exclusive drops, and dispatches from the Corporate Empire — delivered monthly.
                 </p>
               </FadeUp>
 
@@ -614,9 +617,6 @@ export default function Home2() {
                   <p className="text-stone-500 text-sm">
                     No spam. Just satire. Unsubscribe anytime.
                   </p>
-                  <Link to="/chronicles" className="text-amber-600 hover:text-amber-700 text-sm font-medium flex items-center gap-1">
-                    Read the Chronicles <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
                 </div>
               </FadeUp>
             </div>
@@ -693,7 +693,7 @@ export default function Home2() {
                     />
                   </p>
                   <footer className="mt-6 text-amber-500 font-medium text-sm sm:text-base">
-                    — The Corporate Chronicle
+                    — CorporatePranks
                   </footer>
                 </blockquote>
               </FadeUp>
@@ -734,7 +734,7 @@ export default function Home2() {
                       The Daily Dispatch
                     </h2>
                     <p className="text-white/90 mb-6 sm:mb-8 text-base sm:text-lg max-w-xl mx-auto px-2 sm:px-0">
-                      New stories drop daily. Follow for the first half of each chronicle, then come back here for the full story.
+                      Daily corporate satire, product drops, and behind-the-scenes chaos.
                     </p>
                     <a
                       href="https://www.instagram.com/corporatepranks"
