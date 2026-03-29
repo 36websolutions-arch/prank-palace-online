@@ -66,7 +66,7 @@ const STAGE_LABELS: Record<ProcessingStage, string> = {
 };
 
 /** Extract evenly-spaced JPEG frames from a video file via Canvas */
-async function extractFrames(file: File, frameCount = 8): Promise<string[]> {
+async function extractFrames(file: File, frameCount = 10): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
     video.preload = "metadata";
