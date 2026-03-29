@@ -54,3 +54,15 @@
 - **FIX**: Always test API responses against actual data before writing types. The audit-log returns: `{id, accountId, username, actionType, result, durationMs, metadata, createdAt}`.
 - **CONTEXT**: xforge uses camelCase throughout its API. Don't assume snake_case.
 - **DETECTION**: Compare interface fields against actual API response JSON.
+
+### Process — 2026-03-27
+- **MISTAKE**: Deployed frontend (Vercel) and edge function (Supabase) before committing and pushing to git. User had to remind me to commit.
+- **FIX**: Always commit and push BEFORE deploying. The order is: commit → push → deploy. This ensures the deployed code matches what's in the repo.
+- **CONTEXT**: Deploying before committing means the live site runs code that isn't tracked in version control. If something breaks, there's no way to roll back via git.
+- **DETECTION**: N/A — just always follow the commit → push → deploy sequence.
+
+### Configuration — 2026-03-29
+- **MISTAKE**: Redeployed `generate-caption` edge function to update model names, but function was missing from `supabase/config.toml`. This caused JWT verification to be enabled (the default), breaking all authenticated requests from the browser (401 errors). The curl test with anon key still worked, masking the bug.
+- **FIX**: Add `[functions.generate-caption]` with `verify_jwt = false` to `supabase/config.toml` before deploying. Any edge function called from the browser via `supabase.functions.invoke()` should have `verify_jwt = false` in config.toml, OR the function needs explicit JWT handling logic.
+- **CONTEXT**: The Supabase JS client sends the user's session JWT in the Authorization header. The gateway verifies this JWT when `verify_jwt = true`. The anon key used in curl tests bypasses this check. Always test edge functions from the actual browser, not just curl.
+- **DETECTION**: `grep -c "generate-caption" supabase/config.toml` — if 0, the function uses default JWT verification.

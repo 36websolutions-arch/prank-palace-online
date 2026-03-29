@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import { subscribeToBeehiiv } from "@/lib/beehiiv";
 import {
   ArrowRight,
   Mail,
@@ -15,6 +16,7 @@ import {
   Package,
   Star,
   Check,
+  Gift,
 } from "lucide-react";
 
 // Hook for scroll-triggered animations
@@ -221,6 +223,7 @@ export default function Home2() {
   }, []);
 
   const [subscribing, setSubscribing] = useState(false);
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,11 +232,13 @@ export default function Home2() {
     try {
       const { error } = await supabase.from("newsletter_subscribers").insert({ email: email.trim() });
       if (error && error.code === "23505") {
-        alert("You're already subscribed! The Senate appreciates your loyalty.");
+        // Already subscribed — still show the code
+        setNewsletterSuccess(true);
       } else if (error) {
         throw error;
       } else {
-        alert("Thanks for subscribing! The Senate will be in touch.");
+        subscribeToBeehiiv(email.trim());
+        setNewsletterSuccess(true);
       }
       setEmail("");
     } catch (err) {
@@ -581,44 +586,76 @@ export default function Home2() {
 
               <FadeUp delay={0.1}>
                 <h2 className="font-display text-3xl sm:text-4xl md:text-5xl mb-4 text-stone-900 dark:text-stone-100">
-                  The Monthly <span className="text-amber-600">Dispatch</span>
+                  Join the <span className="text-amber-600">Prank Letter</span>
                 </h2>
               </FadeUp>
 
-              <FadeUp delay={0.2}>
-                <p className="text-stone-600 dark:text-stone-400 mb-8 text-base sm:text-lg max-w-xl mx-auto">
-                  New products, exclusive drops, and dispatches from the Corporate Empire — delivered monthly.
-                </p>
-              </FadeUp>
+              {!newsletterSuccess ? (
+                <>
+                  <FadeUp delay={0.15}>
+                    <div className="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700/50 text-amber-700 dark:text-amber-400 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+                      <Gift className="h-4 w-4" />
+                      Get 50% off your first 5 orders
+                    </div>
+                  </FadeUp>
 
-              <FadeUp delay={0.3}>
-                <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                  <Input
-                    type="email"
-                    placeholder="citizen@empire.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="flex-1 bg-white dark:bg-stone-800 border-stone-300 dark:border-stone-700 h-12 text-base"
-                  />
-                  <Button
-                    type="submit"
-                    disabled={subscribing}
-                    className="bg-amber-600 hover:bg-amber-700 text-white px-8 h-12 text-base group"
-                  >
-                    {subscribing ? "Subscribing..." : "Subscribe"}
-                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </form>
-              </FadeUp>
+                  <FadeUp delay={0.2}>
+                    <p className="text-stone-600 dark:text-stone-400 mb-8 text-base sm:text-lg max-w-xl mx-auto">
+                      Exclusive content, discounts, and dispatches from the Corporate Empire — delivered to your inbox.
+                    </p>
+                  </FadeUp>
 
-              <FadeUp delay={0.4}>
-                <div className="flex items-center justify-center gap-4 mt-6">
-                  <p className="text-stone-500 text-sm">
-                    No spam. Just satire. Unsubscribe anytime.
-                  </p>
-                </div>
-              </FadeUp>
+                  <FadeUp delay={0.3}>
+                    <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                      <Input
+                        type="email"
+                        placeholder="citizen@empire.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="flex-1 bg-white dark:bg-stone-800 border-stone-300 dark:border-stone-700 h-12 text-base"
+                      />
+                      <Button
+                        type="submit"
+                        disabled={subscribing}
+                        className="bg-amber-600 hover:bg-amber-700 text-white px-8 h-12 text-base group"
+                      >
+                        {subscribing ? "Joining..." : "Get 50% Off"}
+                        <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </form>
+                  </FadeUp>
+
+                  <FadeUp delay={0.4}>
+                    <div className="flex items-center justify-center gap-4 mt-6">
+                      <p className="text-stone-500 text-sm">
+                        No spam. Just satire and discounts. Unsubscribe anytime.
+                      </p>
+                    </div>
+                  </FadeUp>
+                </>
+              ) : (
+                <>
+                  <FadeUp delay={0.1}>
+                    <div className="bg-white dark:bg-stone-800 border-2 border-dashed border-amber-500/50 rounded-xl p-6 mb-6 max-w-sm mx-auto">
+                      <p className="text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">Your Promo Code</p>
+                      <p className="font-mono text-3xl font-bold text-amber-600 dark:text-amber-400 tracking-widest">PRANKSTER50</p>
+                      <p className="text-sm text-stone-500 mt-2">50% off product price &middot; first 5 orders &middot; excludes shipping</p>
+                      <Button
+                        onClick={() => navigator.clipboard.writeText("PRANKSTER50")}
+                        variant="outline"
+                        className="mt-3 border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+                        size="sm"
+                      >
+                        Copy Code
+                      </Button>
+                    </div>
+                  </FadeUp>
+                  <FadeUp delay={0.2}>
+                    <p className="text-stone-500 text-sm">Welcome to the Senate! Use this code at checkout.</p>
+                  </FadeUp>
+                </>
+              )}
             </div>
           </div>
         </section>

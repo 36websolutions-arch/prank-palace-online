@@ -66,7 +66,7 @@ const STAGE_LABELS: Record<ProcessingStage, string> = {
 };
 
 /** Extract evenly-spaced JPEG frames from a video file via Canvas */
-async function extractFrames(file: File, frameCount = 20): Promise<string[]> {
+async function extractFrames(file: File, frameCount = 8): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
     video.preload = "metadata";
@@ -119,12 +119,12 @@ function seekAndCapture(
     video.currentTime = time;
     video.onseeked = () => {
       try {
-        // Scale to max 800px wide
-        const scale = Math.min(1, 800 / video.videoWidth);
+        // Scale to max 512px wide (keeps payload under Supabase 2MB limit)
+        const scale = Math.min(1, 512 / video.videoWidth);
         canvas.width = video.videoWidth * scale;
         canvas.height = video.videoHeight * scale;
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
         // Strip "data:image/jpeg;base64," prefix
         const base64 = dataUrl.split(",")[1];
         resolve(base64);
@@ -152,19 +152,19 @@ async function uploadVideoToStorage(file: File): Promise<string> {
   return storagePath;
 }
 
-/** Read an image file as resized base64 JPEG (max 800px wide) */
+/** Read an image file as resized base64 JPEG (max 512px wide) */
 async function imageToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      const scale = Math.min(1, 800 / img.naturalWidth);
+      const scale = Math.min(1, 512 / img.naturalWidth);
       const canvas = document.createElement("canvas");
       canvas.width = img.naturalWidth * scale;
       canvas.height = img.naturalHeight * scale;
       const ctx = canvas.getContext("2d")!;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
       URL.revokeObjectURL(url);
       resolve(dataUrl.split(",")[1]);
     };
@@ -412,7 +412,9 @@ export function CaptionGeneratorTab() {
       });
 
       if (response.error) {
-        throw new Error(response.error.message);
+        // Try to get the actual error from the function response body
+        const detail = response.data?.error || response.error.message;
+        throw new Error(detail);
       }
 
       const { caption } = response.data;

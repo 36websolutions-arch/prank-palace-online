@@ -14,7 +14,7 @@ import { useCart } from "@/contexts/CartContext";
 import { EmptyState } from "@/components/EmptyState";
 import { ChronicleSpinner } from "@/components/ChronicleLoader";
 import { toast } from "@/hooks/use-toast";
-import { ArrowLeft, ShoppingBag, Gift, Lock, CreditCard, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Gift, Lock, CreditCard, Tag, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { trackPurchase } from "@/lib/analytics";
 
@@ -125,7 +125,7 @@ function StripePaymentForm({
   email,
   deliveryDate,
   formValid,
-  paymentIntentId,
+  discountedProductPrice,
 }: {
   funnelOrder: FunnelOrder;
   shippingAddress: string;
@@ -135,7 +135,7 @@ function StripePaymentForm({
   email: string;
   deliveryDate: string;
   formValid: boolean;
-  paymentIntentId: string;
+  discountedProductPrice: number;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -146,7 +146,7 @@ function StripePaymentForm({
 
   const isDickheadProduct = funnelOrder.productName?.toLowerCase().includes("dickhead");
   const shippingCost = isDickheadProduct ? 0 : (funnelOrder.bundleQty >= 2 ? 0 : 4.99);
-  const finalTotal = funnelOrder.totalPrice + shippingCost;
+  const finalTotal = discountedProductPrice + shippingCost;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -300,8 +300,13 @@ function FunnelCheckout() {
   });
   const [formValid, setFormValid] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [paymentIntentId, setPaymentIntentId] = useState<string>("");
   const [loadingPayment, setLoadingPayment] = useState(false);
+
+  // Promo code state
+  const [promoCode, setPromoCode] = useState("");
+  const [promoApplied, setPromoApplied] = useState<{ code: string; discount: number; percent: number } | null>(null);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState("");
 
   // Load funnel order from localStorage (YSLS, YBS, or DickHead)
   const funnelOrder: FunnelOrder | null = (() => {
@@ -320,6 +325,40 @@ function FunnelCheckout() {
       : form.street.trim() !== "" && form.city.trim() !== "" && form.state.trim() !== "" && form.zip.trim() !== "";
     setFormValid(baseValid && addressFields);
   }, [form, shipToFriend, recipientForm]);
+
+  // Apply promo code
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim() || !funnelOrder) return;
+    setPromoLoading(true);
+    setPromoError("");
+    try {
+      const { data, error } = await supabase.functions.invoke("stripe-checkout", {
+        body: { action: "validate-promo", code: promoCode.trim(), productPrice: funnelOrder.totalPrice },
+      });
+      if (error) throw error;
+      if (data?.valid) {
+        setPromoApplied({ code: data.code, discount: data.discount, percent: data.discountPercent });
+        setPromoError("");
+        // Reset payment intent so it's recreated with discount
+        setClientSecret(null);
+      } else {
+        setPromoError("Invalid promo code");
+        setPromoApplied(null);
+      }
+    } catch {
+      setPromoError("Failed to validate code");
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const removePromo = () => {
+    setPromoApplied(null);
+    setPromoCode("");
+    setPromoError("");
+    setClientSecret(null);
+    setPaymentIntentId("");
+  };
 
   // Create PaymentIntent when we have a valid order + user
   useEffect(() => {
@@ -350,13 +389,13 @@ function FunnelCheckout() {
             userId: user?.id || "guest",
             email: form.email,
             nickname: nickname || "Guest",
+            promoCode: promoApplied?.code || undefined,
           },
         });
 
         if (error) throw error;
         if (data?.clientSecret) {
           setClientSecret(data.clientSecret);
-          setPaymentIntentId(data.paymentIntentId);
         }
       } catch (err) {
         console.error("Failed to create payment intent:", err);
@@ -371,7 +410,7 @@ function FunnelCheckout() {
     };
 
     createPaymentIntent();
-  }, [formValid, funnelOrder?.totalPrice]);
+  }, [formValid, funnelOrder?.totalPrice, promoApplied]);
 
   if (!funnelOrder) {
     return (
@@ -674,7 +713,7 @@ function FunnelCheckout() {
                     email={form.email}
                     deliveryDate={form.deliveryDate}
                     formValid={formValid}
-                    paymentIntentId={paymentIntentId}
+                    discountedProductPrice={promoApplied ? funnelOrder.totalPrice - promoApplied.discount : funnelOrder.totalPrice}
                   />
                 </Elements>
               )}
@@ -731,6 +770,53 @@ function FunnelCheckout() {
                 )}
               </div>
 
+              {/* Promo Code */}
+              <div className="border-t border-stone-200 dark:border-stone-700 pt-4 mb-4">
+                {promoApplied ? (
+                  <div className="flex items-center justify-between bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/40 rounded-lg p-3">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600" />
+                      <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                        {promoApplied.code} ({promoApplied.percent}% off)
+                      </span>
+                    </div>
+                    <button
+                      onClick={removePromo}
+                      className="text-xs text-stone-500 hover:text-red-500 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+                        <Input
+                          placeholder="Promo code"
+                          value={promoCode}
+                          onChange={(e) => { setPromoCode(e.target.value); setPromoError(""); }}
+                          onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
+                          className="pl-9 border-stone-300 dark:border-stone-700 focus:border-amber-500 h-10"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={handleApplyPromo}
+                        disabled={promoLoading || !promoCode.trim()}
+                        variant="outline"
+                        className="border-stone-300 dark:border-stone-700 hover:border-amber-500 h-10 px-4"
+                      >
+                        {promoLoading ? "..." : "Apply"}
+                      </Button>
+                    </div>
+                    {promoError && (
+                      <p className="text-xs text-red-500">{promoError}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Totals */}
               <div className="border-t border-stone-200 dark:border-stone-700 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
@@ -739,9 +825,17 @@ function FunnelCheckout() {
                 </div>
                 {funnelOrder.comparePrice > funnelOrder.totalPrice && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-stone-600 dark:text-stone-400">You Save</span>
+                    <span className="text-stone-600 dark:text-stone-400">Bundle Savings</span>
                     <span className="text-green-600 font-medium">
                       -${(funnelOrder.comparePrice - funnelOrder.totalPrice).toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                {promoApplied && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-600 dark:text-green-400 font-medium">Promo ({promoApplied.code})</span>
+                    <span className="text-green-600 font-medium">
+                      -${promoApplied.discount.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -751,7 +845,9 @@ function FunnelCheckout() {
                 </div>
                 <div className="flex justify-between text-xl font-bold pt-2 border-t border-stone-200 dark:border-stone-700">
                   <span className="text-stone-900 dark:text-stone-100">Total</span>
-                  <span className="text-amber-600">${finalTotal.toFixed(2)}</span>
+                  <span className="text-amber-600">
+                    ${((promoApplied ? funnelOrder.totalPrice - promoApplied.discount : funnelOrder.totalPrice) + shippingCost).toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>

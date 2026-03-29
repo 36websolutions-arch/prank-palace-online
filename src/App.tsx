@@ -40,7 +40,9 @@ import YourBreathStinks from "./pages/YourBreathStinks";
 import ForumEconomicus from "./pages/ForumEconomicus";
 import TheDickHead from "./pages/TheDickHead";
 import MyOrders from "./pages/MyOrders";
+import Join from "./pages/Join";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { ExitIntentPopup } from "./components/ExitIntentPopup";
 
 
 const queryClient = new QueryClient();
@@ -55,6 +57,7 @@ const App = () => (
           <AmbientToasts />
           <BrowserRouter>
             <ScrollToTop />
+            <ExitIntentPopup />
             <Routes>
               <Route path="/" element={<Home2 />} />
               <Route path="/home" element={<Navigate to="/" replace />} />
@@ -90,6 +93,7 @@ const App = () => (
               <Route path="/forum-economicus" element={<ForumEconomicus />} />
               <Route path="/the-dickhead" element={<TheDickHead />} />
               <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/join" element={<Join />} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

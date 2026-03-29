@@ -14,3 +14,21 @@ verify_jwt = false
 
 [functions.generate-chronicle]
 verify_jwt = false
+
+[functions.generate-caption]
+verify_jwt = false
+
+[functions.stripe-checkout]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.kofi-webhook]
+verify_jwt = false
+
+[functions.delete-user]
+verify_jwt = false
+
+[functions.subscribe-beehiiv]
+verify_jwt = false

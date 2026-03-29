@@ -15,6 +15,11 @@ const VALID_PRICES: Record<number, number> = {
 };
 const SUBSCRIPTION_PRICE = 25.00;
 
+// Promo codes — server-side only, never trust the client's discount amount
+const PROMO_CODES: Record<string, { discountPercent: number }> = {
+  PRANKSTER50: { discountPercent: 50 },
+};
+
 function validatePrice(bundleQty: number, totalPrice: number, productName: string): boolean {
   // Subscription products (magazines)
   if (productName?.toLowerCase().includes("magazine")) {
@@ -30,12 +35,36 @@ function validatePrice(bundleQty: number, totalPrice: number, productName: strin
   return Math.abs(totalPrice - expectedPrice) < 0.01;
 }
 
+function applyPromoCode(code: string | undefined, productPrice: number): { discount: number; validCode: string | null } {
+  if (!code) return { discount: 0, validCode: null };
+  const promo = PROMO_CODES[code.toUpperCase().trim()];
+  if (!promo) return { discount: 0, validCode: null };
+  const discount = Math.round(productPrice * promo.discountPercent) / 100;
+  return { discount, validCode: code.toUpperCase().trim() };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    const body = await req.json();
+
+    // Promo code validation endpoint
+    if (body.action === "validate-promo") {
+      const { code, productPrice } = body;
+      const { discount, validCode } = applyPromoCode(code, productPrice || 0);
+      return new Response(
+        JSON.stringify({
+          valid: !!validCode,
+          code: validCode,
+          discount,
+          discountPercent: validCode ? PROMO_CODES[validCode].discountPercent : 0,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     const {
       productName,
       scentVariant,
@@ -52,7 +81,8 @@ serve(async (req) => {
       userId,
       email,
       nickname,
-    } = await req.json();
+      promoCode,
+    } = body;
 
     if (!totalPrice || !userId || !email) {
       throw new Error("Missing required fields");
@@ -63,9 +93,13 @@ serve(async (req) => {
       throw new Error("Invalid price for product");
     }
 
+    // Apply promo code discount to product price only (not shipping)
+    const { discount, validCode } = applyPromoCode(promoCode, totalPrice);
+    const discountedPrice = totalPrice - discount;
+
     const isDickhead = productName?.toLowerCase().includes("dickhead");
     const shippingCost = isDickhead ? 0 : (bundleQty >= 2 ? 0 : 4.99);
-    const amountInCents = Math.round((totalPrice + shippingCost) * 100);
+    const amountInCents = Math.round((discountedPrice + shippingCost) * 100);
 
     // Create a Stripe PaymentIntent
     const params = new URLSearchParams({
@@ -87,9 +121,12 @@ serve(async (req) => {
       "metadata[card_inside]": cardInside || "",
       "metadata[recipient_name]": recipientName || "",
       "metadata[ship_anonymous]": String(shipAnonymous || false),
-      "metadata[amount_paid]": String(totalPrice + shippingCost),
+      "metadata[amount_paid]": String(discountedPrice + shippingCost),
+      "metadata[original_price]": String(totalPrice),
+      "metadata[discount]": String(discount),
+      "metadata[promo_code]": validCode || "",
       "metadata[shipping_cost]": String(shippingCost),
-      "description": `${productName} — ${bundleQty} pack(s) — ${scentVariant}`,
+      "description": `${productName} — ${bundleQty} pack(s) — ${scentVariant}${validCode ? ` (${validCode} -$${discount.toFixed(2)})` : ""}`,
       "receipt_email": email,
     });
 

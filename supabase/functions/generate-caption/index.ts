@@ -131,7 +131,7 @@ async function analyzeFrames(frames: string[], prompt?: string): Promise<string>
     },
   }));
 
-  const defaultPrompt = "These are 20 frames extracted evenly from a short video. Describe what's happening in the video in detail: the setting, people, actions, transitions, text overlays, and any notable visual elements. Note how the scene evolves from start to finish. Be thorough (5-8 sentences).";
+  const defaultPrompt = "These are frames extracted evenly from a short video. Describe what's happening in the video in detail: the setting, people, actions, transitions, text overlays, and any notable visual elements. Note how the scene evolves from start to finish. Be thorough (5-8 sentences).";
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -141,7 +141,7 @@ async function analyzeFrames(frames: string[], prompt?: string): Promise<string>
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: 1500,
       messages: [{
         role: "user",
@@ -333,7 +333,7 @@ Write the caption in the @CorporatePranks brand voice. Make it sharp, memorable,
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20250929",
+        model: "claude-sonnet-4-6",
         max_tokens: 2000,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: userPrompt }],
