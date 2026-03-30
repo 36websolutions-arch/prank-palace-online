@@ -120,7 +120,7 @@ async function transcribeAudio(videoStoragePath: string): Promise<string> {
   return whisperData.text || "";
 }
 
-/** Analyze video frames via Claude Vision */
+/** Analyze video frames via Claude Vision (uses Haiku for speed) */
 async function analyzeFrames(frames: string[], prompt?: string): Promise<string> {
   const imageContent = frames.map((base64) => ({
     type: "image" as const,
@@ -141,7 +141,7 @@ async function analyzeFrames(frames: string[], prompt?: string): Promise<string>
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-6",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 1500,
       messages: [{
         role: "user",
