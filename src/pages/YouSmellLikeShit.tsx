@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { trackAddToCart } from "@/lib/analytics";
-import { ShoppingCart, Lock, Package, Star, ChevronDown, Check } from "lucide-react";
+import { ShoppingCart, Lock, Package, Star, ChevronDown, Check, Shield } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { StructuredData, productSchema, faqSchema, breadcrumbSchema } from "@/components/StructuredData";
 import {
@@ -541,11 +541,21 @@ export default function YouSmellLikeShit() {
               </GlowButton>
 
               {/* Trust Row */}
-              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-stone-400">
-                <span className="flex items-center gap-1"><Lock className="h-3.5 w-3.5" /> Secure Checkout</span>
-                <span className="flex items-center gap-1"><Package className="h-3.5 w-3.5" /> Ships in 24hrs</span>
-                <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> 4.9/5 Rating</span>
-                <span className="flex items-center gap-1"><Check className="h-3.5 w-3.5" /> Real Cologne</span>
+              <div className="border-t border-stone-700/50 pt-4 mt-1">
+                <div className="flex flex-wrap items-center justify-center gap-2.5">
+                  <span className="flex items-center gap-1.5 rounded-full bg-stone-800/80 border border-stone-700/60 px-3 py-1.5 text-sm text-stone-300">
+                    <Lock className="h-3.5 w-3.5 text-amber-500" /> Secure Checkout
+                  </span>
+                  <span className="flex items-center gap-1.5 rounded-full bg-stone-800/80 border border-stone-700/60 px-3 py-1.5 text-sm text-stone-300">
+                    <Package className="h-3.5 w-3.5 text-amber-500" /> Ships in 24hrs
+                  </span>
+                  <span className="flex items-center gap-1.5 rounded-full bg-stone-800/80 border border-stone-700/60 px-3 py-1.5 text-sm text-stone-300">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> 4.9/5 Rating
+                  </span>
+                  <span className="flex items-center gap-1.5 rounded-full bg-stone-800/80 border border-stone-700/60 px-3 py-1.5 text-sm text-stone-300">
+                    <Shield className="h-3.5 w-3.5 text-amber-500" /> Money-Back Guarantee
+                  </span>
+                </div>
               </div>
             </div>
           </FadeUp>
