@@ -26,7 +26,7 @@ const MAX_HISTORY = 5;
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const MAX_DURATION = 120; // 2 minutes
 const MAX_CAROUSEL_FILES = 10; // Instagram carousel limit
-const CAROUSEL_FRAMES_PER_VIDEO = 3; // Fewer frames per video in carousel to stay under payload limit
+const CAROUSEL_FRAMES_PER_VIDEO = 5; // Frames per video in carousel mode
 
 function loadHistory(): CaptionHistoryEntry[] {
   try {
@@ -66,7 +66,7 @@ const STAGE_LABELS: Record<ProcessingStage, string> = {
 };
 
 /** Extract evenly-spaced JPEG frames from a video file via Canvas */
-async function extractFrames(file: File, frameCount = 10): Promise<string[]> {
+async function extractFrames(file: File, frameCount = 15): Promise<string[]> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
     video.preload = "metadata";
@@ -119,12 +119,12 @@ function seekAndCapture(
     video.currentTime = time;
     video.onseeked = () => {
       try {
-        // Scale to max 512px wide (keeps payload under Supabase 2MB limit)
-        const scale = Math.min(1, 512 / video.videoWidth);
+        // Scale to max 800px wide
+        const scale = Math.min(1, 800 / video.videoWidth);
         canvas.width = video.videoWidth * scale;
         canvas.height = video.videoHeight * scale;
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
         // Strip "data:image/jpeg;base64," prefix
         const base64 = dataUrl.split(",")[1];
         resolve(base64);
@@ -152,19 +152,19 @@ async function uploadVideoToStorage(file: File): Promise<string> {
   return storagePath;
 }
 
-/** Read an image file as resized base64 JPEG (max 512px wide) */
+/** Read an image file as resized base64 JPEG (max 800px wide) */
 async function imageToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      const scale = Math.min(1, 512 / img.naturalWidth);
+      const scale = Math.min(1, 800 / img.naturalWidth);
       const canvas = document.createElement("canvas");
       canvas.width = img.naturalWidth * scale;
       canvas.height = img.naturalHeight * scale;
       const ctx = canvas.getContext("2d")!;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
       URL.revokeObjectURL(url);
       resolve(dataUrl.split(",")[1]);
     };
@@ -382,7 +382,7 @@ export function CaptionGeneratorTab() {
         const payloadJson = JSON.stringify({ mode: "carousel", slides, topic, additionalContext });
         console.log(`Carousel payload size: ${(payloadJson.length / 1024).toFixed(0)}KB (${slides.length} slides)`);
 
-        if (payloadJson.length > 1.8 * 1024 * 1024) {
+        if (payloadJson.length > 5.5 * 1024 * 1024) {
           throw new Error(`Payload too large (${(payloadJson.length / 1024 / 1024).toFixed(1)}MB). Try fewer slides or smaller images.`);
         }
 
