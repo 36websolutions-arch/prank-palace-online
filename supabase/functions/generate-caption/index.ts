@@ -353,14 +353,51 @@ Write the caption in the @CorporatePranks brand voice. Make it sharp, memorable,
       throw new Error("No content in Claude response");
     }
 
-    const cleanedContent = textContent.replace(/```json/g, "").replace(/```/g, "").trim();
+    // Extract JSON from response — Claude sometimes wraps it in markdown or adds preamble
+    let cleanedContent = textContent.replace(/```json/g, "").replace(/```/g, "").trim();
 
     let caption;
     try {
       caption = JSON.parse(cleanedContent);
     } catch {
-      console.error("Failed to parse Claude response:", cleanedContent);
-      throw new Error("Failed to parse AI response as JSON");
+      // Try extracting JSON object from the response text
+      const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          caption = JSON.parse(jsonMatch[0]);
+        } catch {
+          // Last resort: manually extract fields with regex
+          console.error("JSON parse failed, attempting field extraction. Raw response:", cleanedContent.substring(0, 300));
+          const titleMatch = cleanedContent.match(/"title"\s*:\s*"([^"]+)"/);
+          const bodyMatch = cleanedContent.match(/"body"\s*:\s*"([\s\S]*?)"\s*,\s*"hashtags/);
+          const hashtagMatch = cleanedContent.match(/"hashtags"\s*:\s*"([^"]+)"/);
+
+          if (titleMatch && bodyMatch) {
+            caption = {
+              title: titleMatch[1],
+              body: bodyMatch[1].replace(/\\n/g, "\n"),
+              hashtags: hashtagMatch?.[1] || "#CorporatePranks #HistoryRepeats #AncientRome",
+            };
+          } else {
+            // Absolute fallback: treat the entire response as the caption body
+            console.error("Field extraction also failed. Using raw text as caption body.");
+            const rawText = cleanedContent.replace(/[{}"\[\]]/g, "").trim();
+            caption = {
+              title: "The Corporate Chronicle",
+              body: rawText.substring(0, 2000),
+              hashtags: "#CorporatePranks #HistoryRepeats #AncientRome",
+            };
+          }
+        }
+      } else {
+        // No JSON-like structure at all — use the raw text
+        console.error("No JSON structure found. Using raw text.");
+        caption = {
+          title: "The Corporate Chronicle",
+          body: cleanedContent.substring(0, 2000),
+          hashtags: "#CorporatePranks #HistoryRepeats #AncientRome",
+        };
+      }
     }
 
     // Enforce exactly 3 unique hashtags
