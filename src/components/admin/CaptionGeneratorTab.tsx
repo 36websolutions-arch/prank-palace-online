@@ -26,7 +26,7 @@ const MAX_HISTORY = 5;
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const MAX_DURATION = 120; // 2 minutes
 const MAX_CAROUSEL_FILES = 10; // Instagram carousel limit
-const CAROUSEL_FRAMES_PER_VIDEO = 5; // Fewer frames per video in carousel mode
+const CAROUSEL_FRAMES_PER_VIDEO = 3; // Fewer frames per video in carousel to stay under payload limit
 
 function loadHistory(): CaptionHistoryEntry[] {
   try {
@@ -359,17 +359,31 @@ export function CaptionGeneratorTab() {
         for (let i = 0; i < carouselPreviews.length; i++) {
           const item = carouselPreviews[i];
 
-          if (item.type === "image") {
-            const base64 = await imageToBase64(item.file);
-            slides.push({ type: "image", frames: [base64] });
-          } else {
-            // Video: extract fewer frames + upload for transcription
-            setStage("extracting");
-            const frames = await extractFrames(item.file, CAROUSEL_FRAMES_PER_VIDEO);
-            setStage("uploading");
-            const videoStoragePath = await uploadVideoToStorage(item.file);
-            slides.push({ type: "video", frames, videoStoragePath });
+          try {
+            if (item.type === "image") {
+              const base64 = await imageToBase64(item.file);
+              slides.push({ type: "image", frames: [base64] });
+            } else {
+              // Video: extract fewer frames + upload for transcription
+              setStage("extracting");
+              const frames = await extractFrames(item.file, CAROUSEL_FRAMES_PER_VIDEO);
+              setStage("uploading");
+              const videoStoragePath = await uploadVideoToStorage(item.file);
+              slides.push({ type: "video", frames, videoStoragePath });
+            }
+          } catch (slideErr: any) {
+            console.error(`Carousel slide ${i + 1} failed:`, slideErr);
+            toast.error(`Slide ${i + 1} failed: ${slideErr.message}`);
+            throw slideErr;
           }
+        }
+
+        // Log payload size for debugging
+        const payloadJson = JSON.stringify({ mode: "carousel", slides, topic, additionalContext });
+        console.log(`Carousel payload size: ${(payloadJson.length / 1024).toFixed(0)}KB (${slides.length} slides)`);
+
+        if (payloadJson.length > 1.8 * 1024 * 1024) {
+          throw new Error(`Payload too large (${(payloadJson.length / 1024 / 1024).toFixed(1)}MB). Try fewer slides or smaller images.`);
         }
 
         setStage(hasVideos ? "transcribing" : "generating");
