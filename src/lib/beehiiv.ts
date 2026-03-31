@@ -1,23 +1,18 @@
 /**
- * Beehiiv Newsletter Integration (via Supabase Edge Function)
+ * Welcome Email via Resend (Supabase Edge Function)
  *
- * To activate:
- * 1. Max creates a Beehiiv account at beehiiv.com
- * 2. Get the API key from Settings > Integrations > API
- * 3. Get the Publication ID from Settings > Publication
- * 4. Set as Supabase secrets:
- *    supabase secrets set BEEHIIV_API_KEY=<key> BEEHIIV_PUBLICATION_ID=<id> --project-ref kywwyzoxegmehfdzqokx
- * 5. Deploy the subscribe-beehiiv edge function
+ * Sends the branded welcome email with PRANKSTER50 promo code
+ * whenever a new subscriber signs up. Uses Resend API server-side.
  *
- * IMPORTANT: API key must stay server-side (edge function), NOT in VITE_ env vars.
- * VITE_ vars are bundled into the client JS and visible to anyone in DevTools.
+ * The function name is still "subscribe-beehiiv" for backwards compat
+ * but the edge function now uses Resend instead.
  */
 
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * Subscribe an email to the Beehiiv publication via edge function.
- * Fails silently — Supabase is the source of truth, Beehiiv is a relay.
+ * Send welcome email to new subscriber via Resend.
+ * Fails silently — Supabase is the source of truth, email is a bonus.
  */
 export async function subscribeToBeehiiv(email: string): Promise<void> {
   try {
@@ -25,9 +20,9 @@ export async function subscribeToBeehiiv(email: string): Promise<void> {
       body: { email },
     });
     if (error) {
-      console.error("Beehiiv subscription failed:", error.message);
+      console.error("Welcome email failed:", error.message);
     }
   } catch (err) {
-    console.error("Beehiiv error:", err);
+    console.error("Welcome email error:", err);
   }
 }
