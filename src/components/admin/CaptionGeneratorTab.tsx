@@ -346,9 +346,12 @@ export function CaptionGeneratorTab() {
 
     setGenerating(true);
     setStage("idle");
+    const genStart = Date.now();
+    const clog = (step: string, detail?: string) => console.log(`[caption-ui] [${Date.now() - genStart}ms] ${step}${detail ? ` — ${detail}` : ""}`);
 
     try {
       let requestBody: Record<string, any>;
+      clog("START", `mode=${inputMode}`);
 
       if (inputMode === "carousel") {
         const hasVideos = carouselPreviews.some((p) => p.type === "video");
@@ -396,11 +399,15 @@ export function CaptionGeneratorTab() {
       } else if (inputMode === "video" && videoFile) {
         // Phase 1: Extract frames
         setStage("extracting");
+        clog("EXTRACT_FRAMES", `file=${videoFile.name}, size=${(videoFile.size / 1024).toFixed(0)}KB, type=${videoFile.type}`);
         const frames = await extractFrames(videoFile);
+        clog("EXTRACT_DONE", `${frames.length} frames, totalB64=${(frames.reduce((a, f) => a + f.length, 0) / 1024).toFixed(0)}KB`);
 
         // Phase 2: Upload video to storage
         setStage("uploading");
+        clog("UPLOAD_START", `${videoFile.name}`);
         const videoStoragePath = await uploadVideoToStorage(videoFile);
+        clog("UPLOAD_DONE", `path=${videoStoragePath}`);
 
         // Phase 3: Send to edge function (it handles transcription + vision)
         setStage("transcribing");
@@ -420,17 +427,23 @@ export function CaptionGeneratorTab() {
         };
       }
 
+      const payloadSize = JSON.stringify(requestBody).length;
+      clog("INVOKE", `payloadSize=${(payloadSize / 1024).toFixed(0)}KB`);
       setStage("generating");
       const response = await supabase.functions.invoke("generate-caption", {
         body: requestBody,
       });
 
+      clog("RESPONSE", `error=${!!response.error}, success=${response.data?.success}, dataKeys=${Object.keys(response.data || {}).join(",")}`);
+
       if (response.error) {
         const detail = response.data?.error || response.error.message;
+        clog("ERROR_DETAIL", detail);
         throw new Error(detail);
       }
 
       if (response.data && !response.data.success) {
+        clog("ERROR_DETAIL", response.data.error || "unknown");
         throw new Error(response.data.error || "Caption generation failed");
       }
 
@@ -453,8 +466,10 @@ export function CaptionGeneratorTab() {
       setCaptionHistory(updated);
       saveHistory(updated);
 
+      clog("SUCCESS", `title="${response.data.caption?.title}", chars=${response.data.caption?.body?.length}, totalTime=${Date.now() - genStart}ms`);
       toast.success("Caption forged from the annals of Rome");
     } catch (error: any) {
+      clog("FAILED", `${error.message} (totalTime=${Date.now() - genStart}ms)`);
       console.error("Caption generation error:", error);
       toast.error(`Generation failed: ${error.message}`);
     } finally {

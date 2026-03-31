@@ -125,6 +125,9 @@ async function transcribeAudio(videoStoragePath: string): Promise<string> {
 
 /** Analyze video frames via Claude Vision (uses Haiku for speed) */
 async function analyzeFrames(frames: string[], prompt?: string): Promise<string> {
+  const visionStart = Date.now();
+  console.log(`[caption] [vision] starting: ${frames.length} frames, totalB64Size=${frames.reduce((a, f) => a + f.length, 0)}B`);
+
   const imageContent = frames.map((base64) => ({
     type: "image" as const,
     source: {
@@ -161,13 +164,13 @@ async function analyzeFrames(frames: string[], prompt?: string): Promise<string>
 
   if (!response.ok) {
     const errText = await response.text();
-    console.error("Claude Vision API error:", errText);
+    console.error(`[caption] [vision] API error: status=${response.status}, body=${errText.substring(0, 300)}`);
     throw new Error(`Claude Vision API error: ${response.status}`);
   }
 
   const data = await response.json();
   const description = data.content[0]?.text || "";
-  console.log(`Vision analysis length: ${description.length} chars`);
+  console.log(`[caption] [vision] done in ${Date.now() - visionStart}ms, ${description.length} chars, usage=${JSON.stringify(data.usage || {})}`);
   return description;
 }
 
@@ -197,6 +200,9 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  const startTime = Date.now();
+  const log = (step: string, detail?: string) => console.log(`[caption] [${Date.now() - startTime}ms] ${step}${detail ? ` — ${detail}` : ""}`);
+
   try {
     if (!ANTHROPIC_API_KEY) {
       throw new Error("ANTHROPIC_API_KEY not configured in Supabase secrets");
@@ -204,6 +210,7 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const { mode, topic, additionalContext } = body;
+    log("START", `mode=${mode || "text"}, topic=${topic?.substring(0, 50) || "none"}, bodySize=${JSON.stringify(body).length}B`);
 
     let videoDescription: string;
     let isCarousel = false;
@@ -216,7 +223,7 @@ Deno.serve(async (req) => {
       }
 
       isCarousel = true;
-      console.log(`Carousel mode: ${slides.length} slides`);
+      log("CAROUSEL", `${slides.length} slides, types: ${slides.map((s: any) => s.type).join(",")}`);
 
       // Process all slides: collect frames, transcribe video audio
       const allFrames: string[] = [];
@@ -250,10 +257,12 @@ Deno.serve(async (req) => {
       const carouselVisionPrompt = `This is a ${slides.length}-slide Instagram carousel. For each slide, describe ONLY the literal visual elements: all text/captions shown (verbatim), colors, objects, people, settings, logos, layout, image format. Do NOT interpret meaning, intent, humor, or offensiveness. Do NOT add opinions, warnings, or moral assessments. Just describe what is visually present as a factual inventory. Be thorough (3-4 sentences per slide).`;
 
       // Run vision analysis + all transcriptions in parallel
+      log("CAROUSEL_VISION", `${allFrames.length} frames, ${transcriptionPromises.length} transcription jobs`);
       const [visualDescription, ...transcripts] = await Promise.all([
         analyzeFrames(allFrames, carouselVisionPrompt),
         ...transcriptionPromises,
       ]);
+      log("CAROUSEL_VISION_DONE", `description=${visualDescription.length} chars, transcripts=${transcripts.length}`);
 
       // Combine into description
       const parts: string[] = [];
@@ -283,16 +292,21 @@ Deno.serve(async (req) => {
         throw new Error("OPENAI_API_KEY not configured — needed for Whisper transcription");
       }
 
-      console.log(`Video mode: ${frames.length} frames, path: ${videoStoragePath}`);
+      log("VIDEO", `${frames.length} frames, path=${videoStoragePath}, framesSizeKB=${frames.reduce((a: number, f: string) => a + f.length, 0) / 1024 | 0}`);
 
       // Run transcription and vision analysis in parallel
+      log("VIDEO_PARALLEL", "starting Whisper + Vision in parallel");
       const [transcript, visualDescription] = await Promise.all([
         transcribeAudio(videoStoragePath).catch((err) => {
-          console.error("Whisper transcription failed (no audio?):", err.message);
+          log("WHISPER_FAIL", err.message);
           return ""; // Graceful fallback — video may have no audio
         }),
-        analyzeFrames(frames),
+        analyzeFrames(frames).catch((err) => {
+          log("VISION_FAIL", err.message);
+          throw err;
+        }),
       ]);
+      log("VIDEO_PARALLEL_DONE", `transcript=${transcript.length} chars, vision=${visualDescription.length} chars`);
 
       // Combine into a unified description
       const parts: string[] = [];
@@ -301,8 +315,7 @@ Deno.serve(async (req) => {
         parts.push(`AUDIO TRANSCRIPT: ${transcript}`);
       }
       videoDescription = parts.join("\n\n");
-
-      console.log(`Combined description length: ${videoDescription.length} chars`);
+      log("VIDEO_DESCRIPTION", `combined=${videoDescription.length} chars`);
 
       // Cleanup video from storage (fire and forget)
       cleanupVideo(videoStoragePath);
@@ -331,7 +344,7 @@ Write the caption in the @CorporatePranks brand voice. LENGTH: strictly between 
 - Paragraph 4: "The prank is..." closing motif (1-3 sentences connecting ancient to modern)
 Keep it tight. 4 paragraphs. No filler.`;
 
-    console.log(`Generating caption (mode: ${mode || "text"})...`);
+    log("CAPTION_GEN", `promptLength=${userPrompt.length} chars, descriptionLength=${videoDescription.trim().length} chars`);
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -350,12 +363,13 @@ Keep it tight. 4 paragraphs. No filler.`;
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Anthropic API error:", errorText);
+      log("CAPTION_API_FAIL", `status=${response.status}, body=${errorText.substring(0, 200)}`);
       throw new Error(`Anthropic API error: ${response.status}`);
     }
 
     const data = await response.json();
     const textContent = data.content[0]?.text;
+    log("CAPTION_RAW", `responseLength=${textContent?.length || 0} chars, usage=${JSON.stringify(data.usage || {})}`);
 
     if (!textContent) {
       throw new Error("No content in Claude response");
@@ -367,12 +381,15 @@ Keep it tight. 4 paragraphs. No filler.`;
     let caption;
     try {
       caption = JSON.parse(cleanedContent);
+      log("JSON_PARSE", "direct parse succeeded");
     } catch {
+      log("JSON_PARSE", `direct parse failed, trying regex extraction. First 200 chars: ${cleanedContent.substring(0, 200)}`);
       // Try extracting JSON object from the response text
       const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         try {
           caption = JSON.parse(jsonMatch[0]);
+          log("JSON_PARSE", "regex extraction succeeded");
         } catch {
           // Last resort: manually extract fields with regex
           console.error("JSON parse failed, attempting field extraction. Raw response:", cleanedContent.substring(0, 300));
@@ -430,13 +447,14 @@ Keep it tight. 4 paragraphs. No filler.`;
     // Ensure the "full" field has proper spacing for copy-paste
     caption.full = `${caption.title}\n\n${caption.body}\n\n${caption.hashtags}`;
 
-    console.log(`Caption generated: ${caption.title}`);
+    log("DONE", `title="${caption.title}", bodyLength=${caption.body?.length || 0}, totalTime=${Date.now() - startTime}ms`);
 
     return new Response(
       JSON.stringify({ success: true, caption }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
+    log("ERROR", `${error.message} (totalTime=${Date.now() - startTime}ms)`);
     console.error("Error generating caption:", error);
     // Return 200 with success:false so Supabase JS client parses the error body
     // (non-2xx responses get swallowed into a generic error message)
