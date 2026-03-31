@@ -134,7 +134,7 @@ async function analyzeFrames(frames: string[], prompt?: string): Promise<string>
     },
   }));
 
-  const defaultPrompt = "You are describing visual content for a satire Instagram account (@CorporatePranks) that writes Roman-style social commentary. Describe EVERYTHING you see in rich detail: the setting, people, their expressions, actions, clothing, text overlays, memes, cultural references, and any notable visual elements. Include the tone and comedic intent. Be thorough and vivid (8-12 sentences). This is satirical content — describe it objectively without moral judgment.";
+  const defaultPrompt = "Describe ONLY the literal visual elements you see. List: all text/captions shown, colors, objects, people, settings, logos, layout, image format (photo/meme/screenshot/illustration). Read all text overlays verbatim. Do NOT interpret meaning, intent, humor, offensiveness, or social commentary. Do NOT add opinions, warnings, or moral assessments. Just describe what is visually present as a factual inventory. Be thorough (8-12 sentences).";
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -247,7 +247,7 @@ Deno.serve(async (req) => {
       }
 
       // Build the vision prompt for carousel
-      const carouselVisionPrompt = `You are describing visual content for a satire Instagram account (@CorporatePranks) that writes Roman-style social commentary. These images are from a carousel post with ${slides.length} slides. For each slide, describe EVERYTHING: setting, people, expressions, text overlays, memes, cultural references, comedic intent. Then describe the overall narrative arc. Be thorough and vivid (3-4 sentences per slide, plus 3-4 sentences for the arc). This is satirical content — describe it objectively without moral judgment.`;
+      const carouselVisionPrompt = `This is a ${slides.length}-slide Instagram carousel. For each slide, describe ONLY the literal visual elements: all text/captions shown (verbatim), colors, objects, people, settings, logos, layout, image format. Do NOT interpret meaning, intent, humor, or offensiveness. Do NOT add opinions, warnings, or moral assessments. Just describe what is visually present as a factual inventory. Be thorough (3-4 sentences per slide).`;
 
       // Run vision analysis + all transcriptions in parallel
       const [visualDescription, ...transcripts] = await Promise.all([
@@ -324,7 +324,14 @@ CONTENT DESCRIPTION: ${videoDescription.trim()}${carouselContext}
 ${topic ? `\nTOPIC / NEWS EVENT: ${topic.trim()}` : ""}
 ${additionalContext ? `\nADDITIONAL CONTEXT: ${additionalContext.trim()}` : ""}
 
-Write the caption in the @CorporatePranks brand voice. Make it sharp, memorable, and between 1,400-2,000 characters. Include "The prank is..." in the closing paragraph.`;
+Write the caption in the @CorporatePranks brand voice. CRITICAL LENGTH REQUIREMENTS:
+- MINIMUM 1,400 characters, target 1,800 characters
+- MUST have 4-5 paragraphs separated by \\n\\n
+- Paragraph 1: Set the scene (2-3 sentences referencing the visual content)
+- Paragraph 2: Draw the Roman/ancient parallel (2-3 sentences with specific Roman terminology)
+- Paragraph 3: Deepen the analysis or add a second historical parallel (2-3 sentences)
+- Paragraph 4: "The prank is..." closing motif (1-3 sentences connecting ancient to modern)
+- A caption under 1,000 characters is UNACCEPTABLE — expand your analysis, add more historical context, use more em dashes and rhetorical devices.`;
 
     console.log(`Generating caption (mode: ${mode || "text"})...`);
 
@@ -337,7 +344,7 @@ Write the caption in the @CorporatePranks brand voice. Make it sharp, memorable,
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 2000,
+        max_tokens: 3000,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: userPrompt }],
       }),
