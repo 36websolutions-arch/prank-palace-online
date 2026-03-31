@@ -324,14 +324,12 @@ CONTENT DESCRIPTION: ${videoDescription.trim()}${carouselContext}
 ${topic ? `\nTOPIC / NEWS EVENT: ${topic.trim()}` : ""}
 ${additionalContext ? `\nADDITIONAL CONTEXT: ${additionalContext.trim()}` : ""}
 
-Write the caption in the @CorporatePranks brand voice. CRITICAL LENGTH REQUIREMENTS:
-- MINIMUM 1,400 characters, target 1,800 characters
-- MUST have 4-5 paragraphs separated by \\n\\n
+Write the caption in the @CorporatePranks brand voice. LENGTH: strictly between 1,400-2,000 characters. NEVER exceed 2,000 characters (Instagram limit). Structure:
 - Paragraph 1: Set the scene (2-3 sentences referencing the visual content)
 - Paragraph 2: Draw the Roman/ancient parallel (2-3 sentences with specific Roman terminology)
 - Paragraph 3: Deepen the analysis or add a second historical parallel (2-3 sentences)
 - Paragraph 4: "The prank is..." closing motif (1-3 sentences connecting ancient to modern)
-- A caption under 1,000 characters is UNACCEPTABLE — expand your analysis, add more historical context, use more em dashes and rhetorical devices.`;
+Keep it tight. 4 paragraphs. No filler.`;
 
     console.log(`Generating caption (mode: ${mode || "text"})...`);
 
