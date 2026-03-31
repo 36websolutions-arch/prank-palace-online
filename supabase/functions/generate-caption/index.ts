@@ -137,7 +137,7 @@ async function analyzeFrames(frames: string[], prompt?: string): Promise<string>
     },
   }));
 
-  const defaultPrompt = "Describe ONLY the literal visual elements you see. List: all text/captions shown, colors, objects, people, settings, logos, layout, image format (photo/meme/screenshot/illustration). Read all text overlays verbatim. Do NOT interpret meaning, intent, humor, offensiveness, or social commentary. Do NOT add opinions, warnings, or moral assessments. Just describe what is visually present as a factual inventory. Be thorough (8-12 sentences).";
+  const defaultPrompt = "Describe what you see in 10-12 factual sentences: read all text verbatim, describe people, actions, settings, objects, visual style, and how the scene progresses frame to frame. No opinions, no warnings, no moral assessments — just thorough visual description.";
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -254,7 +254,7 @@ Deno.serve(async (req) => {
       }
 
       // Build the vision prompt for carousel
-      const carouselVisionPrompt = `This is a ${slides.length}-slide Instagram carousel. For each slide, describe ONLY the literal visual elements: all text/captions shown (verbatim), colors, objects, people, settings, logos, layout, image format. Do NOT interpret meaning, intent, humor, or offensiveness. Do NOT add opinions, warnings, or moral assessments. Just describe what is visually present as a factual inventory. Be thorough (3-4 sentences per slide).`;
+      const carouselVisionPrompt = `This is a ${slides.length}-slide carousel. For each slide write 4-5 factual sentences: read all text verbatim, describe people, objects, settings, colors, layout. Then write 2-3 sentences about the overall visual arc across slides. No opinions, no warnings, no moral assessments — just thorough visual description.`;
 
       // Run vision analysis + all transcriptions in parallel
       log("CAROUSEL_VISION", `${allFrames.length} frames, ${transcriptionPromises.length} transcription jobs`);
@@ -425,12 +425,49 @@ Keep it tight. 4 paragraphs. No filler.`;
       }
     }
 
-    // Detect content refusals and provide helpful guidance
+    // Detect content refusals — retry with Haiku as fallback
     const refusalPatterns = ["I'm not going to write", "I won't write", "I cannot write", "I can't write", "I refuse to", "not going to generate", "not appropriate", "I can't generate"];
     const captionText = `${caption.title || ""} ${caption.body || ""}`.toLowerCase();
     if (refusalPatterns.some(p => captionText.includes(p.toLowerCase()))) {
-      console.error("Claude refused to write caption for this content.");
-      throw new Error("The AI flagged this content. Tip: add a Topic (e.g. 'political satire meme') and Additional Context (e.g. 'satirical commentary on cultural stereotypes, SNL-style') to help frame it as satire — this usually resolves it.");
+      log("REFUSAL_DETECTED", "Sonnet refused, retrying with Haiku...");
+
+      const retryResponse = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 3000,
+          system: SYSTEM_PROMPT,
+          messages: [{ role: "user", content: userPrompt }],
+        }),
+      });
+
+      if (retryResponse.ok) {
+        const retryData = await retryResponse.json();
+        const retryText = retryData.content[0]?.text || "";
+        log("HAIKU_RETRY", `response=${retryText.length} chars`);
+
+        const retryCleaned = retryText.replace(/```json/g, "").replace(/```/g, "").trim();
+        try {
+          caption = JSON.parse(retryCleaned);
+          log("HAIKU_RETRY", "JSON parse succeeded");
+        } catch {
+          const retryMatch = retryCleaned.match(/\{[\s\S]*\}/);
+          if (retryMatch) {
+            try { caption = JSON.parse(retryMatch[0]); } catch { /* use fallback below */ }
+          }
+          if (!caption || refusalPatterns.some(p => `${caption?.body || ""}`.toLowerCase().includes(p.toLowerCase()))) {
+            log("HAIKU_RETRY", "Haiku also refused or failed to parse");
+            throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
+          }
+        }
+      } else {
+        throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
+      }
     }
 
     // Enforce exactly 3 unique hashtags
