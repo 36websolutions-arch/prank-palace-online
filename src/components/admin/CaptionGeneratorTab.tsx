@@ -426,9 +426,12 @@ export function CaptionGeneratorTab() {
       });
 
       if (response.error) {
-        // Try to get the actual error from the function response body
         const detail = response.data?.error || response.error.message;
         throw new Error(detail);
+      }
+
+      if (response.data && !response.data.success) {
+        throw new Error(response.data.error || "Caption generation failed");
       }
 
       const { caption } = response.data;

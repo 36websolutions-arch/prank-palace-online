@@ -438,10 +438,12 @@ Keep it tight. 4 paragraphs. No filler.`;
     );
   } catch (error) {
     console.error("Error generating caption:", error);
+    // Return 200 with success:false so Supabase JS client parses the error body
+    // (non-2xx responses get swallowed into a generic error message)
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
       {
-        status: 500,
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
