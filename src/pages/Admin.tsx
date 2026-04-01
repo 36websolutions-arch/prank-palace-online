@@ -17,7 +17,8 @@ import { ManageForumTab } from "@/components/admin/ManageForumTab";
 import { CommentReviewTab } from "@/components/admin/CommentReviewTab";
 import { CaptionGeneratorTab } from "@/components/admin/CaptionGeneratorTab";
 import { TwitterTab } from "@/components/admin/TwitterTab";
-import { Package, Zap, PlusCircle, Settings, RefreshCw, Users, FileText, Scroll, TrendingUp, MessageSquare, Instagram, Twitter } from "lucide-react";
+import { SubscribersTab } from "@/components/admin/SubscribersTab";
+import { Package, Zap, PlusCircle, Settings, RefreshCw, Users, FileText, Scroll, TrendingUp, MessageSquare, Instagram, Twitter, Mail } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Admin() {
@@ -113,6 +114,10 @@ export default function Admin() {
                 <Instagram className="h-4 w-4" />
                 <span className="hidden sm:inline">Captions</span>
               </TabsTrigger>
+              <TabsTrigger value="subscribers" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900 data-[state=active]:text-amber-600">
+                <Mail className="h-4 w-4" />
+                <span className="hidden sm:inline">Emails</span>
+              </TabsTrigger>
             </TabsList>
           ) : (
             <TabsList className="grid w-full grid-cols-1 max-w-xs mb-8 bg-stone-100 dark:bg-stone-800">
@@ -157,6 +162,9 @@ export default function Admin() {
               </TabsContent>
               <TabsContent value="twitter">
                 <TwitterTab />
+              </TabsContent>
+              <TabsContent value="subscribers">
+                <SubscribersTab />
               </TabsContent>
             </>
           )}
