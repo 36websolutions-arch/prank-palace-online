@@ -7,7 +7,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const WELCOME_EMAIL_HTML = `
+function buildWelcomeEmail(email: string): string {
+  const unsubUrl = `https://corporatepranks.com/unsubscribe?email=${encodeURIComponent(email)}`;
+  return `
 <div style="max-width:600px;margin:0 auto;font-family:Georgia,serif;color:#1c1917;background:#fafaf9;padding:40px 24px">
   <div style="text-align:center;margin-bottom:32px">
     <h1 style="font-size:28px;margin:0 0 4px;color:#1c1917">Welcome to the Senate, Citizen.</h1>
@@ -29,8 +31,10 @@ const WELCOME_EMAIL_HTML = `
   <div style="text-align:center;padding:16px 0;border-top:1px solid #e7e5e4">
     <p style="color:#a8a29e;font-size:12px;margin:0">&copy; 2026 CorporatePranks &middot; Satire Since Rome</p>
     <p style="color:#a8a29e;font-size:12px;margin:4px 0 0"><a href="https://corporatepranks.com" style="color:#d97706;text-decoration:none">corporatepranks.com</a></p>
+    <p style="color:#a8a29e;font-size:11px;margin:8px 0 0"><a href="${unsubUrl}" style="color:#a8a29e;text-decoration:underline">Unsubscribe</a></p>
   </div>
 </div>`;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -58,10 +62,10 @@ Deno.serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Corporate Pranks <noreply@corporatepranks.com>",
+        from: "Sam from Corporate Pranks <sam@corporatepranks.com>",
         to: [email],
         subject: "Welcome to the Senate, Citizen — here's 50% off",
-        html: WELCOME_EMAIL_HTML,
+        html: buildWelcomeEmail(email),
       }),
     });
 

@@ -41,6 +41,7 @@ import ForumEconomicus from "./pages/ForumEconomicus";
 import TheDickHead from "./pages/TheDickHead";
 import MyOrders from "./pages/MyOrders";
 import Join from "./pages/Join";
+import Unsubscribe from "./pages/Unsubscribe";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { ExitIntentPopup } from "./components/ExitIntentPopup";
 
@@ -94,6 +95,7 @@ const App = () => (
               <Route path="/the-dickhead" element={<TheDickHead />} />
               <Route path="/my-orders" element={<MyOrders />} />
               <Route path="/join" element={<Join />} />
+              <Route path="/unsubscribe" element={<Unsubscribe />} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
