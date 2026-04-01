@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, Shield, Truck, Star, Gift, Check } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 import { subscribeToBeehiiv } from "@/lib/beehiiv";
 import { PROMO_CODE } from "@/lib/promo";
 
@@ -48,7 +49,7 @@ export default function Join() {
       {/* Minimal header */}
       <header className="py-6 px-6">
         <Link to="/" className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 transition-colors">
-          <img src="/logo.png" alt="Corporate Pranks" className="h-8 w-8" />
+          <img src={logoImg} alt="Corporate Pranks" className="h-8 w-8 rounded-full" />
           <span className="font-display text-lg">CorporatePranks</span>
         </Link>
       </header>
