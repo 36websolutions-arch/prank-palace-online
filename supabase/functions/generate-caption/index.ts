@@ -426,6 +426,24 @@ Keep it tight. 4 paragraphs. No filler.`;
       }
     }
 
+    // Clean up: strip trailing commas and unescape newlines
+    if (caption.title) caption.title = caption.title.replace(/,\s*$/, "").trim();
+    if (caption.body) caption.body = caption.body.replace(/,\s*$/, "").replace(/\\n/g, "\n").trim();
+    if (caption.hashtags) caption.hashtags = caption.hashtags.replace(/,\s*$/, "").trim();
+
+    // If body is missing but other keys exist, merge all string values into body
+    if (caption && typeof caption === "object" && (!caption.body || caption.body.length < 50)) {
+      const keys = Object.keys(caption);
+      const nonStandard = keys.filter(k => !["title", "body", "hashtags", "full"].includes(k));
+      if (nonStandard.length > 0) {
+        const extraParts = nonStandard.map(k => caption[k]).filter((v: any) => typeof v === "string" && v.length > 20 && !v.includes("#"));
+        if (extraParts.length > 0) {
+          caption.body = extraParts.join("\n\n").replace(/\\n/g, "\n").replace(/,\s*$/, "").trim();
+          log("NORMALIZE", `merged ${nonStandard.join(",")} into body (${caption.body.length} chars)`);
+        }
+      }
+    }
+
     // Detect content refusals — retry with Haiku as fallback
     const refusalPatterns = ["I'm not going to write", "I won't write", "I cannot write", "I can't write", "I refuse to", "not going to generate", "not appropriate", "I can't generate"];
     const captionText = `${caption.title || ""} ${caption.body || ""}`.toLowerCase();
@@ -453,38 +471,43 @@ Keep it tight. 4 paragraphs. No filler.`;
         log("HAIKU_RETRY", `response=${retryText.length} chars`);
 
         const retryCleaned = retryText.replace(/```json/g, "").replace(/```/g, "").trim();
-        let retryParsed = false;
+
+        // Try to parse as JSON first
+        let parsedObj: any = null;
         try {
-          caption = JSON.parse(retryCleaned);
-          retryParsed = true;
-          log("HAIKU_RETRY", "JSON parse succeeded");
+          parsedObj = JSON.parse(retryCleaned);
         } catch {
           const retryMatch = retryCleaned.match(/\{[\s\S]*\}/);
           if (retryMatch) {
-            try {
-              caption = JSON.parse(retryMatch[0]);
-              retryParsed = true;
-              log("HAIKU_RETRY", "regex JSON parse succeeded");
-            } catch { /* fall through to text extraction */ }
+            try { parsedObj = JSON.parse(retryMatch[0]); } catch { /* fall through */ }
           }
         }
 
-        // If JSON parse failed, extract caption from raw text
-        if (!retryParsed) {
+        if (parsedObj && typeof parsedObj === "object") {
+          // Normalize non-standard keys — Haiku sometimes uses "middle", "analysis", "closing", etc.
+          const allValues = Object.values(parsedObj).filter((v): v is string => typeof v === "string");
+          const titleVal = parsedObj.title || allValues[0] || "The Corporate Chronicle";
+          const hashtagVal = allValues.find((v: string) => v.includes("#")) || "#CorporatePranks #HistoryRepeats #AncientRome";
+          const bodyParts = allValues.filter((v: string) => v !== titleVal && !v.includes("#") && v.length > 20);
+          const bodyVal = bodyParts.join("\n\n").replace(/\\n/g, "\n");
+
+          caption = { title: titleVal.replace(/,\s*$/, ""), body: bodyVal, hashtags: hashtagVal.replace(/,\s*$/, "") };
+          log("HAIKU_RETRY", `normalized JSON: ${Object.keys(parsedObj).join(",")}`);
+        } else {
+          // Full text extraction fallback
           log("HAIKU_RETRY", "JSON parse failed, extracting from raw text");
-          // Strip JSON field names and structure characters
           const cleanText = retryCleaned
             .replace(/[{}[\]]/g, "")
-            .replace(/"(title|body|hashtags|full)"\s*:\s*/g, "")
+            .replace(/"\w+"\s*:\s*/g, "")
             .replace(/,\s*$/gm, "")
             .replace(/^"/gm, "").replace(/"$/gm, "")
             .replace(/\\n/g, "\n")
             .trim();
 
           const lines = cleanText.split("\n").filter((l: string) => l.trim());
-          const title = lines[0]?.replace(/^The\s+/, "The ").trim() || "The Corporate Chronicle";
+          const title = lines[0]?.trim() || "The Corporate Chronicle";
           const hashtagLine = lines.find((l: string) => l.includes("#")) || "#CorporatePranks #HistoryRepeats #AncientRome";
-          const bodyLines = lines.slice(1).filter((l: string) => !l.includes("#")).join("\n\n");
+          const bodyLines = lines.slice(1).filter((l: string) => !l.includes("#") && l.trim().length > 10).join("\n\n");
 
           caption = { title, body: bodyLines || cleanText, hashtags: hashtagLine };
         }
@@ -493,6 +516,39 @@ Keep it tight. 4 paragraphs. No filler.`;
         if (refusalPatterns.some(p => `${caption?.body || ""}`.toLowerCase().includes(p.toLowerCase()))) {
           log("HAIKU_RETRY", "Haiku also refused");
           throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
+        }
+
+        // If Haiku output is too short, retry with expand instruction
+        if (caption.body && caption.body.length < 1000) {
+          log("HAIKU_SHORT", `only ${caption.body.length} chars, retrying with expand prompt`);
+          const expandResponse = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: { "x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+            body: JSON.stringify({
+              model: "claude-haiku-4-5-20251001",
+              max_tokens: 3000,
+              system: SYSTEM_PROMPT,
+              messages: [
+                { role: "user", content: userPrompt },
+                { role: "assistant", content: `{"title": "${caption.title}", "body": "${caption.body.substring(0, 200)}` },
+                { role: "user", content: "This caption is too short. Expand it to 1,400-2,000 characters with 4 full paragraphs. Keep the same title and opening, but add deeper Roman parallels and end with 'The prank is...' Return ONLY the JSON." },
+              ],
+            }),
+          });
+          if (expandResponse.ok) {
+            const expandData = await expandResponse.json();
+            const expandText = expandData.content[0]?.text || "";
+            const expandCleaned = expandText.replace(/```json/g, "").replace(/```/g, "").trim();
+            try {
+              const expanded = JSON.parse(expandCleaned.match(/\{[\s\S]*\}/)?.[0] || expandCleaned);
+              if (expanded.body && expanded.body.length > caption.body.length) {
+                caption = expanded;
+                log("HAIKU_EXPAND", `expanded to ${caption.body?.length} chars`);
+              }
+            } catch {
+              log("HAIKU_EXPAND", "expand parse failed, keeping original");
+            }
+          }
         }
       } else {
         throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
