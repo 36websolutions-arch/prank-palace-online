@@ -67,16 +67,27 @@ WHAT NOT TO DO:
 - Never shorter than 1,000 characters (except reactive hot takes)
 - Never forget the Roman parallel — it's the brand DNA
 
-OUTPUT FORMAT — return ONLY valid JSON, no preamble or markdown:
-{
-  "title": "The [Title in Title Case]",
-  "body": "Full caption body with paragraphs separated by \\n\\n",
-  "hashtags": "#Tag1 #Tag2 #AncientRome",
-  "full": "Title\\n\\nBody paragraphs\\n\\n#Tag1 #Tag2 #AncientRome"
-}
+OUTPUT FORMAT — return the caption as PLAIN TEXT (not JSON, not markdown):
+Line 1: The title (e.g. "The [Noun Phrase]")
+Blank line
+Body paragraphs separated by blank lines (4 paragraphs)
+Blank line
+Hashtag line (exactly 3 hashtags, always include #AncientRome)
 
-CRITICAL SPACING: The "full" field MUST have a blank line (\\n\\n) between the title and first paragraph, AND a blank line (\\n\\n) between the last paragraph and the hashtags. This ensures clean copy-paste formatting.
-CRITICAL HASHTAGS: Exactly 3 hashtags. No duplicates. Always include #AncientRome.`;
+Example format:
+The Corporate Catastrophe
+
+First paragraph here...
+
+Second paragraph with Roman parallel...
+
+Third paragraph deepening the analysis...
+
+The prank is that... closing paragraph.
+
+#CorporatePranks #HistoryRepeats #AncientRome
+
+CRITICAL: Return ONLY the caption text. No JSON. No field labels. No markdown. No preamble. Just the title, paragraphs, and hashtags as plain text.`;
 
 /** Download video from Supabase Storage and transcribe audio via OpenAI Whisper */
 async function transcribeAudio(videoStoragePath: string): Promise<string> {
@@ -376,87 +387,36 @@ Keep it tight. 4 paragraphs. No filler.`;
       throw new Error("No content in Claude response");
     }
 
-    // Extract JSON from response — Claude sometimes wraps it in markdown or adds preamble
-    let cleanedContent = textContent.replace(/```json/g, "").replace(/```/g, "").trim();
+    // Parse plain text response into caption object
+    // Format: Title\n\nBody paragraphs\n\n#Hashtags
+    function parseTextCaption(text: string): { title: string; body: string; hashtags: string } {
+      // Strip any JSON or markdown artifacts
+      let clean = text.replace(/```json/g, "").replace(/```/g, "").replace(/[{}]/g, "").trim();
+      // Remove JSON field labels if model still returns them
+      clean = clean.replace(/"\w+"\s*:\s*"/g, "").replace(/",?\s*$/gm, "").replace(/^"/gm, "");
+      clean = clean.replace(/\\n/g, "\n").trim();
 
-    let caption;
-    try {
-      caption = JSON.parse(cleanedContent);
-      log("JSON_PARSE", "direct parse succeeded");
-    } catch {
-      log("JSON_PARSE", `direct parse failed, trying regex extraction. First 200 chars: ${cleanedContent.substring(0, 200)}`);
-      // Try extracting JSON object from the response text
-      const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          caption = JSON.parse(jsonMatch[0]);
-          log("JSON_PARSE", "regex extraction succeeded");
-        } catch {
-          // Last resort: manually extract fields with regex
-          console.error("JSON parse failed, attempting field extraction. Raw response:", cleanedContent.substring(0, 300));
-          const titleMatch = cleanedContent.match(/"title"\s*:\s*"([^"]+)"/);
-          const bodyMatch = cleanedContent.match(/"body"\s*:\s*"([\s\S]*?)"\s*,\s*"hashtags/);
-          const hashtagMatch = cleanedContent.match(/"hashtags"\s*:\s*"([^"]+)"/);
+      const lines = clean.split("\n").map((l: string) => l.trim()).filter((l: string) => l);
+      const title = lines[0] || "The Corporate Chronicle";
+      const hashtagLine = lines.find((l: string) => /^#\w+/.test(l)) || "#CorporatePranks #HistoryRepeats #AncientRome";
+      const bodyLines = lines.slice(1).filter((l: string) => !(/^#\w+/.test(l)));
+      const body = bodyLines.join("\n\n");
 
-          if (titleMatch && bodyMatch) {
-            caption = {
-              title: titleMatch[1],
-              body: bodyMatch[1].replace(/\\n/g, "\n"),
-              hashtags: hashtagMatch?.[1] || "#CorporatePranks #HistoryRepeats #AncientRome",
-            };
-          } else {
-            // Absolute fallback: treat the entire response as the caption body
-            console.error("Field extraction also failed. Using raw text as caption body.");
-            const rawText = cleanedContent.replace(/[{}"\[\]]/g, "").trim();
-            caption = {
-              title: "The Corporate Chronicle",
-              body: rawText.substring(0, 2000),
-              hashtags: "#CorporatePranks #HistoryRepeats #AncientRome",
-            };
-          }
-        }
-      } else {
-        // No JSON-like structure at all — use the raw text
-        console.error("No JSON structure found. Using raw text.");
-        caption = {
-          title: "The Corporate Chronicle",
-          body: cleanedContent.substring(0, 2000),
-          hashtags: "#CorporatePranks #HistoryRepeats #AncientRome",
-        };
-      }
+      return { title, body, hashtags: hashtagLine };
     }
 
-    // Clean up: strip trailing commas and unescape newlines
-    if (caption.title) caption.title = caption.title.replace(/,\s*$/, "").trim();
-    if (caption.body) caption.body = caption.body.replace(/,\s*$/, "").replace(/\\n/g, "\n").trim();
-    if (caption.hashtags) caption.hashtags = caption.hashtags.replace(/,\s*$/, "").trim();
-
-    // If body is missing but other keys exist, merge all string values into body
-    if (caption && typeof caption === "object" && (!caption.body || caption.body.length < 50)) {
-      const keys = Object.keys(caption);
-      const nonStandard = keys.filter(k => !["title", "body", "hashtags", "full"].includes(k));
-      if (nonStandard.length > 0) {
-        const extraParts = nonStandard.map(k => caption[k]).filter((v: any) => typeof v === "string" && v.length > 20 && !v.includes("#"));
-        if (extraParts.length > 0) {
-          caption.body = extraParts.join("\n\n").replace(/\\n/g, "\n").replace(/,\s*$/, "").trim();
-          log("NORMALIZE", `merged ${nonStandard.join(",")} into body (${caption.body.length} chars)`);
-        }
-      }
-    }
+    let caption = parseTextCaption(textContent);
+    log("PARSED", `title="${caption.title}", body=${caption.body.length} chars, hashtags="${caption.hashtags}"`);
 
     // Detect content refusals — retry with Haiku as fallback
     const refusalPatterns = ["I'm not going to write", "I won't write", "I cannot write", "I can't write", "I refuse to", "not going to generate", "not appropriate", "I can't generate"];
-    const captionText = `${caption.title || ""} ${caption.body || ""}`.toLowerCase();
-    if (refusalPatterns.some(p => captionText.includes(p.toLowerCase()))) {
+    const captionCheck = `${caption.title} ${caption.body}`.toLowerCase();
+    if (refusalPatterns.some(p => captionCheck.includes(p.toLowerCase()))) {
       log("REFUSAL_DETECTED", "Sonnet refused, retrying with Haiku...");
 
       const retryResponse = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: {
-          "x-api-key": ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-          "content-type": "application/json",
-        },
+        headers: { "x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
         body: JSON.stringify({
           model: "claude-haiku-4-5-20251001",
           max_tokens: 3000,
@@ -469,86 +429,11 @@ Keep it tight. 4 paragraphs. No filler.`;
         const retryData = await retryResponse.json();
         const retryText = retryData.content[0]?.text || "";
         log("HAIKU_RETRY", `response=${retryText.length} chars`);
+        caption = parseTextCaption(retryText);
+        log("HAIKU_PARSED", `title="${caption.title}", body=${caption.body.length} chars`);
 
-        const retryCleaned = retryText.replace(/```json/g, "").replace(/```/g, "").trim();
-
-        // Try to parse as JSON first
-        let parsedObj: any = null;
-        try {
-          parsedObj = JSON.parse(retryCleaned);
-        } catch {
-          const retryMatch = retryCleaned.match(/\{[\s\S]*\}/);
-          if (retryMatch) {
-            try { parsedObj = JSON.parse(retryMatch[0]); } catch { /* fall through */ }
-          }
-        }
-
-        if (parsedObj && typeof parsedObj === "object") {
-          // Normalize non-standard keys — Haiku sometimes uses "middle", "analysis", "closing", etc.
-          const allValues = Object.values(parsedObj).filter((v): v is string => typeof v === "string");
-          const titleVal = parsedObj.title || allValues[0] || "The Corporate Chronicle";
-          const hashtagVal = allValues.find((v: string) => v.includes("#")) || "#CorporatePranks #HistoryRepeats #AncientRome";
-          const bodyParts = allValues.filter((v: string) => v !== titleVal && !v.includes("#") && v.length > 20);
-          const bodyVal = bodyParts.join("\n\n").replace(/\\n/g, "\n");
-
-          caption = { title: titleVal.replace(/,\s*$/, ""), body: bodyVal, hashtags: hashtagVal.replace(/,\s*$/, "") };
-          log("HAIKU_RETRY", `normalized JSON: ${Object.keys(parsedObj).join(",")}`);
-        } else {
-          // Full text extraction fallback
-          log("HAIKU_RETRY", "JSON parse failed, extracting from raw text");
-          const cleanText = retryCleaned
-            .replace(/[{}[\]]/g, "")
-            .replace(/"\w+"\s*:\s*/g, "")
-            .replace(/,\s*$/gm, "")
-            .replace(/^"/gm, "").replace(/"$/gm, "")
-            .replace(/\\n/g, "\n")
-            .trim();
-
-          const lines = cleanText.split("\n").filter((l: string) => l.trim());
-          const title = lines[0]?.trim() || "The Corporate Chronicle";
-          const hashtagLine = lines.find((l: string) => l.includes("#")) || "#CorporatePranks #HistoryRepeats #AncientRome";
-          const bodyLines = lines.slice(1).filter((l: string) => !l.includes("#") && l.trim().length > 10).join("\n\n");
-
-          caption = { title, body: bodyLines || cleanText, hashtags: hashtagLine };
-        }
-
-        // Final refusal check on the Haiku output
-        if (refusalPatterns.some(p => `${caption?.body || ""}`.toLowerCase().includes(p.toLowerCase()))) {
-          log("HAIKU_RETRY", "Haiku also refused");
+        if (refusalPatterns.some(p => caption.body.toLowerCase().includes(p.toLowerCase()))) {
           throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
-        }
-
-        // If Haiku output is too short, retry with expand instruction
-        if (caption.body && caption.body.length < 1000) {
-          log("HAIKU_SHORT", `only ${caption.body.length} chars, retrying with expand prompt`);
-          const expandResponse = await fetch("https://api.anthropic.com/v1/messages", {
-            method: "POST",
-            headers: { "x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-            body: JSON.stringify({
-              model: "claude-haiku-4-5-20251001",
-              max_tokens: 3000,
-              system: SYSTEM_PROMPT,
-              messages: [
-                { role: "user", content: userPrompt },
-                { role: "assistant", content: `{"title": "${caption.title}", "body": "${caption.body.substring(0, 200)}` },
-                { role: "user", content: "This caption is too short. Expand it to 1,400-2,000 characters with 4 full paragraphs. Keep the same title and opening, but add deeper Roman parallels and end with 'The prank is...' Return ONLY the JSON." },
-              ],
-            }),
-          });
-          if (expandResponse.ok) {
-            const expandData = await expandResponse.json();
-            const expandText = expandData.content[0]?.text || "";
-            const expandCleaned = expandText.replace(/```json/g, "").replace(/```/g, "").trim();
-            try {
-              const expanded = JSON.parse(expandCleaned.match(/\{[\s\S]*\}/)?.[0] || expandCleaned);
-              if (expanded.body && expanded.body.length > caption.body.length) {
-                caption = expanded;
-                log("HAIKU_EXPAND", `expanded to ${caption.body?.length} chars`);
-              }
-            } catch {
-              log("HAIKU_EXPAND", "expand parse failed, keeping original");
-            }
-          }
         }
       } else {
         throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
