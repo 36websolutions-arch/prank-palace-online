@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Corporate Pranks <onboarding@resend.dev>",
+        from: "Corporate Pranks <noreply@corporatepranks.com>",
         to: [email],
         subject: "Welcome to the Senate, Citizen — here's 50% off",
         html: WELCOME_EMAIL_HTML,
