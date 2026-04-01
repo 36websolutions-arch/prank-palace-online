@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Users, UserCheck, UserX, RefreshCw, Search, Download } from "lucide-react";
+import { Mail, Users, UserCheck, UserX, RefreshCw, Search, Download, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Subscriber {
   id: string;
@@ -45,6 +46,17 @@ export function SubscribersTab() {
       (filter === "unsubscribed" && !s.is_active);
     return matchesSearch && matchesFilter;
   });
+
+  const deleteSubscriber = async (id: string, email: string) => {
+    if (!confirm(`Delete ${email}?`)) return;
+    const { error } = await supabase.from("newsletter_subscribers").delete().eq("id", id);
+    if (error) {
+      toast.error(`Failed to delete: ${error.message}`);
+    } else {
+      toast.success(`Deleted ${email}`);
+      setSubscribers((prev) => prev.filter((s) => s.id !== id));
+    }
+  };
 
   const activeCount = subscribers.filter((s) => s.is_active).length;
   const unsubCount = subscribers.filter((s) => !s.is_active).length;
@@ -158,6 +170,7 @@ export function SubscribersTab() {
                     <th className="text-left py-2 px-3 text-stone-500 font-medium">Email</th>
                     <th className="text-left py-2 px-3 text-stone-500 font-medium">Subscribed</th>
                     <th className="text-left py-2 px-3 text-stone-500 font-medium">Status</th>
+                    <th className="text-right py-2 px-3 text-stone-500 font-medium w-16"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -177,6 +190,15 @@ export function SubscribersTab() {
                             <UserX className="h-3 w-3" /> Unsub'd
                           </span>
                         )}
+                      </td>
+                      <td className="py-2 px-3 text-right">
+                        <button
+                          onClick={() => deleteSubscriber(sub.id, sub.email)}
+                          className="text-stone-400 hover:text-red-500 transition-colors p-1"
+                          title="Delete subscriber"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}

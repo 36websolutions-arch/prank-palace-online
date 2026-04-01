@@ -44,7 +44,9 @@ export function ExitIntentPopup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || subscribing) return;
+    const trimmed = email.trim();
+    if (!trimmed || subscribing) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return;
     setSubscribing(true);
     try {
       const { error } = await supabase.from("newsletter_subscribers").insert({

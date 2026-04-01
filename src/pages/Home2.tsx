@@ -227,7 +227,12 @@ export default function Home2() {
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || subscribing) return;
+    const trimmed = email.trim();
+    if (!trimmed || subscribing) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
     setSubscribing(true);
     try {
       const { error } = await supabase.from("newsletter_subscribers").insert({ email: email.trim() });

@@ -15,7 +15,12 @@ export default function Join() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || subscribing) return;
+    const trimmed = email.trim();
+    if (!trimmed || subscribing) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
     setSubscribing(true);
     try {
       const { error } = await supabase.from("newsletter_subscribers").insert({
