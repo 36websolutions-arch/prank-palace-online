@@ -344,7 +344,8 @@ Write the caption in the @CorporatePranks brand voice. LENGTH: strictly between 
 - Paragraph 4: "The prank is..." closing motif (1-3 sentences connecting ancient to modern)
 Keep it tight. 4 paragraphs. No filler.`;
 
-    log("CAPTION_GEN", `promptLength=${userPrompt.length} chars, descriptionLength=${videoDescription.trim().length} chars`);
+    const captionModel = "claude-sonnet-4-6";
+    log("CAPTION_GEN", `model=${captionModel}, promptLength=${userPrompt.length} chars, descriptionLength=${videoDescription.trim().length} chars`);
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -354,7 +355,7 @@ Keep it tight. 4 paragraphs. No filler.`;
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
+        model: captionModel,
         max_tokens: 3000,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: userPrompt }],
@@ -452,18 +453,46 @@ Keep it tight. 4 paragraphs. No filler.`;
         log("HAIKU_RETRY", `response=${retryText.length} chars`);
 
         const retryCleaned = retryText.replace(/```json/g, "").replace(/```/g, "").trim();
+        let retryParsed = false;
         try {
           caption = JSON.parse(retryCleaned);
+          retryParsed = true;
           log("HAIKU_RETRY", "JSON parse succeeded");
         } catch {
           const retryMatch = retryCleaned.match(/\{[\s\S]*\}/);
           if (retryMatch) {
-            try { caption = JSON.parse(retryMatch[0]); } catch { /* use fallback below */ }
+            try {
+              caption = JSON.parse(retryMatch[0]);
+              retryParsed = true;
+              log("HAIKU_RETRY", "regex JSON parse succeeded");
+            } catch { /* fall through to text extraction */ }
           }
-          if (!caption || refusalPatterns.some(p => `${caption?.body || ""}`.toLowerCase().includes(p.toLowerCase()))) {
-            log("HAIKU_RETRY", "Haiku also refused or failed to parse");
-            throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
-          }
+        }
+
+        // If JSON parse failed, extract caption from raw text
+        if (!retryParsed) {
+          log("HAIKU_RETRY", "JSON parse failed, extracting from raw text");
+          // Strip JSON field names and structure characters
+          const cleanText = retryCleaned
+            .replace(/[{}[\]]/g, "")
+            .replace(/"(title|body|hashtags|full)"\s*:\s*/g, "")
+            .replace(/,\s*$/gm, "")
+            .replace(/^"/gm, "").replace(/"$/gm, "")
+            .replace(/\\n/g, "\n")
+            .trim();
+
+          const lines = cleanText.split("\n").filter((l: string) => l.trim());
+          const title = lines[0]?.replace(/^The\s+/, "The ").trim() || "The Corporate Chronicle";
+          const hashtagLine = lines.find((l: string) => l.includes("#")) || "#CorporatePranks #HistoryRepeats #AncientRome";
+          const bodyLines = lines.slice(1).filter((l: string) => !l.includes("#")).join("\n\n");
+
+          caption = { title, body: bodyLines || cleanText, hashtags: hashtagLine };
+        }
+
+        // Final refusal check on the Haiku output
+        if (refusalPatterns.some(p => `${caption?.body || ""}`.toLowerCase().includes(p.toLowerCase()))) {
+          log("HAIKU_RETRY", "Haiku also refused");
+          throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
         }
       } else {
         throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
