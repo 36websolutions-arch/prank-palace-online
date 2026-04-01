@@ -338,13 +338,9 @@ Deno.serve(async (req) => {
       }
     }
 
-    const carouselContext = isCarousel
-      ? `\nPOST FORMAT: This is an Instagram CAROUSEL post with multiple slides. The caption should encourage swiping through the slides and reference the visual journey across them. Naturally weave in engagement that motivates viewers to swipe.`
-      : "";
+    const userPrompt = `Write an Instagram caption for this content:
 
-    const userPrompt = `Write an Instagram caption for this ${isCarousel ? "carousel post" : "video"}:
-
-CONTENT DESCRIPTION: ${videoDescription.trim()}${carouselContext}
+CONTENT DESCRIPTION: ${videoDescription.trim()}
 ${topic ? `\nTOPIC / NEWS EVENT: ${topic.trim()}` : ""}
 ${additionalContext ? `\nADDITIONAL CONTEXT: ${additionalContext.trim()}` : ""}
 
