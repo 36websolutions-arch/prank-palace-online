@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight, Shield, Truck, Star, Gift, Check } from "lucide-react";
+import { ArrowRight, Gift, Check, Instagram, Users, Flame } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { subscribeToBeehiiv } from "@/lib/beehiiv";
 import { PROMO_CODE } from "@/lib/promo";
@@ -25,15 +25,14 @@ export default function Join() {
     setSubscribing(true);
     try {
       const { error } = await supabase.from("newsletter_subscribers").insert({
-        email: email.trim(),
+        email: trimmed,
       });
       if (error && error.code === "23505") {
-        // Already subscribed — still show the code
         setSubscribed(true);
       } else if (error) {
         throw error;
       } else {
-        subscribeToBeehiiv(email.trim());
+        subscribeToBeehiiv(trimmed);
         setSubscribed(true);
       }
     } catch (err) {
@@ -46,88 +45,159 @@ export default function Join() {
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col">
-      {/* Minimal header */}
-      <header className="py-6 px-6">
+      {/* Header */}
+      <header className="py-4 px-6 border-b border-stone-900">
         <Link to="/" className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 transition-colors">
           <img src={logoImg} alt="Corporate Pranks" className="h-8 w-8 rounded-full" />
           <span className="font-display text-lg">CorporatePranks</span>
         </Link>
       </header>
 
-      <main className="flex-1 flex items-center justify-center px-4 py-8">
-        <div className="max-w-lg w-full">
-          {!subscribed ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center"
-            >
-              {/* Hero badge */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 px-4 py-1.5 rounded-full text-sm font-medium mb-8"
+      <main className="flex-1">
+        {!subscribed ? (
+          <>
+            {/* Section 1: Hook — What is Corporate Pranks */}
+            <section className="px-4 pt-10 pb-8 text-center">
+              <motion.h1
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="font-display text-3xl sm:text-4xl lg:text-5xl mb-3 leading-tight"
               >
-                <Gift className="h-4 w-4" />
-                Exclusive Offer
-              </motion.div>
+                Corporate Satire.<br />
+                <span className="text-amber-500">Since Rome.</span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-stone-400 text-base sm:text-lg max-w-md mx-auto"
+              >
+                Prank gifts that actually smell good, Instagram captions written by a cynical Roman historian, and dispatches from the Corporate Empire.
+              </motion.p>
+            </section>
 
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl mb-4 leading-tight">
-                Get <span className="text-amber-500">50% Off</span> Your First 5 Orders
-              </h1>
-
-              <p className="text-stone-400 text-lg mb-8 max-w-md mx-auto">
-                Join the Prank Letter and receive exclusive content, discounts, and dispatches from the Corporate Empire.
-              </p>
-
-              {/* Email form */}
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-8">
-                <Input
-                  type="email"
-                  placeholder="citizen@empire.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="flex-1 bg-stone-900 border-stone-700 h-14 text-base text-stone-100 placeholder:text-stone-500 focus:border-amber-500"
-                />
-                <Button
-                  type="submit"
-                  disabled={subscribing}
-                  className="bg-amber-500 hover:bg-amber-600 text-stone-950 px-8 h-14 text-base font-bold group"
-                >
-                  {subscribing ? "Joining..." : "Join Now"}
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </form>
-
-              <p className="text-xs text-stone-500 mb-12">
-                No spam. Unsubscribe anytime. Just satire, discounts, and historically accurate insults.
-              </p>
-
-              {/* Trust signals */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-md mx-auto">
+            {/* Section 2: Social proof stats */}
+            <section className="px-4 pb-8">
+              <div className="flex justify-center gap-8 sm:gap-12 max-w-md mx-auto">
                 {[
-                  { icon: Shield, label: "Secure Checkout" },
-                  { icon: Truck, label: "Ships in 24hrs" },
-                  { icon: Star, label: "4.9/5 Rating" },
-                  { icon: Gift, label: "Real Cologne" },
-                ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex flex-col items-center gap-1.5 text-stone-500">
-                    <Icon className="h-5 w-5 text-amber-500/60" />
-                    <span className="text-xs">{label}</span>
+                  { icon: Users, value: "18K+", label: "Citizens" },
+                  { icon: Instagram, value: "Daily", label: "Dispatches" },
+                  { icon: Flame, value: "2,847+", label: "Packs Shipped" },
+                ].map(({ icon: Icon, value, label }) => (
+                  <div key={label} className="text-center">
+                    <Icon className="h-5 w-5 text-amber-500/70 mx-auto mb-1" />
+                    <p className="text-xl font-bold text-stone-100">{value}</p>
+                    <p className="text-xs text-stone-500">{label}</p>
                   </div>
                 ))}
               </div>
-            </motion.div>
-          ) : (
-            /* Success state — reveal the code */
+            </section>
+
+            {/* Section 3: Featured content — Instagram embed */}
+            <section className="px-4 pb-8">
+              <div className="max-w-sm mx-auto">
+                <a
+                  href="https://www.instagram.com/corporatepranks"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-stone-700 transition-colors"
+                >
+                  <div className="flex items-center gap-3 p-3 border-b border-stone-800">
+                    <img src={logoImg} alt="" className="h-8 w-8 rounded-full" />
+                    <div>
+                      <p className="text-sm font-medium text-stone-100">corporatepranks</p>
+                      <p className="text-xs text-stone-500">18,000+ followers</p>
+                    </div>
+                  </div>
+                  <div className="p-4 text-center">
+                    <p className="text-stone-400 text-sm italic mb-3">
+                      "History doesn't repeat itself, but corporate America sure does."
+                    </p>
+                    <div className="flex items-center justify-center gap-2 text-amber-500 text-sm font-medium">
+                      <Instagram className="h-4 w-4" />
+                      Follow @corporatepranks
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </section>
+
+            {/* Section 4: The offer + email capture */}
+            <section className="px-4 pb-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="max-w-md mx-auto text-center"
+              >
+                <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+                  <Gift className="h-4 w-4" />
+                  Exclusive Offer
+                </div>
+
+                <h2 className="font-display text-2xl sm:text-3xl mb-2">
+                  Get <span className="text-amber-500">50% Off</span> Your First 5 Orders
+                </h2>
+
+                <p className="text-stone-400 text-sm mb-6">
+                  Join the Prank Letter for exclusive drops, discounts, and content that would make Juvenal proud.
+                </p>
+
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 mb-4">
+                  <Input
+                    type="email"
+                    placeholder="citizen@empire.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="flex-1 bg-stone-900 border-stone-700 h-14 text-base text-stone-100 placeholder:text-stone-500 focus:border-amber-500"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={subscribing}
+                    className="bg-amber-500 hover:bg-amber-600 text-stone-950 px-8 h-14 text-base font-bold group"
+                  >
+                    {subscribing ? "Joining..." : "Get 50% Off"}
+                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </form>
+
+                <p className="text-xs text-stone-600">
+                  No spam. Unsubscribe anytime. Just satire, discounts, and historically accurate insults.
+                </p>
+              </motion.div>
+            </section>
+
+            {/* Section 5: What you'll get */}
+            <section className="px-4 pb-12 border-t border-stone-900 pt-8">
+              <div className="max-w-md mx-auto">
+                <h3 className="text-center text-sm font-medium text-stone-500 uppercase tracking-wider mb-6">What you'll get</h3>
+                <div className="space-y-4">
+                  {[
+                    "50% off your first 5 orders on prank cologne and sour mints",
+                    "Weekly dispatches from the Corporate Empire (Roman satire meets modern absurdity)",
+                    "Early access to new product drops before they hit the site",
+                    "Exclusive memes and content you won't see on Instagram",
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="mt-0.5 w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-3 w-3 text-amber-400" />
+                      </div>
+                      <p className="text-stone-300 text-sm">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </>
+        ) : (
+          /* Success state */
+          <div className="flex-1 flex items-center justify-center px-4 py-12">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
-              className="text-center"
+              className="text-center max-w-lg"
             >
               <motion.div
                 initial={{ scale: 0 }}
@@ -146,7 +216,6 @@ export default function Join() {
                 Your exclusive promo code is ready. Use it on your next 5 orders:
               </p>
 
-              {/* Promo code display */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -169,7 +238,6 @@ export default function Join() {
                 </Button>
               </motion.div>
 
-              {/* Product CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to="/you-smell-like-shit">
                   <Button className="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold px-6">
@@ -190,11 +258,10 @@ export default function Join() {
                 Browse the full Armory &rarr;
               </Link>
             </motion.div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
 
-      {/* Minimal footer */}
       <footer className="py-6 px-6 text-center text-xs text-stone-600">
         &copy; {new Date().getFullYear()} CorporatePranks. Satire Since Rome.
       </footer>
