@@ -144,7 +144,7 @@ export default function Join() {
                 transition={{ delay: 0.4 }}
                 className="max-w-md mx-auto"
               >
-                <div className="bg-stone-900 border border-stone-800 rounded-2xl p-6 text-center">
+                <div className="bg-stone-900 border-2 border-amber-500/30 rounded-2xl p-6 sm:p-8 text-center shadow-[0_0_40px_rgba(245,158,11,0.15)]">
                   <h2 className="font-display text-2xl sm:text-3xl mb-2">
                     Get <span className="text-amber-500">50% Off</span>
                   </h2>
@@ -152,7 +152,7 @@ export default function Join() {
                     Your first 5 orders. Drop your email and the code is yours.
                   </p>
 
-                  <form onSubmit={handleSubmit} className="space-y-3">
+                  <form onSubmit={handleSubmit} className="space-y-4">
                     <Input
                       type="email"
                       placeholder="citizen@empire.com"
@@ -164,10 +164,10 @@ export default function Join() {
                     <Button
                       type="submit"
                       disabled={subscribing}
-                      className="w-full bg-amber-500 hover:bg-amber-600 text-stone-950 h-14 text-base font-bold group rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transition-all"
+                      className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-stone-950 h-16 text-lg font-black tracking-wide group rounded-xl shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:shadow-[0_0_50px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                     >
-                      {subscribing ? "Joining..." : "Send Me the Code"}
-                      <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      {subscribing ? "JOINING..." : "SEND ME THE CODE"}
+                      <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </form>
 
