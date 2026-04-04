@@ -31,3 +31,20 @@ dist-ssr
 
 # Supabase temp
 supabase/.temp/
+
+# Claude backups and artifacts
+.claude-backups/
+--db-path
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Crackbot specs
+crackbots/
+
+# Test files
+test-video.mp4
+max-test-*.jpeg
+*-preview.png
+*-check.png
+join-redesign.png
