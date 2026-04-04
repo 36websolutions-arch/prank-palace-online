@@ -19,7 +19,7 @@ VOICE (match these patterns from real @CorporatePranks posts):
 - Uses "we," "you," "our" freely. First person plural is the default.
 - Declarative and bold — states opinions as facts, not suggestions.
 - Mixes casual phrasing with sharp analysis ("it is honestly wild how...", "a biting satire of a reality where...")
-- Em dashes (—) for dramatic pauses and asides.
+- Use colons, commas, or parentheses for pauses and asides. Never use em dashes.
 - Connects modern events to Ancient Rome, but also Greek, Persian, and other empires.
 - The "prank" motif appears in the closing — reframes the topic as systemic irony.
 - Sometimes uses "The prank is..." but varies it ("The real joke is...", "The irony here is...", etc.)
@@ -358,17 +358,17 @@ Keep it tight. 4 paragraphs. No filler.`;
     function parseTextCaption(text: string): { title: string; body: string; hashtags: string } {
       // Strip any JSON or markdown artifacts
       let clean = text.replace(/```json/g, "").replace(/```/g, "").replace(/[{}]/g, "").trim();
-      // Remove JSON field labels if model still returns them
       clean = clean.replace(/"\w+"\s*:\s*"/g, "").replace(/",?\s*$/gm, "").replace(/^"/gm, "");
       clean = clean.replace(/\\n/g, "\n").trim();
 
-      const lines = clean.split("\n").map((l: string) => l.trim()).filter((l: string) => l);
-      const title = lines[0] || "The Corporate Chronicle";
-      const hashtagLine = lines.find((l: string) => /^#\w+/.test(l)) || "#CorporatePranks #HistoryRepeats #AncientRome";
-      const bodyLines = lines.slice(1).filter((l: string) => !(/^#\w+/.test(l)));
-      const body = bodyLines.join("\n\n");
+      // Split on paragraph boundaries (double newlines) to preserve structure
+      const paragraphs = clean.split(/\n\n+/).map((p: string) => p.trim()).filter((p: string) => p);
+      const title = paragraphs[0] || "The Corporate Chronicle";
+      const hashtagPara = paragraphs.find((p: string) => /^#\w+/.test(p)) || "#CorporatePranks #HistoryRepeats #AncientRome";
+      const bodyParagraphs = paragraphs.slice(1).filter((p: string) => !(/^#\w+/.test(p)));
+      const body = bodyParagraphs.join("\n\n");
 
-      return { title, body, hashtags: hashtagLine };
+      return { title, body, hashtags: hashtagPara };
     }
 
     let caption = parseTextCaption(textContent);
@@ -398,7 +398,7 @@ Keep it tight. 4 paragraphs. No filler.`;
         caption = parseTextCaption(retryText);
         log("HAIKU_PARSED", `title="${caption.title}", body=${caption.body.length} chars`);
 
-        if (refusalPatterns.some(p => caption.body.toLowerCase().includes(p.toLowerCase()))) {
+        if (refusalPatterns.some(p => `${caption.title} ${caption.body}`.toLowerCase().includes(p.toLowerCase()))) {
           throw new Error("The AI flagged this content. Tip: add a Topic and Additional Context to help frame it as satire.");
         }
       } else {
@@ -413,7 +413,7 @@ Keep it tight. 4 paragraphs. No filler.`;
       if (!tags.some((t: string) => t.toLowerCase() === "#ancientrome")) {
         tags.push("#AncientRome");
       }
-      tags = tags.slice(0, 3);
+      tags = tags.slice(0, 5);
       caption.hashtags = tags.join(" ");
     }
 

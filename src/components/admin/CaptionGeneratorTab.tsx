@@ -117,7 +117,7 @@ function seekAndCapture(
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     video.currentTime = time;
-    video.onseeked = () => {
+    video.addEventListener("seeked", () => {
       try {
         // Scale to max 800px wide
         const scale = Math.min(1, 800 / video.videoWidth);
@@ -125,14 +125,13 @@ function seekAndCapture(
         canvas.height = video.videoHeight * scale;
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
-        // Strip "data:image/jpeg;base64," prefix
         const base64 = dataUrl.split(",")[1];
         resolve(base64);
       } catch (err) {
         reject(err);
       }
-    };
-    video.onerror = () => reject(new Error("Seek failed"));
+    }, { once: true });
+    video.addEventListener("error", () => reject(new Error("Seek failed")), { once: true });
   });
 }
 

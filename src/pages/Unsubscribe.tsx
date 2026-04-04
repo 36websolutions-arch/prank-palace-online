@@ -5,23 +5,28 @@ import { supabase } from "@/integrations/supabase/client";
 
 export default function Unsubscribe() {
   const [searchParams] = useSearchParams();
-  const email = searchParams.get("email") || "";
+  const token = searchParams.get("token") || "";
   const [status, setStatus] = useState<"loading" | "done" | "error">("loading");
+  const [unsubEmail, setUnsubEmail] = useState("");
 
   useEffect(() => {
-    if (!email) {
+    if (!token) {
       setStatus("error");
       return;
     }
 
     const unsubscribe = async () => {
       try {
-        const { error } = await supabase
-          .from("newsletter_subscribers")
-          .update({ is_active: false, unsubscribed_at: new Date().toISOString() })
-          .eq("email", email);
+        // Call edge function to verify token and unsubscribe
+        const { data, error } = await supabase.functions.invoke("subscribe-beehiiv", {
+          body: { action: "unsubscribe", token },
+        });
 
-        if (error) throw error;
+        if (error || !data?.success) {
+          throw new Error(data?.error || "Invalid or expired link");
+        }
+
+        setUnsubEmail(data.email || "");
         setStatus("done");
       } catch {
         setStatus("error");
@@ -29,7 +34,7 @@ export default function Unsubscribe() {
     };
 
     unsubscribe();
-  }, [email]);
+  }, [token]);
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col items-center justify-center px-4">
@@ -42,7 +47,7 @@ export default function Unsubscribe() {
           <>
             <h1 className="font-display text-3xl mb-4">You've Left the Senate</h1>
             <p className="text-stone-400 mb-8">
-              {email} has been unsubscribed. You won't receive any more emails from us.
+              You've been unsubscribed. You won't receive any more emails from us.
             </p>
             <p className="text-stone-500 text-sm mb-8">
               We'll miss you, Citizen. The Empire won't be the same.
@@ -59,7 +64,7 @@ export default function Unsubscribe() {
           <>
             <h1 className="font-display text-3xl mb-4">Something Went Wrong</h1>
             <p className="text-stone-400 mb-8">
-              We couldn't process your unsubscribe request. Please email us at info@corporatepranks.com and we'll remove you manually.
+              This unsubscribe link is invalid or expired. Please email us at info@corporatepranks.com and we'll remove you manually.
             </p>
             <Link to="/">
               <Button className="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold">

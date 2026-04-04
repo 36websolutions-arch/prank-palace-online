@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Navigate, Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -357,7 +357,6 @@ function FunnelCheckout() {
     setPromoCode("");
     setPromoError("");
     setClientSecret(null);
-    setPaymentIntentId("");
   };
 
   // Create PaymentIntent when we have a valid order + user
@@ -883,44 +882,8 @@ function CartCheckout() {
     setFormValid(form.phone.trim() !== "" && form.address.trim() !== "" && form.deliveryDate !== "");
   }, [form]);
 
-  // Auth guard — cart requires login
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
-        <Navbar />
-        <main className="flex-1 container mx-auto px-4 py-12">
-          <div className="flex items-center justify-center py-8">
-            <ChronicleSpinner />
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
-        <Navbar />
-        <main className="flex-1 container mx-auto px-4 py-12">
-          <EmptyState
-            icon="🛒"
-            title="Sign in to use your cart"
-            description="Or buy directly from our product pages — no account needed!"
-            action={
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link to="/auth"><Button className="bg-amber-600 hover:bg-amber-700 text-white">Sign In</Button></Link>
-                <Link to="/armory"><Button variant="outline" className="border-stone-300 dark:border-stone-700">Browse Products</Button></Link>
-              </div>
-            }
-          />
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   useEffect(() => {
+    if (!user) return;
     const fetchClientId = async () => {
       try {
         const { data, error } = await supabase.functions.invoke("paypal", {
@@ -934,7 +897,7 @@ function CartCheckout() {
       }
     };
     fetchClientId();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!paypalClientId || paypalLoaded) return;
@@ -1041,6 +1004,43 @@ function CartCheckout() {
       },
     }).render(paypalContainerRef.current);
   }, [paypalLoaded, formValid, totalPrice]);
+
+  // Auth guards — placed after all hooks to satisfy Rules of Hooks
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-12">
+          <div className="flex items-center justify-center py-8">
+            <ChronicleSpinner />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950">
+        <Navbar />
+        <main className="flex-1 container mx-auto px-4 py-12">
+          <EmptyState
+            icon="🛒"
+            title="Sign in to use your cart"
+            description="Or buy directly from our product pages — no account needed!"
+            action={
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link to="/auth"><Button className="bg-amber-600 hover:bg-amber-700 text-white">Sign In</Button></Link>
+                <Link to="/armory"><Button variant="outline" className="border-stone-300 dark:border-stone-700">Browse Products</Button></Link>
+              </div>
+            }
+          />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
