@@ -39,7 +39,7 @@ function applyPromoCode(code: string | undefined, productPrice: number): { disco
   if (!code) return { discount: 0, validCode: null };
   const promo = PROMO_CODES[code.toUpperCase().trim()];
   if (!promo) return { discount: 0, validCode: null };
-  const discount = Math.round(productPrice * promo.discountPercent) / 100;
+  const discount = Math.round(productPrice * (promo.discountPercent / 100) * 100) / 100;
   return { discount, validCode: code.toUpperCase().trim() };
 }
 

@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const UNSUB_SECRET = Deno.env.get("UNSUB_SECRET") || "cp-unsub-2026-default-key";
+const PROMO_CODE = Deno.env.get("PROMO_CODE") || "PRANKSTER50";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
@@ -39,7 +40,7 @@ function buildWelcomeEmail(email: string, unsubToken: string): string {
   </div>
   <div style="background:#1c1917;color:#fafaf9;border-radius:12px;padding:32px;text-align:center;margin-bottom:24px">
     <p style="color:#d97706;font-size:12px;text-transform:uppercase;letter-spacing:2px;margin:0 0 8px">Your Exclusive Code</p>
-    <p style="font-family:monospace;font-size:36px;font-weight:bold;color:#f59e0b;letter-spacing:4px;margin:0 0 8px">PRANKSTER50</p>
+    <p style="font-family:monospace;font-size:36px;font-weight:bold;color:#f59e0b;letter-spacing:4px;margin:0 0 8px">${PROMO_CODE}</p>
     <p style="color:#a8a29e;font-size:14px;margin:0">50% off your next 5 orders &middot; excludes shipping</p>
   </div>
   <div style="text-align:center;margin-bottom:32px">
@@ -108,6 +109,20 @@ Deno.serve(async (req) => {
     // Subscribe action — send welcome email
     const { email } = body;
     if (!email) throw new Error("Email is required");
+
+    // Verify email actually exists in our subscriber table (prevents open relay abuse)
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data: subscriber } = await supabase
+      .from("newsletter_subscribers")
+      .select("id")
+      .eq("email", email.toLowerCase().trim())
+      .eq("is_active", true)
+      .limit(1)
+      .single();
+
+    if (!subscriber) {
+      throw new Error("Email not found in subscriber list");
+    }
 
     if (!RESEND_API_KEY) {
       return new Response(
