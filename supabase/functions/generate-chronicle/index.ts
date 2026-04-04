@@ -50,7 +50,7 @@ async function generateAutoTopic(): Promise<string> {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: 200,
       messages: [{
         role: "user",
@@ -119,7 +119,7 @@ Write a new chronicle about this topic. Make it sharp and memorable.
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20250929",
+        model: "claude-sonnet-4-6",
         max_tokens: 2000,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: userPrompt }],

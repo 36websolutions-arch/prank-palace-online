@@ -183,7 +183,7 @@ async function transformWithClaude(articles: RawArticle[]): Promise<any[]> {
     },
     signal: AbortSignal.timeout(45000),
     body: JSON.stringify({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: 4000,
       system: ROMAN_TRANSFORM_PROMPT,
       messages: [{ role: "user", content: `Transform these ${articles.length} articles:\n\n${articleList}` }],
