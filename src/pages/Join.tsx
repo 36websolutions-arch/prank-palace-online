@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight, ArrowDown, Gift, Check, Users, Flame, MessageSquare } from "lucide-react";
+import { ArrowRight, ArrowDown, Check, Star, Shield, Truck, Gift } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { subscribeToBeehiiv } from "@/lib/beehiiv";
 import { PROMO_CODE } from "@/lib/promo";
@@ -51,7 +51,7 @@ export default function Join() {
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col">
       {/* Header */}
-      <header className="py-4 px-6 border-b border-stone-900">
+      <header className="py-3 px-6 border-b border-stone-900">
         <Link to="/" className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 transition-colors">
           <img src={logoImg} alt="Corporate Pranks" className="h-8 w-8 rounded-full" />
           <span className="font-display text-lg">CorporatePranks</span>
@@ -61,101 +61,127 @@ export default function Join() {
       <main className="flex-1">
         {!subscribed ? (
           <>
-            {/* Section 1: Outcome hook — mobile-first, big and bold */}
-            <section className="px-4 pt-10 pb-6 text-center">
-              {/* Tappable CTA badge — scrolls to form */}
-              <motion.button
-                onClick={scrollToForm}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 }}
-                className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/40 text-amber-400 px-5 py-2 rounded-full text-sm font-bold mb-6 active:scale-95 transition-transform"
-              >
-                <Gift className="h-4 w-4" />
-                50% Off — Tap to Claim
-                <ArrowDown className="h-3.5 w-3.5 animate-bounce" />
-              </motion.button>
+            {/* Hero: Product + Offer — above the fold on mobile */}
+            <section className="px-4 pt-6 pb-4">
+              <div className="max-w-md mx-auto">
+                {/* Product image */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative mb-5"
+                >
+                  <img
+                    src="/products/you-smell-like-shit/hero-1.webp"
+                    alt="You Smell Like Shit - Solid Cologne Gift Set"
+                    className="w-full rounded-xl border border-stone-800"
+                  />
+                  {/* Price badge */}
+                  <div className="absolute top-3 right-3 bg-amber-500 text-stone-950 font-black text-sm px-3 py-1.5 rounded-lg shadow-lg">
+                    50% OFF
+                  </div>
+                </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="font-display text-3xl sm:text-4xl lg:text-5xl mb-4 leading-tight"
-              >
-                Be the funniest person<br />
-                <span className="text-amber-500">in the group chat.</span>
-              </motion.h1>
+                {/* Headline + price */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.15 }}
+                  className="text-center mb-4"
+                >
+                  <h1 className="font-display text-2xl sm:text-3xl mb-1 leading-tight">
+                    Your friend needs this.
+                  </h1>
+                  <p className="text-stone-400 text-base">
+                    Real cologne. Real insults. Real reactions.
+                  </p>
+                  <div className="flex items-center justify-center gap-3 mt-3">
+                    <span className="text-2xl font-bold text-amber-500">$9.99</span>
+                    <span className="text-lg text-stone-500 line-through">$19.99</span>
+                    <span className="text-xs font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded">SAVE $10</span>
+                  </div>
+                </motion.div>
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-stone-400 text-base sm:text-lg max-w-sm mx-auto"
-              >
-                Join 18,000+ people who send prank gifts that get them blocked and thanked in the same text.
-              </motion.p>
+                {/* CTA button — scrolls to form */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 }}
+                >
+                  <Button
+                    onClick={scrollToForm}
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-stone-950 h-14 text-base font-black tracking-wide rounded-xl shadow-[0_0_25px_rgba(245,158,11,0.4)] hover:shadow-[0_0_40px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  >
+                    GET 50% OFF
+                    <ArrowDown className="h-4 w-4 ml-2 animate-bounce" />
+                  </Button>
+                </motion.div>
+              </div>
             </section>
 
-            {/* Section 2: Social proof — outcomes, not features */}
-            <section className="px-4 pb-8">
-              <div className="flex justify-center gap-6 sm:gap-10 max-w-md mx-auto">
+            {/* Trust badges */}
+            <section className="px-4 pb-4">
+              <div className="flex justify-center gap-6 max-w-md mx-auto">
                 {[
-                  { icon: Users, value: "18K+", label: "People in on it" },
-                  { icon: Flame, value: "2,847+", label: "Friends roasted" },
-                  { icon: MessageSquare, value: "4.9/5", label: "\"Worth the block\"" },
-                ].map(({ icon: Icon, value, label }) => (
+                  { icon: Shield, label: "Secure Checkout" },
+                  { icon: Truck, label: "Ships in 24hrs" },
+                  { icon: Star, label: "4.9/5 Rating" },
+                  { icon: Gift, label: "Anonymous Delivery" },
+                ].map(({ icon: Icon, label }) => (
                   <div key={label} className="text-center">
-                    <Icon className="h-5 w-5 text-amber-500/70 mx-auto mb-1" />
-                    <p className="text-xl font-bold text-stone-100">{value}</p>
-                    <p className="text-xs text-stone-500">{label}</p>
+                    <Icon className="h-4 w-4 text-amber-500/60 mx-auto mb-0.5" />
+                    <span className="text-[10px] text-stone-500">{label}</span>
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* Section 3: What happens when you join — outcomes not deliverables */}
-            <section className="px-4 pb-8">
-              <div className="max-w-sm mx-auto space-y-3">
+            {/* Social proof — real reviews */}
+            <section className="px-4 pb-6">
+              <div className="max-w-md mx-auto space-y-3">
                 {[
-                  "You send a gift that makes someone laugh so hard they forgive you for the packaging",
-                  "You find the memes before everyone else and become the group chat legend",
-                  "You get 50% off the most savage prank gifts on the internet",
-                ].map((item, i) => (
+                  { text: "Sent this to my roommate. Offended for 5 minutes, then asked where to get cologne this good.", author: "Jake M." },
+                  { text: "My brother hasn't spoken to me in 3 days. Worth it. The cologne actually smells amazing.", author: "Sarah T." },
+                  { text: "Bought 6 packs. My entire friend group smells better AND hates me.", author: "Marcus D." },
+                ].map((review, i) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 + i * 0.1 }}
-                    className="flex items-start gap-3 bg-stone-900/50 border border-stone-800/50 rounded-lg p-3"
+                    transition={{ delay: 0.3 + i * 0.1 }}
+                    className="bg-stone-900/50 border border-stone-800/50 rounded-lg p-3"
                   >
-                    <div className="mt-0.5 w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                      <Check className="h-3 w-3 text-amber-400" />
+                    <div className="flex gap-0.5 mb-1">
+                      {[...Array(5)].map((_, j) => (
+                        <Star key={j} className="h-3 w-3 fill-amber-500 text-amber-500" />
+                      ))}
                     </div>
-                    <p className="text-stone-300 text-sm">{item}</p>
+                    <p className="text-stone-300 text-sm italic">"{review.text}"</p>
+                    <p className="text-stone-600 text-xs mt-1">{review.author}</p>
                   </motion.div>
                 ))}
               </div>
             </section>
 
-            {/* Section 4: Email capture — THE CTA, prominent on mobile */}
-            <section className="px-4 pb-10" ref={formRef}>
+            {/* Email capture — THE FORM */}
+            <section className="px-4 pb-8" ref={formRef}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0.5 }}
                 className="max-w-md mx-auto"
               >
                 <div className="bg-stone-900 border-2 border-amber-500/30 rounded-2xl p-6 sm:p-8 text-center shadow-[0_0_40px_rgba(245,158,11,0.15)]">
-                  <h2 className="font-display text-2xl sm:text-3xl mb-2">
-                    Get <span className="text-amber-500">50% Off</span>
+                  <h2 className="font-display text-xl sm:text-2xl mb-1">
+                    Get your <span className="text-amber-500">50% off</span> code
                   </h2>
                   <p className="text-stone-400 text-sm mb-5">
-                    Your first 5 orders. Drop your email and the code is yours.
+                    Drop your email. We'll send the code instantly.
                   </p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <Input
                       type="email"
-                      placeholder="citizen@empire.com"
+                      placeholder="your@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -166,7 +192,7 @@ export default function Join() {
                       disabled={subscribing}
                       className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-stone-950 h-16 text-lg font-black tracking-wide group rounded-xl shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:shadow-[0_0_50px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                     >
-                      {subscribing ? "JOINING..." : "SEND ME THE CODE"}
+                      {subscribing ? "SENDING..." : "SEND ME THE CODE"}
                       <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </form>
@@ -178,13 +204,23 @@ export default function Join() {
               </motion.div>
             </section>
 
-            {/* Section 5: Quick testimonial */}
-            <section className="px-4 pb-10">
-              <div className="max-w-sm mx-auto text-center">
-                <p className="text-stone-500 text-sm italic">
-                  "Sent this to my roommate. Offended for 5 minutes, then asked where to get cologne this good."
-                </p>
-                <p className="text-stone-600 text-xs mt-2">— Jake M., verified buyer</p>
+            {/* What's in the box */}
+            <section className="px-4 pb-10 border-t border-stone-900 pt-6">
+              <div className="max-w-md mx-auto">
+                <h3 className="text-center text-xs font-medium text-stone-500 uppercase tracking-wider mb-4">What's in the box</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    "2 solid cologne tins (actually smells incredible)",
+                    "1 savage greeting card (15 options or write your own)",
+                    "Anonymous shipping (no return address)",
+                    "The look on their face (priceless)",
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <Check className="h-3.5 w-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                      <p className="text-stone-400 text-xs">{item}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </section>
           </>
@@ -236,31 +272,24 @@ export default function Join() {
                 </Button>
               </motion.div>
 
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/you-smell-like-shit">
-                  <Button className="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold px-6">
-                    Shop "You Smell Like Shit" Cologne
-                  </Button>
-                </Link>
-                <Link to="/your-breath-stinks">
-                  <Button variant="outline" className="border-stone-700 text-stone-300 hover:border-amber-500 px-6">
-                    Shop "Your Breath Stinks" Mints
-                  </Button>
-                </Link>
-              </div>
+              <Link to="/you-smell-like-shit">
+                <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-stone-950 font-bold px-8 h-14 text-base rounded-xl">
+                  Shop Now with 50% Off
+                </Button>
+              </Link>
 
               <Link
                 to="/armory"
-                className="inline-block mt-6 text-sm text-stone-500 hover:text-amber-400 transition-colors"
+                className="inline-block mt-4 text-sm text-stone-500 hover:text-amber-400 transition-colors"
               >
-                Browse the full Armory &rarr;
+                Browse all products &rarr;
               </Link>
             </motion.div>
           </div>
         )}
       </main>
 
-      <footer className="py-6 px-6 text-center text-xs text-stone-600">
+      <footer className="py-4 px-6 text-center text-xs text-stone-600">
         &copy; {new Date().getFullYear()} CorporatePranks. Satire Since Rome.
       </footer>
     </div>
