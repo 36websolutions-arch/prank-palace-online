@@ -1,5 +1,19 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+// Disable default body parsing so we can forward multipart for media uploads
+// JSON requests are parsed manually below
+export const config = {
+  api: { bodyParser: false },
+};
+
+async function parseJsonBody(req: VercelRequest): Promise<unknown> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+  }
+  return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+}
+
 const XFORGE_URL = process.env.XFORGE_URL || "http://5.161.106.11:3900";
 const XFORGE_USERNAME = process.env.XFORGE_USERNAME || "admin";
 const XFORGE_PASSWORD = process.env.XFORGE_PASSWORD || "";
@@ -106,7 +120,47 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: "Unauthorized — admin role required" });
   }
 
-  const { endpoint, method = "GET", body } = req.body as {
+  // Media upload path — forward multipart form data to xforge
+  if (req.query.mediaUpload === "true") {
+    const accountId = req.query.accountId as string;
+    if (!accountId) {
+      return res.status(400).json({ error: "Missing accountId" });
+    }
+
+    try {
+      const token = await getXforgeToken();
+
+      // Read the raw body and forward it with the same content-type
+      const contentType = req.headers["content-type"] || "";
+      const chunks: Buffer[] = [];
+      for await (const chunk of req) {
+        chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+      }
+      const rawBody = Buffer.concat(chunks);
+
+      const response = await fetch(
+        `${XFORGE_URL}/api/reply-bot/media-upload?accountId=${accountId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": contentType,
+            Authorization: `Bearer ${token}`,
+          },
+          body: rawBody,
+        }
+      );
+
+      const data = await response.json();
+      return res.status(response.status).json(data);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Media upload proxy error";
+      console.error("xforge-proxy media upload error:", message);
+      return res.status(502).json({ error: message });
+    }
+  }
+
+  const parsedBody = await parseJsonBody(req) as Record<string, unknown>;
+  const { endpoint, method = "GET", body } = parsedBody as {
     endpoint: string;
     method?: string;
     body?: unknown;

@@ -113,8 +113,29 @@ export function rejectQueueItem(id: string): Promise<unknown> {
   return xforgeApi("/api/reply-bot/approve", "POST", { id, action: "reject" });
 }
 
-export function postTweet(text: string): Promise<unknown> {
-  return xforgeApi("/api/reply-bot/tweet", "POST", { accountId: ACCOUNT_ID, text });
+export function postTweet(text: string, mediaIds?: string[]): Promise<unknown> {
+  return xforgeApi("/api/reply-bot/tweet", "POST", { accountId: ACCOUNT_ID, text, mediaIds });
+}
+
+export async function uploadTweetMedia(file: File): Promise<{ mediaId: string }> {
+  const { data: { session } } = await (await import("@/integrations/supabase/client")).supabase.auth.getSession();
+  if (!session?.access_token) throw new Error("Not authenticated");
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`/api/xforge-proxy?mediaUpload=true&accountId=${ACCOUNT_ID}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${session.access_token}` },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || `Upload failed: ${res.status}`);
+  }
+
+  return res.json();
 }
 
 export function generateTweet(personaId: string, topic?: string): Promise<{ text: string }> {

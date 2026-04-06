@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { toast } from "@/hooks/use-toast";
 import {
   CheckCircle, Clock, XCircle, Send, AlertTriangle, ThumbsUp, ThumbsDown,
-  RefreshCw, Sparkles, Calendar, User, BarChart3, MessageSquare, History, Users,
+  RefreshCw, Sparkles, Calendar, User, BarChart3, MessageSquare, History, Users, Upload,
 } from "lucide-react";
 import {
   getQueue, approveQueueItem, rejectQueueItem, postTweet, generateTweet,
@@ -190,6 +190,10 @@ function ComposeSubTab() {
   const [generating, setGenerating] = useState(false);
   const [posting, setPosting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [mediaId, setMediaId] = useState<string | null>(null);
 
   useEffect(() => {
     getPersonas().then(res => {
@@ -212,13 +216,51 @@ function ComposeSubTab() {
     setGenerating(false);
   };
 
+  const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setMediaFile(file);
+    setMediaId(null);
+    if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+    setMediaPreview(URL.createObjectURL(file));
+  };
+
+  const clearMedia = () => {
+    setMediaFile(null);
+    setMediaId(null);
+    if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+    setMediaPreview(null);
+  };
+
   const handlePost = async () => {
     setShowConfirm(false);
     setPosting(true);
     try {
-      await postTweet(text);
+      let ids: string[] | undefined;
+
+      // Upload media first if attached
+      if (mediaFile && !mediaId) {
+        setUploading(true);
+        try {
+          const { uploadTweetMedia } = await import("@/lib/xforge-client");
+          const result = await uploadTweetMedia(mediaFile);
+          ids = [result.mediaId];
+          setMediaId(result.mediaId);
+        } catch (err: any) {
+          toast({ title: "Media Upload Failed", description: err.message, variant: "destructive" });
+          setPosting(false);
+          setUploading(false);
+          return;
+        }
+        setUploading(false);
+      } else if (mediaId) {
+        ids = [mediaId];
+      }
+
+      await postTweet(text, ids);
       toast({ title: "Posted!", description: "Tweet posted to @CorporatePranks" });
       setText("");
+      clearMedia();
     } catch {
       toast({ title: "Error", description: "Failed to post tweet", variant: "destructive" });
     }
@@ -280,14 +322,45 @@ function ComposeSubTab() {
         />
       </div>
 
+      {/* Media attachment */}
+      <div>
+        {mediaPreview ? (
+          <div className="relative inline-block">
+            {mediaFile?.type.startsWith("video/") ? (
+              <video src={mediaPreview} className="max-h-40 rounded-lg border border-stone-300 dark:border-stone-700" controls />
+            ) : (
+              <img src={mediaPreview} alt="attachment" className="max-h-40 rounded-lg border border-stone-300 dark:border-stone-700" />
+            )}
+            <button
+              onClick={clearMedia}
+              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+            >
+              X
+            </button>
+            {mediaId && <span className="text-xs text-green-500 block mt-1">Uploaded</span>}
+          </div>
+        ) : (
+          <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-stone-300 dark:border-stone-700 cursor-pointer hover:border-sky-500 transition-colors text-sm text-stone-500">
+            <Upload className="h-4 w-4" />
+            Attach image or video
+            <input
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={handleMediaSelect}
+            />
+          </label>
+        )}
+      </div>
+
       {/* Post button */}
       <div className="flex items-center gap-3">
         <Button
           onClick={() => setShowConfirm(true)}
-          disabled={!text.trim() || overLimit || posting}
+          disabled={!text.trim() || overLimit || posting || uploading}
           className="bg-sky-500 hover:bg-sky-600 text-white gap-1"
         >
-          <Send className="h-4 w-4" /> {posting ? "Posting..." : "Post Now"}
+          <Send className="h-4 w-4" /> {posting ? (uploading ? "Uploading media..." : "Posting...") : "Post Now"}
         </Button>
       </div>
 
