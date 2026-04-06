@@ -65,7 +65,7 @@ export default function Admin() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {isAdmin ? (
-            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12 mb-8 bg-stone-100 dark:bg-stone-800">
+            <TabsList className="flex w-full overflow-x-auto gap-1 mb-8 bg-stone-100 dark:bg-stone-800 p-1">
               <TabsTrigger value="digital-orders" className="gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900 data-[state=active]:text-amber-600">
                 <Zap className="h-4 w-4" />
                 <span className="hidden sm:inline">Digital</span>
