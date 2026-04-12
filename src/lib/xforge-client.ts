@@ -117,16 +117,41 @@ export function postTweet(text: string, mediaIds?: string[]): Promise<unknown> {
   return xforgeApi("/api/reply-bot/tweet", "POST", { accountId: ACCOUNT_ID, text, mediaIds });
 }
 
+export function deleteTweet(tweetId: string): Promise<unknown> {
+  return xforgeApi("/api/reply-bot/delete-tweet", "POST", { accountId: ACCOUNT_ID, tweetId });
+}
+
 export async function uploadTweetMedia(file: File): Promise<{ mediaId: string }> {
   const { data: { session } } = await (await import("@/integrations/supabase/client")).supabase.auth.getSession();
   if (!session?.access_token) throw new Error("Not authenticated");
 
+  // Step 1: Get xforge auth credentials from proxy
+  const credsRes = await fetch("/api/xforge-proxy?getUploadCreds=true", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ endpoint: "/health", method: "GET" }),
+  });
+
+  if (!credsRes.ok) {
+    const err = await credsRes.json().catch(() => ({ error: credsRes.statusText }));
+    throw new Error(err.error || "Failed to get upload credentials");
+  }
+
+  const { token, csrfToken } = await credsRes.json();
+
+  // Step 2: Upload directly to xforge via HTTPS (bypasses Vercel 4.5MB limit)
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`/api/xforge-proxy?mediaUpload=true&accountId=${ACCOUNT_ID}`, {
+  const res = await fetch(`https://xf.corporatepranks.com/api/reply-bot/media-upload?accountId=${ACCOUNT_ID}`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${session.access_token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
+    },
     body: formData,
   });
 

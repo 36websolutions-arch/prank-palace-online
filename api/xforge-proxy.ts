@@ -4,6 +4,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 // JSON requests are parsed manually below
 export const config = {
   api: { bodyParser: false },
+  maxDuration: 60,
 };
 
 async function parseJsonBody(req: VercelRequest): Promise<unknown> {
@@ -20,13 +21,26 @@ const XFORGE_PASSWORD = process.env.XFORGE_PASSWORD || "";
 const SUPABASE_URL = process.env.SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "";
 
-// Cached xforge JWT (serverless functions may reuse across invocations)
-let cachedToken: { accessToken: string; refreshToken: string; expiresAt: number } | null = null;
+// Cached xforge JWT + CSRF token (serverless functions may reuse across invocations)
+let cachedToken: { accessToken: string; refreshToken: string; csrfToken: string; expiresAt: number } | null = null;
 
-async function getXforgeToken(): Promise<string> {
+/** Extract the xf-tok CSRF cookie value from Set-Cookie headers */
+function extractCsrfCookie(res: Response): string {
+  const setCookies = res.headers.getSetCookie?.() ?? [];
+  for (const c of setCookies) {
+    const match = c.match(/xf-tok=([^;]+)/);
+    if (match) return match[1];
+  }
+  // Fallback: check raw header
+  const raw = res.headers.get("set-cookie") || "";
+  const match = raw.match(/xf-tok=([^;]+)/);
+  return match ? match[1] : "";
+}
+
+async function getXforgeToken(): Promise<{ accessToken: string; csrfToken: string }> {
   // Return cached token if still valid (with 60s buffer)
   if (cachedToken && Date.now() < cachedToken.expiresAt - 60_000) {
-    return cachedToken.accessToken;
+    return { accessToken: cachedToken.accessToken, csrfToken: cachedToken.csrfToken };
   }
 
   // Try refresh first if we have a refresh token
@@ -39,12 +53,14 @@ async function getXforgeToken(): Promise<string> {
       });
       if (res.ok) {
         const data = await res.json();
+        const csrf = extractCsrfCookie(res) || cachedToken.csrfToken;
         cachedToken = {
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
+          csrfToken: csrf,
           expiresAt: Date.now() + 14 * 60 * 1000, // assume ~15min expiry
         };
-        return cachedToken.accessToken;
+        return { accessToken: cachedToken.accessToken, csrfToken: cachedToken.csrfToken };
       }
     } catch {
       // Fall through to full login
@@ -63,12 +79,14 @@ async function getXforgeToken(): Promise<string> {
   }
 
   const data = await res.json();
+  const csrf = extractCsrfCookie(res);
   cachedToken = {
     accessToken: data.accessToken,
     refreshToken: data.refreshToken,
+    csrfToken: csrf,
     expiresAt: Date.now() + 14 * 60 * 1000,
   };
-  return cachedToken.accessToken;
+  return { accessToken: cachedToken.accessToken, csrfToken: cachedToken.csrfToken };
 }
 
 async function validateAdmin(authHeader: string | undefined): Promise<boolean> {
@@ -120,7 +138,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: "Unauthorized — admin role required" });
   }
 
-  // Media upload path — forward multipart form data to xforge
+  // Return xforge credentials for direct uploads (bypasses Vercel 4.5MB body limit)
+  if (req.query.getUploadCreds === "true") {
+    try {
+      const { accessToken, csrfToken } = await getXforgeToken();
+      return res.status(200).json({ token: accessToken, csrfToken: csrfToken || "" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to get upload credentials";
+      return res.status(502).json({ error: message });
+    }
+  }
+
+  // Media upload path — forward multipart form data to xforge (fallback for small files)
   if (req.query.mediaUpload === "true") {
     const accountId = req.query.accountId as string;
     if (!accountId) {
@@ -128,7 +157,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-      const token = await getXforgeToken();
+      const { accessToken, csrfToken } = await getXforgeToken();
 
       // Read the raw body and forward it with the same content-type
       const contentType = req.headers["content-type"] || "";
@@ -144,7 +173,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           method: "POST",
           headers: {
             "Content-Type": contentType,
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
+            ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
           },
           body: rawBody,
         }
@@ -176,13 +206,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const token = await getXforgeToken();
+    const { accessToken, csrfToken } = await getXforgeToken();
 
     const fetchOpts: RequestInit = {
       method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
+        ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
       },
     };
     if (body && method !== "GET") {
@@ -191,11 +222,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let response = await fetch(`${XFORGE_URL}${endpoint}`, fetchOpts);
 
-    // Auto-retry on 401 (token expired)
-    if (response.status === 401) {
+    // Auto-retry on 401 (token expired) or 403 (CSRF token expired)
+    if (response.status === 401 || response.status === 403) {
       cachedToken = null;
-      const newToken = await getXforgeToken();
-      (fetchOpts.headers as Record<string, string>).Authorization = `Bearer ${newToken}`;
+      const fresh = await getXforgeToken();
+      const headers = fetchOpts.headers as Record<string, string>;
+      headers.Authorization = `Bearer ${fresh.accessToken}`;
+      if (fresh.csrfToken) headers["x-csrf-token"] = fresh.csrfToken;
       response = await fetch(`${XFORGE_URL}${endpoint}`, fetchOpts);
     }
 

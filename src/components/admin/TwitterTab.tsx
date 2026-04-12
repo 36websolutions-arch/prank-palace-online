@@ -261,14 +261,15 @@ function ComposeSubTab() {
       toast({ title: "Posted!", description: "Tweet posted to @CorporatePranks" });
       setText("");
       clearMedia();
-    } catch {
-      toast({ title: "Error", description: "Failed to post tweet", variant: "destructive" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err?.message || "Failed to post tweet", variant: "destructive" });
     }
     setPosting(false);
   };
 
   const charCount = text.length;
-  const overLimit = charCount > 280;
+  const MAX_CHARS = 25000; // Twitter Premium long-form limit
+  const overLimit = charCount > MAX_CHARS;
 
   return (
     <div className="space-y-6">
@@ -311,7 +312,7 @@ function ComposeSubTab() {
         <div className="flex justify-between items-center mb-1">
           <label className="text-sm font-medium text-stone-700 dark:text-stone-300">Tweet Text</label>
           <span className={`text-xs font-mono ${overLimit ? "text-red-500 font-bold" : "text-stone-400"}`}>
-            {charCount}/280
+            {charCount.toLocaleString()}/{MAX_CHARS > 1000 ? `${Math.floor(MAX_CHARS / 1000)}K` : MAX_CHARS}
           </span>
         </div>
         <textarea
@@ -366,13 +367,13 @@ function ComposeSubTab() {
 
       {/* Confirm dialog */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-stone-900 rounded-xl p-6 max-w-md mx-4 shadow-xl">
-            <h3 className="font-semibold text-lg mb-2">Post to @CorporatePranks?</h3>
-            <div className="bg-stone-50 dark:bg-stone-800 rounded-md p-3 mb-4">
-              <p className="text-sm">{text}</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white dark:bg-stone-900 rounded-xl p-6 max-w-md w-full shadow-xl max-h-[90vh] flex flex-col">
+            <h3 className="font-semibold text-lg mb-2 flex-shrink-0">Post to @CorporatePranks?</h3>
+            <div className="bg-stone-50 dark:bg-stone-800 rounded-md p-3 mb-4 overflow-y-auto flex-1 min-h-0">
+              <p className="text-sm whitespace-pre-wrap">{text.slice(0, 500)}{text.length > 500 ? `\n\n... (${text.length.toLocaleString()} chars total)` : ""}</p>
             </div>
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-2 justify-end flex-shrink-0">
               <Button variant="outline" onClick={() => setShowConfirm(false)}>Cancel</Button>
               <Button onClick={handlePost} className="bg-sky-500 hover:bg-sky-600 text-white">Confirm Post</Button>
             </div>
