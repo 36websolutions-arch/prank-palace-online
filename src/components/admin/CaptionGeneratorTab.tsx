@@ -23,7 +23,7 @@ interface CaptionHistoryEntry {
 
 const HISTORY_KEY = "cp-caption-history";
 const MAX_HISTORY = 5;
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB — fits 1.5+ min iPhone videos at any quality
 const MAX_DURATION = 120; // 2 minutes
 const MAX_CAROUSEL_FILES = 10; // Instagram carousel limit
 const CAROUSEL_FRAMES_PER_VIDEO = 5; // Frames per video in carousel mode
@@ -179,7 +179,7 @@ async function imageToBase64(file: File): Promise<string> {
 function validateVideoFile(file: File): Promise<void> {
   return new Promise((resolve, reject) => {
     if (file.size > MAX_FILE_SIZE) {
-      reject(new Error(`File too large (${(file.size / 1024 / 1024).toFixed(0)}MB). Max is 100MB.`));
+      reject(new Error(`File too large (${(file.size / 1024 / 1024).toFixed(0)}MB). Max is 500MB.`));
       return;
     }
 
@@ -291,7 +291,7 @@ export function CaptionGeneratorTab() {
           return;
         }
       } else if (file.size > MAX_FILE_SIZE) {
-        toast.error(`${file.name}: Image too large (${(file.size / 1024 / 1024).toFixed(0)}MB). Max is 100MB.`);
+        toast.error(`${file.name}: Image too large (${(file.size / 1024 / 1024).toFixed(0)}MB). Max is 500MB.`);
         e.target.value = "";
         return;
       }
