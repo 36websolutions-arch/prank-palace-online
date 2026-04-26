@@ -583,7 +583,7 @@ export function CaptionGeneratorTab() {
                       Click to upload video
                     </p>
                     <p className="text-xs text-stone-400 dark:text-stone-500 mt-1">
-                      MP4, WebM, or MOV — max 100MB, 2 min
+                      MP4, WebM, or MOV — max 500MB, 2 min
                     </p>
                     <input
                       ref={fileInputRef}
@@ -691,7 +691,7 @@ export function CaptionGeneratorTab() {
                       : `Add more (${carouselPreviews.length}/${MAX_CAROUSEL_FILES})`}
                   </p>
                   <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">
-                    Images + videos — max 100MB per video, 2 min
+                    Images + videos — max 500MB per video, 2 min
                   </p>
                   <input
                     ref={carouselInputRef}
